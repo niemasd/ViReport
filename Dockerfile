@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
 # install general programs
-RUN apk update && apk add make wget
+RUN apk update && apk add gcc make wget
 
 # install Python 3 modules
 RUN pip install dendropy && \
@@ -11,7 +11,7 @@ RUN pip install dendropy && \
     pip install treeswift
 
 # install FastRoot
-RUN wget https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
+RUN wget -q https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
     unzip master.zip && \
     mv MinVar-Rooting-master /usr/local/bin/MinVar-Rooting && \
     ln -s /usr/local/bin/MinVar-Rooting/FastRoot.py /usr/local/bin/FastRoot.py && \
