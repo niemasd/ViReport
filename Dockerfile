@@ -2,4 +2,5 @@
 FROM python:3.7-alpine
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
-# TODO install other tools
+# install general dependencies
+RUN apk update && apk add wget
