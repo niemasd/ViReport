@@ -28,12 +28,12 @@ RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     mv FastTree /usr/local/bin && \
     rm FastTree.c
 
-# install IQ-TREE
+# install IQ-TREE (1.6.12)
 RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
     mv iqtree*/bin/iqtree /usr/local/bin && \
     rm -rf iqtree*
 
-# install MAFFT
+# install MAFFT (7.453)
 RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-extensions-src.tgz" | tar -zx && \
     cd mafft*/core && \
     make clean && \
