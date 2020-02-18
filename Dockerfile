@@ -11,6 +11,11 @@ RUN apk update && \
     apk upgrade && \
     apk add autoconf automake bash g++ gcc libc-dev make python3 R wget
 
+# set up R
+RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
+    echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
+    R -e "install.packages(c('devtools'))"
+
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 
@@ -18,10 +23,6 @@ RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 RUN pip install dendropy && \
     pip install niemads && \
     pip install treeswift
-
-# install R
-RUN echo 'options(repos=structure(c(CRAN="http://cran.us.r-project.org")))' >> ~/.Rprofile && \
-    R -e "install.packages(c('devtools'))"
 
 # install FastRoot
 RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
