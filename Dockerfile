@@ -9,15 +9,19 @@ RUN mkdir VIREPORT_SETUP && \
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add autoconf automake bash g++ gcc libc-dev make wget
+    apk add autoconf automake bash g++ gcc libc-dev make R wget
+
+# make bash the default shell
+RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 
 # install Python 3 modules
 RUN pip install dendropy && \
     pip install niemads && \
     pip install treeswift
 
-# make bash the default shell
-RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
+# install R
+RUN echo 'options(repos=structure(c(CRAN="http://cran.us.r-project.org")))' >> ~/.Rprofile && \
+    R -e "install.packages(c('devtools'))"
 
 # install FastRoot
 RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
@@ -71,6 +75,9 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
     unzip raxml-ng*.zip && \
     mv raxml-ng /usr/local/bin && \
     rm -rf raxml-ng*
+
+# install treedater
+RUN R -e 'install_github("emvolz/treedater")'
 
 # clean up
 RUN cd .. && \
