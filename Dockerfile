@@ -29,6 +29,7 @@ RUN apk update && \
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
     mkdir -p /usr/share/doc/R/html && \
+    sed -i 's/CFLAGS =/CFLAGS = -D__USE_MISC/g' /etc/R/Makeconf && \
     R -e 'install.packages("Rcpp", repos="https://cloud.r-project.org/")' && \
     wget -q "https://github.com/r-lib/fs/archive/master.zip" && \
     unzip -q master.zip && \
