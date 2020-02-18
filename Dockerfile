@@ -5,7 +5,7 @@ MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add bash gcc libc-dev make wget
+    apk add autoconf automake bash gcc libc-dev make wget
 
 # install Python 3 modules
 RUN pip install dendropy && \
@@ -42,7 +42,17 @@ RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-exte
     cd ../.. && \
     rm -rf mafft*
 
-# install RAxML-NG (
+# install PhyML (3.3.20190909)
+RUN wget -q "https://github.com/stephaneguindon/phyml/archive/master.zip" && \
+    unzip -q master.zip && \
+    cd phyml-master && \
+    ./autogen.sh && \
+    ./configure --enable-phyml && \
+    make && \
+    make install && \
+    rm -rf phyml-master master.zip
+
+# install RAxML-NG (0.9.0)
 RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-ng_v0.9.0_linux_x86_64.zip" && \
     unzip raxml-ng*.zip && \
     mv raxml-ng /usr/local/bin && \
