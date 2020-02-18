@@ -33,7 +33,7 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     R -e "install.packages(c('Rcpp'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)" && \
     wget -q "https://github.com/r-lib/fs/archive/master.zip" && \
     unzip -q master.zip && \
-    R CMD INSTALL fs-master && \
+    R CMD INSTALL fs-master > /dev/null && \
     rm -rf fs-master master.zip && \
     R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
