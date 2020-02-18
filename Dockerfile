@@ -9,7 +9,7 @@ RUN mkdir VIREPORT_SETUP && \
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add autoconf automake bash g++ gcc libc-dev make python3 R R-dev wget
+    apk add autoconf automake bash g++ gcc libc-dev linux-headers make python3 R R-dev wget
 
 # set up R
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
