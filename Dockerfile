@@ -5,7 +5,7 @@ MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add autoconf automake bash gcc libc-dev make wget
+    apk add autoconf automake bash g++ gcc libc-dev make wget
 
 # install Python 3 modules
 RUN pip install dendropy && \
@@ -33,6 +33,15 @@ RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree
     mv iqtree*/bin/iqtree /usr/local/bin && \
     rm -rf iqtree*
 
+# install LSD2
+RUN wget -q "https://github.com/tothuhien/lsd2/archive/master.zip" && \
+    unzip -q master.zip && \
+    cd lsd2-master/src && \
+    make && \
+    mv lsd2 /usr/local/bin && \
+    cd ../.. && \
+    rm -rf lsd2-master master.zip
+
 # install MAFFT (7.453)
 RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-extensions-src.tgz" | tar -zx && \
     cd mafft*/core && \
@@ -50,6 +59,7 @@ RUN wget -q "https://github.com/stephaneguindon/phyml/archive/master.zip" && \
     ./configure --enable-phyml && \
     make && \
     make install && \
+    cd .. && \
     rm -rf phyml-master master.zip
 
 # install RAxML-NG (0.9.0)
