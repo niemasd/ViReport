@@ -22,6 +22,12 @@ RUN wget -q https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
     ln -s /usr/local/bin/MinVar-Rooting/FastRoot.py /usr/local/bin/FastRoot.py && \
     rm -rf MinVar-Rooting-master master.zip
 
+# install FastTree
+RUN wget -q http://www.microbesonline.org/fasttree/FastTree.c && \
+    gcc -DUSE_DOUBLE -DOPENMP -fopenmp -O3 -finline-functions -funroll-loops -Wall -o FastTree FastTree.c -lm && \
+    mv FastTree /usr/local/bin && \
+    rm FastTree.c
+
 # install MAFFT
 RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-extensions-src.tgz" | tar -zx && \
     cd mafft*/core && \
