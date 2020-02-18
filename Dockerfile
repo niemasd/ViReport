@@ -22,6 +22,7 @@ RUN apk update -q && \
     linux-headers \
     make \
     py3-numpy \
+    py3-numpy-dev \
     py3-scipy \
     python3 \
     python3-dev \
