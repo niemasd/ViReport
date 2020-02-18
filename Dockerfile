@@ -36,8 +36,6 @@ RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 RUN pip3 install -q biopython && \
     pip3 install -q dendropy && \
     pip3 install -q niemads && \
-    pip3 install -q numpy && \
-    pip3 install -q scipy && \
     pip3 install -q treeswift
 
 # set up R
