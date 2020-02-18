@@ -98,6 +98,10 @@ RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-exte
     cd ../.. && \
     rm -rf mafft*
 
+# install MUSCLE (3.8.31)
+RUN wget -qO- "https://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz" | tar -zx && \
+    mv muscle* /usr/local/bin/muscle
+
 # install PhyML (3.3.20190909)
 RUN wget -q "https://github.com/stephaneguindon/phyml/archive/master.zip" && \
     unzip -q master.zip && \
@@ -127,4 +131,5 @@ RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.
 
 # clean up
 RUN cd .. && \
-    rm -rf VIREPORT_SETUP
+    rm -rf VIREPORT_SETUP && \
+    rm -f *.*
