@@ -14,7 +14,7 @@ RUN apk update && \
 # set up R
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
-    R -e "install.packages(c('usethis', 'callr', 'pkgbuild', 'pkgload', 'rcmdcheck', 'roxygen2', 'rversions', 'testthat', 'devtools'))"
+    R -e "install.packages(c('devtools'))"
 
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
