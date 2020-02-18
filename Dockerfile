@@ -12,7 +12,7 @@ RUN pip install dendropy && \
 
 # install FastRoot
 RUN wget -q https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
-    unzip master.zip && \
+    unzip -q master.zip && \
     mv MinVar-Rooting-master /usr/local/bin/MinVar-Rooting && \
     ln -s /usr/local/bin/MinVar-Rooting/FastRoot.py /usr/local/bin/FastRoot.py && \
     rm -rf MinVar-Rooting-master master.zip
