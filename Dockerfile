@@ -34,7 +34,7 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     unzip -q master.zip && \
     R CMD INSTALL fs-master && \
     rm -rf fs-master master.zip && \
-    R -e "install.packages(c('devtools'))"
+    R -e "install.packages(c('devtools','ape'))"
 
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
