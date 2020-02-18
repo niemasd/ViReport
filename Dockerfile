@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
 # install general programs
-RUN apk update && apk add gcc make wget
+RUN apk update && apk add gcc libc-dev make wget
 
 # install Python 3 modules
 RUN pip install dendropy && \
