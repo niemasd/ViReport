@@ -121,6 +121,10 @@ RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'))" &
     wget -qO- "https://raw.githubusercontent.com/emvolz/treedater/master/inst/tdcl" > /usr/local/bin/tdcl && \
     chmod a+x /usr/local/bin/tdcl
 
+# install TreeN93
+RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.py" > /usr/local/bin/TreeN93.py && \
+    chmod a+x /usr/local/bin/TreeN93.py
+
 # clean up
 RUN cd .. && \
     rm -rf VIREPORT_SETUP
