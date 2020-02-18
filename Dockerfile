@@ -3,12 +3,17 @@ FROM python:3.7-alpine
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
 # install general programs
-RUN apk update && apk add gcc libc-dev make wget
+RUN apk update && \
+    apk upgrade && \
+    apk add bash gcc libc-dev make wget
 
 # install Python 3 modules
 RUN pip install dendropy && \
     pip install niemads && \
     pip install treeswift
+
+# make bash the default shell
+RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 
 # install FastRoot
 RUN wget -q https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
