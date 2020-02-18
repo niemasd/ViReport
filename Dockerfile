@@ -14,6 +14,8 @@ RUN apk update && \
 # set up R
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
+    ln -s /usr/bin/automake /usr/bin/automake-1.14 && \
+    ln -s /usr/bin/aclocal /usr/bin/aclocal-1.14 && \
     R -e "install.packages(c('devtools'))"
 
 # make bash the default shell
