@@ -30,12 +30,12 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
     mkdir -p /usr/share/doc/R/html && \
     sed -i 's/CFLAGS =/CFLAGS = -D__USE_MISC/g' /etc/R/Makeconf && \
-    R -e "install.packages(c('Rcpp'), INSTALL_opts = c('--no-html','--no-help','--no-html'))" && \
+    R -e "install.packages(c('Rcpp'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)" && \
     wget -q "https://github.com/r-lib/fs/archive/master.zip" && \
     unzip -q master.zip && \
     R CMD INSTALL fs-master && \
     rm -rf fs-master master.zip && \
-    R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'))"
+    R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
@@ -100,7 +100,7 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
 
 # install treedater
 RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'))" && \
-    R -e "library(devtools); install_github('emvolz/treedater', INSTALL_opts = c('--no-html','--no-help','--no-html'))" && \
+    R -e "library(devtools); install_github('emvolz/treedater', INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)" && \
     wget -qO- "https://raw.githubusercontent.com/emvolz/treedater/master/inst/tdcl" > /usr/local/bin/tdcl && \
     chmod a+x /usr/local/bin/tdcl
 
