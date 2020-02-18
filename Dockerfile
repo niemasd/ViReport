@@ -1,5 +1,5 @@
 # ViReport minimal Docker image using Alpine base with Python
-FROM python:3.7-alpine
+FROM alpine:latest
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
 # create temporary setup folder for everything
@@ -9,7 +9,7 @@ RUN mkdir VIREPORT_SETUP && \
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add autoconf automake bash g++ gcc libc-dev make R wget
+    apk add autoconf automake bash g++ gcc libc-dev make python3 R wget
 
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
