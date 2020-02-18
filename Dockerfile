@@ -34,7 +34,7 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     unzip -q master.zip && \
     R CMD INSTALL fs-master && \
     rm -rf fs-master master.zip && \
-    R -e "install.packages(c('devtools','ape'))"
+    R -e "install.packages(c('devtools'))"
 
 # make bash the default shell
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
@@ -98,7 +98,10 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
     rm -rf raxml-ng*
 
 # install treedater
-RUN R -e 'library(devtools); install_github("emvolz/treedater")'
+RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'))" && \
+    R -e 'library(devtools); install_github("emvolz/treedater")' && \
+    wget -qO- "https://raw.githubusercontent.com/emvolz/treedater/master/inst/tdcl" > /usr/local/bin/tdcl && \
+    chmod a+x /usr/local/bin/tdcl
 
 # clean up
 RUN cd .. && \
