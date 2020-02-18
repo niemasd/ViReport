@@ -70,7 +70,7 @@ RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
     unzip master.zip && \
     cd tn93-master && \
     cmake . && \
-    make install \
+    make install && \
     cd .. && \
     rm -rf tn93-master master.zip
 #RUN pip3 install -q hivtrace
