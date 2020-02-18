@@ -41,3 +41,9 @@ RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-exte
     make install && \
     cd ../.. && \
     rm -rf mafft*
+
+# install RAxML-NG (
+RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-ng_v0.9.0_linux_x86_64.zip" && \
+    unzip raxml-ng*.zip && \
+    mv raxml-ng /usr/local/bin && \
+    rm -rf raxml-ng*
