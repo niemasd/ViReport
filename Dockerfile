@@ -13,6 +13,7 @@ RUN apk update -q && \
     autoconf \
     automake \
     bash \
+    cython \
     file \
     g++ \
     gcc \
