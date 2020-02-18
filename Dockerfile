@@ -13,6 +13,7 @@ RUN apk update -q && \
     autoconf \
     automake \
     bash \
+    cmake \
     cython \
     file \
     g++ \
@@ -65,7 +66,14 @@ RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     rm FastTree.c
 
 # install HIV-TRACE
-RUN pip3 install -q hivtrace
+RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
+    unzip master.zip && \
+    cd tn93-master && \
+    cmake . && \
+    make install \
+    cd .. && \
+    rm -rf tn93-master master.zip
+#RUN pip3 install -q hivtrace
 
 # install IQ-TREE (1.6.12)
 RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
