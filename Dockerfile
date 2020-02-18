@@ -7,9 +7,9 @@ RUN mkdir VIREPORT_SETUP && \
     cd VIREPORT_SETUP
 
 # install general programs
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache \
+RUN apk update -q && \
+    apk upgrade -q && \
+    apk add -q --no-cache \
     autoconf \
     automake \
     bash \
@@ -23,6 +23,7 @@ RUN apk update && \
     python3 \
     R \
     R-dev \
+    #R-doc \
     wget
 
 # set up R
