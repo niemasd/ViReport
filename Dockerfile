@@ -21,10 +21,21 @@ RUN apk update -q && \
     linux-headers \
     make \
     python3 \
+    python3-dev \
     R \
     R-dev \
-    #R-doc \
     wget
+
+# make bash the default shell
+RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
+
+# install Python 3 modules
+RUN pip3 install -q biopython && \
+    pip3 install -q dendropy && \
+    pip3 install -q niemads && \
+    pip3 install -q numpy && \
+    pip3 install -q scipy && \
+    pip3 install -q treeswift
 
 # set up R
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
@@ -38,14 +49,6 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     rm -rf fs-master master.zip && \
     R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
-# make bash the default shell
-RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
-
-# install Python 3 modules
-RUN pip3 install dendropy && \
-    pip3 install niemads && \
-    pip3 install treeswift
-
 # install FastRoot
 RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
     unzip -q master.zip && \
@@ -58,6 +61,9 @@ RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     gcc -DUSE_DOUBLE -DOPENMP -fopenmp -O3 -finline-functions -funroll-loops -Wall -o FastTree FastTree.c -lm && \
     mv FastTree /usr/local/bin && \
     rm FastTree.c
+
+# install HIV-TRACE
+RUN pip3 install hivtrace
 
 # install IQ-TREE (1.6.12)
 RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
