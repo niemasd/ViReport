@@ -16,17 +16,22 @@ RUN pip install dendropy && \
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 
 # install FastRoot
-RUN wget -q https://github.com/uym2/MinVar-Rooting/archive/master.zip && \
+RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
     unzip -q master.zip && \
     mv MinVar-Rooting-master /usr/local/bin/MinVar-Rooting && \
     ln -s /usr/local/bin/MinVar-Rooting/FastRoot.py /usr/local/bin/FastRoot.py && \
     rm -rf MinVar-Rooting-master master.zip
 
 # install FastTree
-RUN wget -q http://www.microbesonline.org/fasttree/FastTree.c && \
+RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     gcc -DUSE_DOUBLE -DOPENMP -fopenmp -O3 -finline-functions -funroll-loops -Wall -o FastTree FastTree.c -lm && \
     mv FastTree /usr/local/bin && \
     rm FastTree.c
+
+# install IQ-TREE
+RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
+    mv iqtree*/bin/iqtree /usr/local/bin && \
+    rm -rf iqtree*
 
 # install MAFFT
 RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-extensions-src.tgz" | tar -zx && \
