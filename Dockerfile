@@ -9,11 +9,26 @@ RUN mkdir VIREPORT_SETUP && \
 # install general programs
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache autoconf automake bash file g++ gcc libc-dev linux-headers make python3 R R-dev wget
+    apk add --no-cache \
+    autoconf \
+    automake \
+    bash \
+    file \
+    g++ \
+    gcc \
+    libc-dev \
+    libxml2-dev \
+    linux-headers \
+    make \
+    python3 \
+    R \
+    R-dev \
+    wget
 
 # set up R
 RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/library'}" >> /usr/lib/R/etc/Renviron && \
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/lib/R/etc/Rprofile.site && \
+    mkdir -p /usr/share/doc/R/html && \
     R -e 'install.packages("Rcpp", repos="https://cloud.r-project.org/")' && \
     wget -q "https://github.com/r-lib/fs/archive/master.zip" && \
     unzip -q master.zip && \
