@@ -77,7 +77,7 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
     rm -rf raxml-ng*
 
 # install treedater
-RUN R -e 'install_github("emvolz/treedater")'
+RUN R -e 'library(devtools); install_github("emvolz/treedater")'
 
 # clean up
 RUN cd .. && \
