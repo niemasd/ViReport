@@ -41,9 +41,9 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
 
 # install Python 3 modules
-RUN pip install dendropy && \
-    pip install niemads && \
-    pip install treeswift
+RUN pip3 install dendropy && \
+    pip3 install niemads && \
+    pip3 install treeswift
 
 # install FastRoot
 RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
