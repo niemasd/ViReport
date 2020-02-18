@@ -2,6 +2,10 @@
 FROM python:3.7-alpine
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
+# create temporary setup folder for everything
+RUN mkdir VIREPORT_SETUP && \
+    cd VIREPORT_SETUP
+
 # install general programs
 RUN apk update && \
     apk upgrade && \
@@ -67,3 +71,7 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
     unzip raxml-ng*.zip && \
     mv raxml-ng /usr/local/bin && \
     rm -rf raxml-ng*
+
+# clean up
+RUN cd .. && \
+    rm -rf VIREPORT_SETUP
