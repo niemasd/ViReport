@@ -31,11 +31,14 @@ RUN apk update -q && \
     R-dev \
     wget
 
-# make bash the default shell
+# make bash the default shell and Python 3 the default Python
 RUN sed -i 's/\/bin\/ash/\/bin\/bash/g' /etc/passwd
+RUN ln -s /usr/bin/python3 /usr/bin/python && \
+    ln -s /usr/bin/pip3 /usr/bin/pip
 
 # install Python 3 modules
 RUN pip3 install -q biopython && \
+    pip3 install -q bitsets && \
     pip3 install -q dendropy && \
     pip3 install -q niemads && \
     pip3 install -q treeswift
@@ -79,6 +82,13 @@ RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
 RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
     mv iqtree*/bin/iqtree /usr/local/bin && \
     rm -rf iqtree*
+
+# install LogDate
+RUN wget -q "https://github.com/uym2/LogDate/archive/master.zip" && \
+    unzip -q master.zip && \
+    mv LogDate-master/Software /usr/local/bin/LogDate && \
+    ln -s /usr/local/bin/LogDate/launch_LogDate.py /usr/local/bin/launch_LogDate.py && \
+    rm -rf LogDate-master master.zip
 
 # install LSD2
 RUN wget -q "https://github.com/tothuhien/lsd2/archive/master.zip" && \
