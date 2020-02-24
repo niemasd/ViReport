@@ -54,5 +54,10 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
         ----------
         seqs_filename : str
             Filename of the raw sequences to align (in the FASTA format)
+
+        Returns
+        -------
+        aln_filename : str
+            Filename of the output multiple sequence alignment (in the FASTA format)
         '''
         pass
