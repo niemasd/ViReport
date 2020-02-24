@@ -12,6 +12,8 @@ from sys import argv
 # set defaults
 DEFAULT = {
     'Driver': 'Default',
+    'Preprocessing': 'None',
+    'MultipleSequenceAlignment': 'MAFFT',
 }
 
 # map module names to CLI args
@@ -31,6 +33,8 @@ def parse_args():
     # use argparse to parse user arguments
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
+    for arg in ARG_TO_MODULE:
+        parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
 
     # if running in Docker image, hardcode output directory
@@ -47,4 +51,3 @@ if __name__ == "__main__":
 
     # parse user arguments
     parse_args()
-    print(MF.MODULES)
