@@ -139,6 +139,14 @@ RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'))" &
 RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.py" > /usr/local/bin/TreeN93.py && \
     chmod a+x /usr/local/bin/TreeN93.py
 
+# set up ViReport
+RUN wget -q "https://github.com/niemasd/ViReport/archive/master.zip" && \
+    unzip -q master.zip && \
+    mv ViReport-master /usr/local/bin/ViReport && \
+    chmod a+x /usr/local/bin/ViReport/ViReport.py && \
+    ln -s /usr/local/bin/ViReport/ViReport.py /usr/local/bin/ViReport.py && \
+    rm -rf master.zip
+
 # clean up
 RUN cd .. && \
     rm -rf VIREPORT_SETUP && \
