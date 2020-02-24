@@ -37,6 +37,14 @@ def parse_args():
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
 
+    # parse module implementation selections
+    GC.SELECTED = dict()
+    for arg in ARG_TO_MODULE:
+        mod = ARG_TO_MODULE[arg]; mod_selection = getattr(args, arg)
+        if mod_selection not in MF.MODULES[mod]:
+            raise ValueError("Invalid %s: %s\n* Valid Options: %s" % (mod, mod_selection, ', '.join(sorted(MF.MODULES[mod]))))
+        GC.SELECTED[mod] = MF.MODULES[mod][mod_selection]
+
     # if running in Docker image, hardcode output directory
     if 'VIREPORT_DOCKER' in environ:
         GC.OUT_DIR = '/VIREPORT_MOUNT/OUT_DIR'
@@ -51,3 +59,6 @@ if __name__ == "__main__":
 
     # parse user arguments
     parse_args()
+
+    # run Driver
+    GC.SELECTED['Driver'].run()
