@@ -31,6 +31,7 @@ class Driver_Default(Driver):
     def run(seqs_filename, sample_times_filename):
         # print starting messages
         print_message()
+        print("========================   Workflow Process   ========================")
         print("Output directory: %s" % GC.OUT_DIR_PRINT)
         print("Starting viral analysis workflow...")
 
@@ -62,3 +63,16 @@ class Driver_Default(Driver):
         print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)
         GC.TREE_UNROOTED = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
         print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)
+
+        # print citations
+        print("\n\n===========================   Citations   ============================")
+        citations = set()
+        for m in GC.SELECTED:
+            cite = GC.SELECTED[m].cite()
+            if isinstance(cite,str):
+                citations.add(cite.strip())
+            elif isinstance(cite,set) or isinstance(cite,list):
+                for c in cite:
+                    citations.add(c.strip())
+        for cite in sorted(citations):
+            print(cite)

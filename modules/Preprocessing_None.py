@@ -3,6 +3,7 @@
 Implementation of the "Preprocessing" module where no preprocessing is done
 '''
 from Preprocessing import Preprocessing
+import ViReport_GlobalContext as GC
 
 class Preprocessing_None(Preprocessing):
     def init():

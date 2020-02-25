@@ -18,7 +18,7 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
         pass
 
     def cite():
-        return GC.CITATION_MAFFT
+        return [GC.CITATION_IQTREE, GC.CITATION_IQTREE_MFP]
 
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
