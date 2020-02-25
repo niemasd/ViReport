@@ -18,7 +18,7 @@ DEFAULT = {
     'Driver': 'Default',
     'MultipleSequenceAlignment': 'MAFFT',
     'PhylogeneticInference': 'IQTREE',
-    'Preprocessing': 'None',
+    'Preprocessing': 'SafeNames',
 }
 
 # map module names to CLI args
