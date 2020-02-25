@@ -19,6 +19,7 @@ DEFAULT = {
     'MultipleSequenceAlignment': 'MAFFT',
     'PhylogeneticInference': 'IQTREE',
     'Preprocessing': 'SafeNames',
+    'Rooting': 'MinVar',
 }
 
 # map module names to CLI args
@@ -27,6 +28,7 @@ MODULE_TO_ARG = {
     'MultipleSequenceAlignment': 'msa',
     'PhylogeneticInference': 'phylo',
     'Preprocessing': 'preprocess',
+    'Rooting': 'root',
 }
 ARG_TO_MODULE = {MODULE_TO_ARG[k]:k for k in MODULE_TO_ARG}
 

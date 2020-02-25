@@ -64,6 +64,11 @@ class Driver_Default(Driver):
         GC.TREE_UNROOTED = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
         print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)
 
+        # root the phylogeny
+        print("\nRunning '%s'..." % GC.SELECTED['Rooting'].__name__)
+        GC.TREE_ROOTED = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED)
+        print("Rooted phylogeny output to: %s" % GC.TREE_ROOTED)
+
         # print citations
         print("\n\n===========================   Citations   ============================")
         citations = set()
