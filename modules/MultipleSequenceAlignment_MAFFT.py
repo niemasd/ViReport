@@ -26,6 +26,8 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
         f_stderr = open('%s/log.txt' % mafft_dir, 'w')
         out_filename = '%s/sequences.aln' % GC.OUT_DIR_OUTFILES
         f_stdout = open(out_filename, 'w')
-        call(['mafft', '--thread', '-1', '--auto', seqs_filename], stdout=f_stdout, stderr=f_stderr)
+        command = ['mafft', '--thread', '-1', '--auto', seqs_filename]
+        f = open('%s/command.txt' % mafft_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+        call(command, stdout=f_stdout, stderr=f_stderr)
         f_stdout.close(); f_stderr.close()
         return out_filename

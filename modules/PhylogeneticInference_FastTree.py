@@ -25,9 +25,11 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         fasttree_dir = '%s/FastTree' % GC.OUT_DIR_TMPFILES
         makedirs(fasttree_dir, exist_ok=True)
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        log_filename = '%s/log.txt' % fasttree_dir
         progress_file = open('%s/progress.txt' % fasttree_dir, 'w')
         command = ['FastTree', '-out', out_filename, '-gamma']
+        # the log file is somewhat large, so just disable for now
+        #log_filename = '%s/log.txt' % fasttree_dir
+        #command += ['-log', log_filename]
         seq_type = GC.predict_seq_type(aln_filename)
         if seq_type == 'DNA':
             command += ['-nt', '-gtr']
@@ -36,6 +38,7 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         else:
             raise ValueError("Invalid sequence type: %s" % seq_type)
         command.append(aln_filename)
+        f = open('%s/command.txt' % fasttree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         call(command, stderr=progress_file)
         progress_file.close()
         return out_filename
