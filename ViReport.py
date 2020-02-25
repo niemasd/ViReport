@@ -15,6 +15,7 @@ import ViReport_ModuleFactory as MF
 
 # set defaults
 DEFAULT = {
+    'Dating': 'LSD2',
     'Driver': 'Default',
     'MultipleSequenceAlignment': 'MAFFT',
     'PhylogeneticInference': 'IQTREE',
@@ -24,6 +25,7 @@ DEFAULT = {
 
 # map module names to CLI args
 MODULE_TO_ARG = {
+    'Dating': 'date',
     'Driver': 'driver',
     'MultipleSequenceAlignment': 'msa',
     'PhylogeneticInference': 'phylo',

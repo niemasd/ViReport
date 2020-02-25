@@ -69,6 +69,11 @@ class Driver_Default(Driver):
         GC.TREE_ROOTED = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED)
         print("Rooted phylogeny output to: %s" % GC.TREE_ROOTED)
 
+        # date the rooted phylogeny
+        print("\nRunning '%s'..." % GC.SELECTED['Dating'].__name__)
+        GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
+        print("Dated phylogeny output to: %s" % GC.TREE_DATED)
+
         # print citations
         print("\n\n===========================   Citations   ============================")
         citations = set()
