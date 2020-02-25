@@ -151,3 +151,6 @@ RUN wget -q "https://github.com/niemasd/ViReport/archive/master.zip" && \
 RUN cd .. && \
     rm -rf VIREPORT_SETUP && \
     rm -f *.*
+
+# run ViReport
+ENTRYPOINT ["/bin/bash", "-c", "ViReport.py"]
