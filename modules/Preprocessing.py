@@ -53,9 +53,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
         Parameters
         ----------
         seqs_filename : str
-            Filename of the raw sequences to align (in the FASTA format)
+            Filename of the raw input sequences to preprocess (in the FASTA format)
         sample_times_filename : str
-            Filename of the sample times (in the LSD format)
+            Filename of the sample times to preprocess (in the LSD format)
 
         Returns
         -------

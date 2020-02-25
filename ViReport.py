@@ -2,12 +2,16 @@
 '''
 ViReport: Automated workflow for performing standard viral phylogenetic analyses and generating a report
 '''
-from modules import ViReport_GlobalContext as GC
-from modules import ViReport_ModuleFactory as MF
 import argparse
-from os import environ
-from os.path import abspath,expanduser,isdir
-from sys import argv
+from os import environ,makedirs
+from os.path import abspath,expanduser,isdir,isfile
+from shutil import copyfile
+from sys import argv,path
+
+# set up path
+path.append('%s/modules' % abspath(expanduser('/'.join(argv[0].split('/')[:-1]))))
+import ViReport_GlobalContext as GC
+import ViReport_ModuleFactory as MF
 
 # set defaults
 DEFAULT = {
@@ -28,14 +32,25 @@ def parse_args():
     '''
     Parse user arguments
     '''
-    assert hasattr(MF,'MODULES'), "Initialize the ModuleFactory before parsing user arguments"
+    if not hasattr(MF,'MODULES'):
+        raise RuntimeError("Initialize the ModuleFactory before parsing user arguments")
 
     # use argparse to parse user arguments
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-s', '--sequences', required=True, type=str, help="Input Sequences (FASTA format)")
+    parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (LSD format)")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
     for arg in ARG_TO_MODULE:
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
+
+    # check input files
+    if not isfile(args.sequences):
+        raise ValueError("Sequence file not found: %s" % args.sequences)
+    args.sequences = expanduser(abspath(args.sequences))
+    if not isfile(args.times):
+        raise ValueError("Sample time file not found: %s" % args.times)
+    args.times = expanduser(abspath(args.times))
 
     # parse module implementation selections
     GC.SELECTED = dict()
@@ -52,6 +67,17 @@ def parse_args():
     else:
         GC.OUT_DIR = expanduser(abspath(args.out_dir))
         GC.OUT_DIR_PRINT = GC.OUT_DIR
+        if isdir(GC.OUT_DIR) or isfile(GC.OUT_DIR):
+            raise ValueError("Output folder exits: %s" % GC.OUT_DIR)
+    makedirs(GC.OUT_DIR, exist_ok=True)
+
+    # copy input files to output directory
+    GC.OUT_DIR_INFILES = "%s/input_files" % GC.OUT_DIR
+    GC.OUT_DIR_INFILES_SEQS = "%s/%s" % (GC.OUT_DIR_INFILES, args.sequences.split('/')[-1])
+    GC.OUT_DIR_INFILES_TIMES = "%s/%s" % (GC.OUT_DIR_INFILES, args.times.split('/')[-1])
+    makedirs(GC.OUT_DIR_INFILES, exist_ok=True)
+    copyfile(args.sequences, GC.OUT_DIR_INFILES_SEQS)
+    copyfile(args.times, GC.OUT_DIR_INFILES_TIMES)
 
 if __name__ == "__main__":
     # initialize ViReport
@@ -61,4 +87,4 @@ if __name__ == "__main__":
     parse_args()
 
     # run Driver
-    GC.SELECTED['Driver'].run()
+    GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.OUT_DIR_INFILES_TIMES)

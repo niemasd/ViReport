@@ -36,8 +36,15 @@ class Driver(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def run():
+    def run(seqs_filename, sample_times_filename):
         '''
         Run the workflow
+
+        Parameters
+        ----------
+        seqs_filename : str
+            Filename of the raw input sequences (in the FASTA format)
+        sample_times_filename : str
+            Filename of the sample times (in the LSD format)
         '''
         pass
