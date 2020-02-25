@@ -57,3 +57,8 @@ class Driver_Default(Driver):
         print("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
         GC.ALIGNMENT = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS)
         print("Multiple sequence alignment output to: %s" % GC.ALIGNMENT)
+
+        # infer a phylogeny
+        print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)
+        GC.TREE_UNROOTED = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
+        print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)

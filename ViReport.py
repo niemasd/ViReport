@@ -16,15 +16,17 @@ import ViReport_ModuleFactory as MF
 # set defaults
 DEFAULT = {
     'Driver': 'Default',
-    'Preprocessing': 'None',
     'MultipleSequenceAlignment': 'MAFFT',
+    'PhylogeneticInference': 'IQTREE',
+    'Preprocessing': 'None',
 }
 
 # map module names to CLI args
 MODULE_TO_ARG = {
     'Driver': 'driver',
-    'Preprocessing': 'preprocess',
     'MultipleSequenceAlignment': 'msa',
+    'PhylogeneticInference': 'phylo',
+    'Preprocessing': 'preprocess',
 }
 ARG_TO_MODULE = {MODULE_TO_ARG[k]:k for k in MODULE_TO_ARG}
 
