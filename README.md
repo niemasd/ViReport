@@ -1,2 +1,1 @@
-# ViReport
-Automated workflow for performing standard viral phylogenetic analyses and generating a report
+**ViReport** is an automated workflow for performing standard viral phylogenetic analyses and generating a report. The workflow is robust in that the user can simply plug in whichever desired module implementation for each stage of the workflow. See the [ViReport Wiki](https://github.com/niemasd/ViReport/wiki) for more information.
