@@ -29,8 +29,9 @@ class Dating_LSD2(Dating):
         makedirs(lsd2_dir, exist_ok=True)
         out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
         log_filename = '%s/log.txt' % lsd2_dir
-        #command = ['FastRoot.py', '-i', tree_filename, '-m', 'MV']
-        command = ['lsd2', '-c', '-i', rooted_tree_filename, '-d', sample_times_filename]
+        lsd_times_filename = '%s/times_lsd.txt' % lsd2_dir
+        f = open(lsd_times_filename, 'w'); f.write(GC.convert_dates_LSD(sample_times_filename)); f.close()
+        command = ['lsd2', '-c', '-i', rooted_tree_filename, '-d', lsd_times_filename]
         f = open('%s/command.txt' % lsd2_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         o = check_output(command)
         move('%s.result' % rooted_tree_filename, out_filename)

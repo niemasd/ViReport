@@ -44,7 +44,7 @@ def parse_args():
     # use argparse to parse user arguments
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s', '--sequences', required=True, type=str, help="Input Sequences (FASTA format)")
-    parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (LSD format)")
+    parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (TSV format)")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
     for arg in ARG_TO_MODULE:
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])

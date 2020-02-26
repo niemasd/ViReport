@@ -55,7 +55,7 @@ class Dating(metaclass=abc.ABCMeta):
         rooted_tree_filename : str
             Filename of the input rooted phylogeny (in the Newick format)
         sample_times_filename : str
-            Filename of the input sample times (in the LSD format)
+            Filename of the input sample times
 
         Returns
         -------

@@ -41,11 +41,9 @@ class Preprocessing_SafeNames(Preprocessing):
         # output safe sample times
         f = open(out_times_filename, 'w')
         for line in open(sample_times_filename):
-            parts = [v.strip() for v in line.strip().split()]
-            if len(parts) == 1:
-                f.write(parts[0])
-            elif len(parts) == 2:
-                f.write(GC.safe(parts[0])); f.write(' '); f.write(parts[1])
+            parts = [v.strip() for v in line.strip().split('\t')]
+            if len(parts) == 2:
+                f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1])
             else:
                 raise ValueError("Invalid sample times file: %s" % sample_times_filename)
             f.write('\n')

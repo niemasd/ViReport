@@ -45,6 +45,6 @@ class Driver(metaclass=abc.ABCMeta):
         seqs_filename : str
             Filename of the raw input sequences (in the FASTA format)
         sample_times_filename : str
-            Filename of the sample times (in the LSD format)
+            Filename of the sample times
         '''
         pass

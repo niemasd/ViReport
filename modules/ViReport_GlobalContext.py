@@ -2,6 +2,7 @@
 '''
 Store global variables/functions to be accessible by all ViReport modules
 '''
+from datetime import datetime,timedelta
 from os.path import isfile
 
 # useful constants
@@ -22,7 +23,7 @@ def safe(s):
 # check if a FASTA file contains DNA or protein sequences
 def predict_seq_type(filename, thresh=0.8):
     if not isfile(filename):
-        print("Invalid FASTA file: %s" % filename)
+        raise ValueError("Invalid FASTA file: %s" % filename)
     count = dict()
     for line in open(filename):
         l = line.strip()
@@ -40,3 +41,23 @@ def predict_seq_type(filename, thresh=0.8):
         return 'DNA'
     else:
         return 'AA' # amino acid
+
+# convert a date (YYYY-MM-DD) to days since 0001-01-01
+def date_to_days(sample_time):
+    num_dashes = sample_time.count('-')
+    if num_dashes == 2:   # YYYY-MM-DD
+        tmp = datetime.strptime(sample_time, '%Y-%m-%d')
+    elif num_dashes == 1: # YYYY-MM(-01)
+        tmp = datetime.strptime('%s-01' % sample_time, '%Y-%m-%d')
+    elif num_dashes == 0: # YYYY(-01-01)
+        tmp = datetime.strptime('%s-01-01' % sample_time, '%Y-%m-%d')
+    else:
+        raise ValueError("Invalid sample date (should be YYYY-MM-DD): %s" % sample_time)
+    return (tmp - datetime(1,1,1)).days # days since 0001-01-01
+
+# read sample times in the ViReport format and return a list of lines in the LSD format
+def convert_dates_LSD(dates_filename):
+    if not isfile(dates_filename):
+        raise ValueError("Invalid dates file: %s" % dates_filename)
+    times = [[v.strip() for v in l.strip().split('\t')] for l in open(dates_filename) if len(l.strip()) != 0]
+    return "%d\n%s" % (len(times), '\n'.join("%s %s" % (u,date_to_days(t)) for u,t in times))

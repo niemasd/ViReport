@@ -55,13 +55,13 @@ class Preprocessing(metaclass=abc.ABCMeta):
         seqs_filename : str
             Filename of the raw input sequences to preprocess (in the FASTA format)
         sample_times_filename : str
-            Filename of the sample times to preprocess (in the LSD format)
+            Filename of the sample times to preprocess
 
         Returns
         -------
         processed_seqs_filename : str
             Filename of the output processed sequences (in the FASTA format)
         processed_sample_times_filename : str
-            Filename of the output processed sample times (in the LSD format)
+            Filename of the output processed sample times
         '''
         pass
