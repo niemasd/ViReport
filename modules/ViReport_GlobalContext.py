@@ -14,6 +14,7 @@ CITATION_IQTREE_MFP = 'Kalyaanamoorthy S., Minh B.Q., Wong T.K.F., von Haeseler 
 CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating using least-squares criteria and algorithms". Systematic Biology. 65(1), 82-97.'
 CITATION_MAFFT = 'Katoh K., Standley D.M. (2013). "MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability". Molecular Biology and Evolution. 30(4), 772-780.'
 CITATION_MINVAR = 'Mai U., Sayyari E., Mirarab S. (2017). "Minimum Variance Rooting of Phylogenetic Trees and Implications for Species Tree Reconstruction". PLoS ONE. 12(8), e0182238.'
+CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)
@@ -59,9 +60,20 @@ def date_to_days(sample_time):
 def days_to_date(days):
     return (datetime(1,1,1) + timedelta(days=days)).strftime('%Y-%m-%d')
 
-# read sample times in the ViReport format and return a list of lines in the LSD format
+# load ViReport sample times as a list of [ID, time] pairs
+def load_dates_ViReport(dates_filename):
+    return [[v.strip() for v in l.strip().split('\t')] for l in open(dates_filename) if len(l.strip()) != 0]
+
+# read sample times in the ViReport format and return a single string in the LSD format
 def convert_dates_LSD(dates_filename):
     if not isfile(dates_filename):
         raise ValueError("Invalid dates file: %s" % dates_filename)
-    times = [[v.strip() for v in l.strip().split('\t')] for l in open(dates_filename) if len(l.strip()) != 0]
+    times = load_dates_ViReport(dates_filename)
     return "%d\n%s" % (len(times), '\n'.join("%s %s" % (u,date_to_days(t)) for u,t in times))
+
+# read sample times in the ViReport format and return a single string in the treedater format
+def convert_dates_treedater(dates_filename):
+    if not isfile(dates_filename):
+        raise ValueError("Invalid dates file: %s" % dates_filename)
+    times = load_dates_ViReport(dates_filename)
+    return '\n'.join("%s,%s" % (u,date_to_days(t)) for u,t in times)

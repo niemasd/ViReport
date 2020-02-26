@@ -15,7 +15,7 @@ import ViReport_ModuleFactory as MF
 
 # set defaults
 DEFAULT = {
-    'Dating': 'LSD2',
+    'Dating': 'treedater',
     'Driver': 'Default',
     'MultipleSequenceAlignment': 'MAFFT',
     'PhylogeneticInference': 'IQTREE',
