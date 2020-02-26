@@ -55,6 +55,10 @@ def date_to_days(sample_time):
         raise ValueError("Invalid sample date (should be YYYY-MM-DD): %s" % sample_time)
     return (tmp - datetime(1,1,1)).days # days since 0001-01-01
 
+# convert days since 0001-01-01 to a date (YYYY-MM-DD)
+def days_to_date(days):
+    return (datetime(1,1,1) + timedelta(days=days)).strftime('%Y-%m-%d')
+
 # read sample times in the ViReport format and return a list of lines in the LSD format
 def convert_dates_LSD(dates_filename):
     if not isfile(dates_filename):
