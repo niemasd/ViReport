@@ -16,6 +16,7 @@ CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating us
 CITATION_MAFFT = 'Katoh K., Standley D.M. (2013). "MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability". Molecular Biology and Evolution. 30(4), 772-780.'
 CITATION_MINVAR = 'Mai U., Sayyari E., Mirarab S. (2017). "Minimum Variance Rooting of Phylogenetic Trees and Implications for Species Tree Reconstruction". PLoS ONE. 12(8), e0182238.'
 CITATION_MUSCLE = 'Edgar R.C. (2004). "MUSCLE: multiple sequence alignment with high accuracy and high throughput". Nucleic Acids Research. 32(5), 1792-1797.'
+CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A. (2019). "RAxML-NG: A fast, scalable, and user-friendly tool for maximum likelihood phylogenetic inference". Bioinformatics. 35(21), 4453-4455.'
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 

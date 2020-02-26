@@ -4,7 +4,6 @@ Implementation of the "PhylogeneticInference" module using FastTree
 '''
 from PhylogeneticInference import PhylogeneticInference
 import ViReport_GlobalContext as GC
-from glob import glob
 from os import makedirs
 from os.path import isfile
 from subprocess import call
