@@ -16,6 +16,7 @@ CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating us
 CITATION_MAFFT = 'Katoh K., Standley D.M. (2013). "MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability". Molecular Biology and Evolution. 30(4), 772-780.'
 CITATION_MINVAR = 'Mai U., Sayyari E., Mirarab S. (2017). "Minimum Variance Rooting of Phylogenetic Trees and Implications for Species Tree Reconstruction". PLoS ONE. 12(8), e0182238.'
 CITATION_MUSCLE = 'Edgar R.C. (2004). "MUSCLE: multiple sequence alignment with high accuracy and high throughput". Nucleic Acids Research. 32(5), 1792-1797.'
+CITATION_PHYML = 'Guindon S., Dufayard J.F., Lefort V., Anisimova M., Hordijk W., Gascuel O. (2010). "New Algorithms and Methods to Estimate Maximum-Likelihood Phylogenies: Assessing the Performance of PhyML 3.0". Systematic Biology. 59(3), 307-321.'
 CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A. (2019). "RAxML-NG: A fast, scalable, and user-friendly tool for maximum likelihood phylogenetic inference". Bioinformatics. 35(21), 4453-4455.'
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
@@ -80,3 +81,28 @@ def convert_dates_treedater(dates_filename):
         raise ValueError("Invalid dates file: %s" % dates_filename)
     times = load_dates_ViReport(dates_filename)
     return '\n'.join("%s,%s" % (u,date_to_days(t)) for u,t in times)
+
+# read a FASTA file as a dictionary (keys = IDs, values = sequences)
+def read_fasta(seqs_filename):
+    if not isfile(seqs_filename):
+        raise ValueError("Invalid sequence file: %s" % seqs_filename)
+    out = dict(); ID = None; seq = None
+    for line in open(seqs_filename):
+        l = line.strip()
+        if len(l) == 0:
+            continue
+        if l[0] == '>':
+            if ID is not None:
+                out[ID] = seq
+            ID = l[1:]; seq = ''
+        else:
+            seq += l
+    out[ID] = seq
+    return out
+
+# read a FASTA file and convert it to a single string in the Phylip format
+def fasta_to_phylip(seqs_filename):
+    if not isfile(seqs_filename):
+        raise ValueError("Invalid sequence file: %s" % seqs_filename)
+    seqs = read_fasta(seqs_filename)
+    return "%d %d\n%s" % (len(seqs), len(seqs[list(seqs.keys())[0]]), '\n'.join("%s %s" % (k, seqs[k]) for k in seqs))
