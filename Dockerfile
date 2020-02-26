@@ -55,6 +55,22 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     rm -rf fs-master master.zip && \
     R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
+# install Clustal Omega (1.2.4)
+RUN wget -qO- "http://prdownloads.sourceforge.net/argtable/argtable2-13.tar.gz" | tar -zx && \
+    cd argtable* && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf argtable*
+RUN wget -qO- "http://www.clustal.org/omega/clustal-omega-1.2.4.tar.gz" | tar -zx && \
+    cd clustal-omega* && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf clustal-omega*
+
 # install FastRoot
 RUN wget -q "https://github.com/uym2/MinVar-Rooting/archive/master.zip" && \
     unzip -q master.zip && \
