@@ -9,7 +9,7 @@ from sys import stdin
 import argparse
 import matplotlib.pyplot as plt
 
-def fasta_lengths(lines):
+def fasta_lengths(lines, keep_gaps=False):
     out = list(); curr = 0
     for l in lines:
         if len(l.strip()) == 0:
@@ -17,7 +17,10 @@ def fasta_lengths(lines):
         if l[0] == '>' and curr != 0:
             out.append(curr); curr = 0
         elif l[0] != '>':
-            curr += len(l.strip().replace('-',''))
+            if keep_gaps:
+                curr += len(l.strip())
+            else:
+                curr += len(l.strip().replace('-',''))
     out.append(curr)
     return out
 
@@ -25,6 +28,7 @@ if __name__ == "__main__":
     # parse args
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=False, type=str, default='stdin', help="Input Sequences (FASTA)")
+    parser.add_argument('-g', '--keep_gaps', action='store_true', help="Keep Gaps")
     parser.add_argument('-c', '--cumulative', action='store_true', help="Cumulative Density (instead of Probability Density)")
     parser.add_argument('-k', '--kde', action='store_true', help="Show Kernel Density Estimation (KDE)")
     parser.add_argument('-kl', '--kde_linestyle', required=False, type=str, default='-', help="KDE Linestyle")
@@ -49,7 +53,7 @@ if __name__ == "__main__":
         lines = [l.strip() for l in gopen(args.input).read().decode().strip().splitlines()]
     else:
         lines = [l.strip() for l in open(args.input).read().strip().splitlines()]
-    data = fasta_lengths(lines)
+    data = fasta_lengths(lines, keep_gaps=args.keep_gaps)
 
     # create figure+axes
     fig, ax = plt.subplots()
