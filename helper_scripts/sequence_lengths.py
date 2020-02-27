@@ -17,7 +17,7 @@ def fasta_lengths(lines):
         if l[0] == '>' and curr != 0:
             out.append(curr); curr = 0
         elif l[0] != '>':
-            curr += len(l.strip())
+            curr += len(l.strip().replace('-',''))
     out.append(curr)
     return out
 
