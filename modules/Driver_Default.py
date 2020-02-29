@@ -74,6 +74,11 @@ class Driver_Default(Driver):
         GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
         print("Dated phylogeny output to: %s" % GC.TREE_DATED)
 
+        # write the report
+        print("\nWriting report using '%s'..." % GC.SELECTED['WriteReport'].__name__)
+        GC.REPORT = GC.SELECTED['WriteReport'].write_report()
+        print("Report written to: %s" % GC.REPORT)
+
         # print citations
         print("\n\n===========================   Citations   ============================")
         citations = set()

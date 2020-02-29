@@ -20,7 +20,9 @@ DEFAULT = {
     'MultipleSequenceAlignment': 'MAFFT',
     'PhylogeneticInference': 'IQTREE',
     'Preprocessing': 'SafeNames',
+    'ReportFormat': 'PDF',
     'Rooting': 'MinVar',
+    'WriteReport': 'Default',
 }
 
 # map module names to CLI args
@@ -30,7 +32,9 @@ MODULE_TO_ARG = {
     'MultipleSequenceAlignment': 'msa',
     'PhylogeneticInference': 'phylo',
     'Preprocessing': 'preprocess',
+    'ReportFormat': 'format',
     'Rooting': 'root',
+    'WriteReport': 'report',
 }
 ARG_TO_MODULE = {MODULE_TO_ARG[k]:k for k in MODULE_TO_ARG}
 
