@@ -47,4 +47,4 @@ class Driver(metaclass=abc.ABCMeta):
         sample_times_filename : str
             Filename of the sample times
         '''
-        pass
+        raise RuntimeError("Not implemented")

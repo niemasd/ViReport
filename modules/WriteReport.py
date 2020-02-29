@@ -55,4 +55,4 @@ class WriteReport(metaclass=abc.ABCMeta):
         report_filename : str
             Filename of the report
         '''
-        pass
+        raise RuntimeError("Not implemented")

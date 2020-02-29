@@ -62,4 +62,4 @@ class Dating(metaclass=abc.ABCMeta):
         dated_tree_filename : str
             Filename of the output dated phylogeny (in the Newick format)
         '''
-        pass
+        raise RuntimeError("Not implemented")

@@ -16,6 +16,7 @@ class WriteReport_Default(WriteReport):
         return GC.CITATION_VIREPORT
 
     def write_report():
-        GC.SELECTED['ReportFormat'].write("Introduction", text_type='header')
+        GC.SELECTED['ReportFormat'].section("Introduction")
+        GC.SELECTED['ReportFormat'].writeln("This is my introduction")
         GC.SELECTED['ReportFormat'].close()
         return None

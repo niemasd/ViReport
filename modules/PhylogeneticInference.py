@@ -60,4 +60,4 @@ class PhylogeneticInference(metaclass=abc.ABCMeta):
         tree_filename : str
             Filename of the output phylogeny (in the Newick format)
         '''
-        pass
+        raise RuntimeError("Not implemented")

@@ -18,6 +18,12 @@ class ReportFormat(metaclass=abc.ABCMeta):
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
+    section(s)
+        New section ``s``
+    subsection(s)
+        New subsection ``s``
+    subsubsection(s)
+        New subsubsection ``s``
     write(s,type)
         Write string ``s`` to the output file 
     writeln(s,type)
@@ -50,6 +56,45 @@ class ReportFormat(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
+    def section(s):
+        '''
+        New section ``s``
+
+        Parameters:
+        -----------
+        s : str
+            Section title
+        '''
+        raise RuntimeError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
+    def subsection(s):
+        '''
+        New subsection ``s``
+
+        Parameters:
+        -----------
+        s : str
+            Subsection title
+        '''
+        raise RuntimeError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
+    def subsubsection(s):
+        '''
+        New subsubsection ``s``
+
+        Parameters:
+        -----------
+        s : str
+            Subsubsection title
+        '''
+        raise RuntimeError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
     def write(s, text_type='normal'):
         '''
         Write string ``s`` to the output file
@@ -59,9 +104,9 @@ class ReportFormat(metaclass=abc.ABCMeta):
         s : str
             String to write
         text_type : str
-            Type of text (normal, header, subheader)
+            Type of text (normal, bold, italic, both)
         '''
-        pass
+        raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod
@@ -74,9 +119,9 @@ class ReportFormat(metaclass=abc.ABCMeta):
         s : str
             String to write
         text_type : str
-            Type of text (normal, header, subheader)
+            Type of text (normal, bold, italic, both)
         '''
-        pass
+        raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod
@@ -89,4 +134,4 @@ class ReportFormat(metaclass=abc.ABCMeta):
         report_filename : str
             Filename of the report
         '''
-        pass
+        raise RuntimeError("Not implemented")

@@ -60,4 +60,4 @@ class Rooting(metaclass=abc.ABCMeta):
         rooted_tree_filename : str
             Filename of the output rooted phylogeny (in the Newick format)
         '''
-        pass
+        raise RuntimeError("Not implemented")

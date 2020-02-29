@@ -60,4 +60,4 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
         aln_filename : str
             Filename of the output multiple sequence alignment (in the FASTA format)
         '''
-        pass
+        raise RuntimeError("Not implemented")

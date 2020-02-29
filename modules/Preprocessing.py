@@ -64,4 +64,4 @@ class Preprocessing(metaclass=abc.ABCMeta):
         processed_sample_times_filename : str
             Filename of the output processed sample times
         '''
-        pass
+        raise RuntimeError("Not implemented")
