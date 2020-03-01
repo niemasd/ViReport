@@ -18,6 +18,9 @@ class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
     def cite():
         return GC.CITATION_CLUSTALOMEGA
 
+    def blurb():
+        return "Multiple sequence alignment was performed using Clustal Omega (Sievers et al., 2011) in automatic mode."
+
     def align(seqs_filename):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)

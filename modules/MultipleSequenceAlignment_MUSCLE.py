@@ -18,6 +18,9 @@ class MultipleSequenceAlignment_MUSCLE(MultipleSequenceAlignment):
     def cite():
         return GC.CITATION_MUSCLE
 
+    def blurb():
+        return "Multiple sequence alignment was performed using MUSCLE (Edgar, 2004)."
+
     def align(seqs_filename):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)

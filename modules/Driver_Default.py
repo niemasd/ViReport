@@ -32,6 +32,7 @@ class Driver_Default(Driver):
         # print starting messages
         print_message()
         print("========================   Workflow Process   ========================")
+        print("ViReport was run as follows: %s" % GC.VIREPORT_COMMAND)
         print("Output directory: %s" % GC.OUT_DIR_PRINT)
         print("Starting viral analysis workflow...")
 
@@ -62,6 +63,11 @@ class Driver_Default(Driver):
         print("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
         GC.ALIGNMENT = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS)
         print("Multiple sequence alignment output to: %s" % GC.ALIGNMENT)
+
+        # compute pairwise sequence distances
+        print("\nRunning '%s'..." % GC.SELECTED['PairwiseDistancesSequence'].__name__)
+        GC.PAIRWISE_DISTS_SEQS = GC.SELECTED['PairwiseDistancesSequence'].pairwise_distances(GC.ALIGNMENT)
+        print("Pairwise sequence distances output to: %s" % GC.PAIRWISE_DISTS_SEQS)
 
         # infer a phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)

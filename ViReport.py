@@ -19,6 +19,7 @@ DEFAULT = {
     'Dating': 'treedater',
     'Driver': 'Default',
     'MultipleSequenceAlignment': 'MAFFT',
+    'PairwiseDistancesSequence': 'tn93',
     'PhylogeneticInference': 'IQTREE',
     'Preprocessing': 'SafeNames',
     'ReportFormat': 'PDF',
@@ -31,6 +32,7 @@ MODULE_TO_ARG = {
     'Dating': 'date',
     'Driver': 'driver',
     'MultipleSequenceAlignment': 'msa',
+    'PairwiseDistancesSequence': 'dists_seq',
     'PhylogeneticInference': 'phylo',
     'Preprocessing': 'preprocess',
     'ReportFormat': 'format',
@@ -101,6 +103,7 @@ if __name__ == "__main__":
 
     # parse user arguments
     parse_args()
+    GC.VIREPORT_COMMAND = ' '.join(argv)
 
     # run Driver
     GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.OUT_DIR_INFILES_TIMES)

@@ -18,6 +18,9 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
     def cite():
         return GC.CITATION_MAFFT
 
+    def blurb():
+        return "Multiple sequence alignment was performed using MAFFT (Katoh & Standley, 2013) in automatic mode."
+
     def align(seqs_filename):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)

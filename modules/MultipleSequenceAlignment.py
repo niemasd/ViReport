@@ -12,6 +12,8 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
     -------
     align(seqs_filename)
         Align the sequences in ``seqs_filename``
+    blurb()
+        Return a string describing what was done
     cite()
         Return citation string (or None)
     init()
@@ -43,6 +45,19 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
         Return the citation string (or None)
         '''
         pass
+
+    @staticmethod
+    @abc.abstractmethod
+    def blurb():
+        '''
+        Return a string describing what was done
+
+        Returns
+        -------
+        desc : str
+            A string describing what was done
+        '''
+        raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod

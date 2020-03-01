@@ -16,6 +16,9 @@ class Preprocessing_SafeNames(Preprocessing):
     def cite():
         return GC.CITATION_VIREPORT
 
+    def blurb():
+        return "The input dataset was preprocessed such that sequences were given safe names: non-letters/digits in sequence IDs were converted to underscores."
+
     def preprocess(seqs_filename, sample_times_filename):
         # set things up
         if not isfile(seqs_filename):

@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 '''
-"Preprocessing" module
+"PairwiseDistancesSequence" module
 '''
 import abc
 
-class Preprocessing(metaclass=abc.ABCMeta):
+class PairwiseDistancesSequence(metaclass=abc.ABCMeta):
     '''
-    Abstract class defining the ``Preprocessing`` module
+    Abstract class defining the ``PairwiseDistancesSequence`` module
 
     Methods
     -------
@@ -18,8 +18,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
-    preprocess(seqs_filename, sample_times_filename)
-        Preprocess the sequences in ``seqs_filename`` and/or the sample times in ``sample_times_filename`` (if need be)
+    pairwise_distances(aln_filename)
+        Compute the pairwise distances between the sequences in ``aln_filename``
     '''
 
     @staticmethod
@@ -61,22 +61,18 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def preprocess(seqs_filename, sample_times_filename):
+    def pairwise_distances(aln_filename):
         '''
-        Preprocess the sequences in ``seqs_filename`` and/or the sample times in ``sample_times_filename`` (if need be)
+        Compute the pairwise distances between the sequences in ``aln_filename``
 
         Parameters
         ----------
-        seqs_filename : str
-            Filename of the raw input sequences to preprocess (in the FASTA format)
-        sample_times_filename : str
-            Filename of the sample times to preprocess
+        aln_filename : str
+            Filename of the multiple sequence alignment (in the FASTA format)
 
         Returns
         -------
-        processed_seqs_filename : str
-            Filename of the output processed sequences (in the FASTA format)
-        processed_sample_times_filename : str
-            Filename of the output processed sample times
+        seq_dists_filename : str
+            Filename of the output pairwise sequence distances (in the tn93 format)
         '''
         raise RuntimeError("Not implemented")

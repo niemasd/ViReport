@@ -16,8 +16,8 @@ class ReportFormat(metaclass=abc.ABCMeta):
         Finish writing the output file and close
     init()
         Initialize the module (if need be)
-    figure(filename, caption)
-        Create a figure from the image in ``filename`` with caption ``caption``
+    figure(filename, caption, width)
+        Create a figure from the image in ``filename`` such that it is ``width`` proportion of the width and with caption ``caption``
     finalize()
         Finalize the module (if need be)
     section(s)
@@ -129,7 +129,7 @@ class ReportFormat(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def figure(filename, caption=None):
         '''
-        Create a figure from the image in ``filename`` with caption ``caption``
+        Create a figure from the image in ``filename`` such that it is ``width`` proportion of the width and with caption ``caption``
 
         Parameters:
         -----------
@@ -137,6 +137,8 @@ class ReportFormat(metaclass=abc.ABCMeta):
             The filename of the image for the figure
         caption : str
             The caption for the figure (or ``None`` for no caption)
+        width : float
+            The desired width (as a proportion of total width)
         '''
         raise RuntimeError("Not implemented")
 

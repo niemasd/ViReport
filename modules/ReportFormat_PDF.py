@@ -23,6 +23,9 @@ def tex_init():
         GC.report_out_tex.write("\\date{%s}\n" % datetime.today().strftime('%Y-%m-%d'))
         GC.report_out_tex.write("\\begin{document}\n\\maketitle\n\n")
 
+def tex_safe(s):
+    return s.replace('&','\&')
+
 class ReportFormat_PDF(ReportFormat):
     def init():
         pass
@@ -34,23 +37,23 @@ class ReportFormat_PDF(ReportFormat):
         return GC.CITATION_VIREPORT
 
     def section(s):
-        tex_init(); GC.report_out_tex.write("\\section{%s}\n" % s)
+        tex_init(); GC.report_out_tex.write("\\section{%s}\n" % tex_safe(s))
 
     def subsection(s):
-        tex_init(); GC.report_out_tex.write("\\subsection{%s}\n" % s)
+        tex_init(); GC.report_out_tex.write("\\subsection{%s}\n" % tex_safe(s))
 
     def write(s, text_type='normal'):
-        tex_init(); GC.report_out_tex.write(s); GC.report_out_tex.write('\n')
+        tex_init(); GC.report_out_tex.write(tex_safe(s)); GC.report_out_tex.write('\n')
 
     def writeln(s, text_type='normal'):
         tex_init(); ReportFormat_PDF.write(s, text_type=text_type); ReportFormat_PDF.write('')
 
-    def figure(filename, caption=None):
+    def figure(filename, caption=None, width=1):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
-        GC.report_out_tex.write("\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.99\\textwidth]{%s}\n" % filename.replace(GC.OUT_DIR_REPORTFILES, '.'))
+        GC.report_out_tex.write("\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=%s\\textwidth]{%s}\n" % (GC.num_str(width), filename.replace(GC.OUT_DIR_REPORTFILES, '.')))
         if caption is not None:
-            GC.report_out_tex.write("\\caption{%s}\n" % caption)
+            GC.report_out_tex.write("\\caption{%s}\n" % tex_safe(caption))
         GC.report_out_tex.write("\\end{figure}\n\n")
 
     def close():

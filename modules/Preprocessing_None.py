@@ -15,5 +15,8 @@ class Preprocessing_None(Preprocessing):
     def cite():
         return GC.CITATION_VIREPORT
 
+    def blurb():
+        return "No preprocessing was done: the inputs were used as they were given."
+
     def preprocess(seqs_filename, sample_times_filename):
         return seqs_filename, sample_times_filename

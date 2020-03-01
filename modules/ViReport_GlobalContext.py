@@ -15,6 +15,7 @@ VIREPORT_VERSION = '0.0.1'
 SAFE_CHARS = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 CITATION_CLUSTALOMEGA = 'Sievers F., Wilm A., Dineen D.G., Gibson T.J., Karplus K., Li W., Lopez R., McWilliam H., Remmert M., Söding J., Thompson J.D., Higgins D.G. (2011). "Fast, scalable generation of high-quality protein multiple sequence alignments using Clustal Omega". Molecular Systems Biology. 7, 539.'
 CITATION_FASTTREE = 'Price M.N., Dehal P.S., Arkin A.P. (2010). "FastTree 2 -- Approximately Maximum-Likelihood Trees for Large Alignments". PLoS ONE. 5(3), e9490.'
+CITATION_HIVTRACE = 'Pond S.L.K., Weaver S., Leigh Brown A.J., Wertheim J.O. (2018). "HIV-TRACE (TRAnsmission Cluster Engine): a Tool for Large Scale Molecular Epidemiology of HIV-1 and Other Rapidly Evolving Pathogens". Molecular Biology and Evolution. 35(7), 1812-1819.'
 CITATION_IQTREE = 'Nguyen L.T., Schmidt H.A., von Haeseler A., Minh B.Q. (2015). "IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies". Molecular Biology and Evolution. 32(1), 268-274.'
 CITATION_IQTREE_MFP = 'Kalyaanamoorthy S., Minh B.Q., Wong T.K.F., von Haeseler A., Jermiin L.S. (2017). "ModelFinder: Fast model selection for accurate phylogenetic estimates". Nature Methods. 14, 587-589.'
 CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating using least-squares criteria and algorithms". Systematic Biology. 65(1), 82-97.'
