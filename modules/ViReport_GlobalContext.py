@@ -3,7 +3,12 @@
 Store global variables/functions to be accessible by all ViReport modules
 '''
 from datetime import datetime,timedelta
+from matplotlib.ticker import MaxNLocator
 from os.path import isfile
+from seaborn import barplot,distplot
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
 # useful constants
 VIREPORT_VERSION = '0.0.1'
@@ -24,6 +29,14 @@ CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/V
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)
 def safe(s):
     return ''.join(c if c in SAFE_CHARS else '_' for c in s)
+
+# convert a number to a string, removing trailing 0s if applicable
+def num_str(n):
+    s = str(n)
+    if '.' in s:
+        return s.rstrip('0').rstrip('.')
+    else:
+        return s
 
 # check if a FASTA file contains DNA or protein sequences
 def predict_seq_type(filename, thresh=0.8):
@@ -100,9 +113,98 @@ def read_fasta(seqs_filename):
     out[ID] = seq
     return out
 
+# return the number of sequences in a FASTA file
+def num_seqs_fasta(seqs_filename):
+    if not isfile(seqs_filename):
+        raise ValueError("Invalid sequence file: %s" % seqs_filename)
+    return sum(l.startswith('>') for l in open(seqs_filename))
+
+# return the lengths of the sequences in a FASTA file
+def seq_lengths_fasta(seqs_filename):
+    if not isfile(seqs_filename):
+        raise ValueError("Invalid sequence file: %s" % seqs_filename)
+    out = list(); curr = None
+    for line in open(seqs_filename):
+        l = line.strip()
+        if len(l) == 0:
+            continue
+        if l[0] == '>':
+            if curr is not None:
+                out.append(curr)
+            curr = 0
+        else:
+            curr += len(l)
+    out.append(curr)
+    return out
+
 # read a FASTA file and convert it to a single string in the Phylip format
 def fasta_to_phylip(seqs_filename):
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     seqs = read_fasta(seqs_filename)
     return "%d %d\n%s" % (len(seqs), len(seqs[list(seqs.keys())[0]]), '\n'.join("%s %s" % (k, seqs[k]) for k in seqs))
+
+# create a histogram figure from a list of numbers
+def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, kde_linestyle='-'):
+    if not kde and not hist:
+        raise ValueError("kde or hist (or both) must be True")
+    fig, ax = plt.subplots()
+    kde_kws = {'linestyle':kde_linestyle}; hist_kws = dict()
+    distplot(data, kde=kde, hist=hist, kde_kws=kde_kws, hist_kws=hist_kws)
+    if title is not None:
+        plt.title(title)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    if xlog:
+        ax.set_xscale('log')
+    if ylog:
+        ax.set_yscale('log')
+    if xmin is not None and xmax is not None:
+        plt.xlim(xmin,xmax)
+    elif xmin is not None:
+        plt.xlim(xmin=xmin)
+    elif xmax is not None:
+        plt.xlim(xmax=xmax)
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin,ymax)
+    elif ymin is not None:
+        plt.ylim(ymin=ymin)
+    elif ymax is not None:
+        plt.ylim(ymax=ymax)
+    plt.tight_layout()
+    fig.savefig(filename)
+    plt.close()
+
+# create a barplot from a list of labels
+def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False):
+    count = dict(); x = list()
+    for l in data:
+        if l in count:
+            count[l] += 1
+        else:
+            count[l] = 1; x.append(l)
+    y = [count[l] for l in x]
+    fig, ax = plt.subplots()
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    barplot(x=x, y=y, ax=ax)
+    if title is not None:
+        plt.title(title)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    if ylog:
+        ax.set_yscale('log')
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin,ymax)
+    elif ymin is not None:
+        plt.ylim(ymin=ymin)
+    elif ymax is not None:
+        plt.ylim(ymax=ymax)
+    if hide_labels:
+        ax.set_xticks(list())
+    plt.tight_layout()
+    fig.savefig(filename)
+    plt.close()

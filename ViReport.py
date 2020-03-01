@@ -3,9 +3,10 @@
 ViReport: Automated workflow for performing standard viral phylogenetic analyses and generating a report
 '''
 import argparse
+from warnings import warn
 from os import environ,makedirs
 from os.path import abspath,expanduser,isdir,isfile
-from shutil import copyfile
+from shutil import copyfile,rmtree
 from sys import argv,path
 
 # set up path
@@ -50,6 +51,7 @@ def parse_args():
     parser.add_argument('-s', '--sequences', required=True, type=str, help="Input Sequences (FASTA format)")
     parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (TSV format)")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
+    parser.add_argument('-f', '--force_overwrite', action='store_true', help="Force Overwrite of Output")
     for arg in ARG_TO_MODULE:
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
@@ -78,7 +80,11 @@ def parse_args():
         GC.OUT_DIR = expanduser(abspath(args.out_dir))
         GC.OUT_DIR_PRINT = GC.OUT_DIR
         if isdir(GC.OUT_DIR) or isfile(GC.OUT_DIR):
-            raise ValueError("Output folder exits: %s" % GC.OUT_DIR)
+            if args.force_overwrite:
+                warn("Overwriting output directory: %s" % GC.OUT_DIR)
+                rmtree(GC.OUT_DIR)
+            else:
+                raise ValueError("Output folder exits: %s" % GC.OUT_DIR)
     makedirs(GC.OUT_DIR, exist_ok=True)
 
     # copy input files to output directory

@@ -47,6 +47,10 @@ class Driver_Default(Driver):
         makedirs(GC.OUT_DIR_OUTFILES, exist_ok=True)
         GC.OUT_DIR_TMPFILES = "%s/intermediate_files" % GC.OUT_DIR
         makedirs(GC.OUT_DIR_TMPFILES, exist_ok=True)
+        GC.OUT_DIR_REPORTFILES = "%s/report_files" % GC.OUT_DIR
+        makedirs(GC.OUT_DIR_REPORTFILES, exist_ok=True)
+        GC.OUT_DIR_REPORTFIGS = '%s/figs' % GC.OUT_DIR_REPORTFILES
+        makedirs(GC.OUT_DIR_REPORTFIGS, exist_ok=True)
 
         # run preprocessing
         print("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)

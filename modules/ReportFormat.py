@@ -16,6 +16,8 @@ class ReportFormat(metaclass=abc.ABCMeta):
         Finish writing the output file and close
     init()
         Initialize the module (if need be)
+    figure(filename, caption)
+        Create a figure from the image in ``filename`` with caption ``caption``
     finalize()
         Finalize the module (if need be)
     section(s)
@@ -120,6 +122,21 @@ class ReportFormat(metaclass=abc.ABCMeta):
             String to write
         text_type : str
             Type of text (normal, bold, italic, both)
+        '''
+        raise RuntimeError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
+    def figure(filename, caption=None):
+        '''
+        Create a figure from the image in ``filename`` with caption ``caption``
+
+        Parameters:
+        -----------
+        filename : str
+            The filename of the image for the figure
+        caption : str
+            The caption for the figure (or ``None`` for no caption)
         '''
         raise RuntimeError("Not implemented")
 
