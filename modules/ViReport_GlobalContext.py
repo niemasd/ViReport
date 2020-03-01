@@ -145,6 +145,22 @@ def fasta_to_phylip(seqs_filename):
     seqs = read_fasta(seqs_filename)
     return "%d %d\n%s" % (len(seqs), len(seqs[list(seqs.keys())[0]]), '\n'.join("%s %s" % (k, seqs[k]) for k in seqs))
 
+# count the number of invariant sites in a multiple sequence alignment
+def num_invariant_sites(aln_filename):
+    if isinstance(aln_filename, dict):
+        aln = aln_filename
+    else:
+        if not isfile(aln_filename):
+            raise ValueError("Invalid alignment file: %s" % aln_filename)
+        aln = read_fasta(aln_filename)
+    n = len(aln[list(aln.keys())[0]]); nucs = [set() for _ in range(n)]
+    for k in aln:
+        s = aln[k]
+        for i in range(n):
+            if s[i] != '-':
+                nucs[i].add(s[i])
+    return sum(len(x) <= 1 for x in nucs)
+
 # create a histogram figure from a list of numbers
 def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, kde_linestyle='-'):
     if not kde and not hist:

@@ -83,6 +83,7 @@ class WriteReport_Default(WriteReport):
         ## compute values of MSA
         msa = GC.read_fasta(GC.ALIGNMENT)
         msa_columns = len(msa[list(msa.keys())[0]])
+        msa_num_invariant = GC.num_invariant_sites(msa)
         msa_num_unique = len(set(msa.values()))
         dists_seq = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
         dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -91,11 +92,13 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Multiple Sequence Alignment")
         write(GC.SELECTED['MultipleSequenceAlignment'].blurb())
-        write("There were %d positions and %d unique sequences in the multiple sequence alignment." % (msa_columns, msa_num_unique))
+        write("There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment." % (msa_columns, msa_num_invariant, msa_num_unique))
         write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
         write("The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
         write("with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
+
+        #
 
         # finish up
         return close()
