@@ -28,7 +28,7 @@ class Driver_Default(Driver):
     def cite():
         return GC.CITATION_VIREPORT
 
-    def run(seqs_filename, sample_times_filename):
+    def run(seqs_filename, sample_times_filename, outgroups_filename):
         # print starting messages
         print_message()
         print("========================   Workflow Process   ========================")
@@ -41,7 +41,9 @@ class Driver_Default(Driver):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         if not isfile(sample_times_filename):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
-        GC.INPUT_SEQS = seqs_filename; GC.INPUT_TIMES = sample_times_filename
+        if outgroups_filename is not None and not isfile(outgroups_filename):
+            raise ValueError("Invalid outgroups list file: %s" % outgroups_filename)
+        GC.INPUT_SEQS = seqs_filename; GC.INPUT_TIMES = sample_times_filename; GC.INPUT_OUTGROUPS = outgroups_filename
 
         # set up output and intermediate folders
         GC.OUT_DIR_OUTFILES = "%s/output_files" % GC.OUT_DIR
@@ -55,10 +57,12 @@ class Driver_Default(Driver):
 
         # run preprocessing
         print("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)
-        GC.PROCESSED_SEQS, GC.PROCESSED_TIMES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES)
+        GC.PROCESSED_SEQS, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS)
         GC.SEQ_TYPE = GC.predict_seq_type(GC.PROCESSED_SEQS)
-        print("Preprocessed sequence output to: %s" % GC.PROCESSED_SEQS)
+        print("Preprocessed sequences output to: %s" % GC.PROCESSED_SEQS)
         print("Preprocessed sample times output to: %s" % GC.PROCESSED_TIMES)
+        if GC.PROCESSED_OUTGROUPS is not None:
+            print("Preprocessed outgroups list output to: %s" % GC.PROCESSED_OUTGROUPS)
 
         # align the preprocessed sequences
         print("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
@@ -72,7 +76,11 @@ class Driver_Default(Driver):
 
         # infer a phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)
-        GC.TREE_UNROOTED = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
+        GC.TREE_UNROOTED_WITH_OUTGROUP = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
+        if GC.PROCESSED_OUTGROUPS is None:
+            GC.TREE_UNROOTED = GC.TREE_UNROOTED_WITH_OUTGROUP
+        else:
+            assert False, "TODO: REMOVE OUTGROUP FROM UNROOTED TREE AND SET TO GC.TREE_UNROOTED"
         print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)
 
         # compute pairwise phylogenetic distances
@@ -82,7 +90,11 @@ class Driver_Default(Driver):
 
         # root the phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['Rooting'].__name__)
-        GC.TREE_ROOTED = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED)
+        GC.TREE_ROOTED_WITH_OUTGROUP = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED_WITH_OUTGROUP)
+        if GC.PROCESSED_OUTGROUPS is None:
+            GC.TREE_ROOTED = GC.TREE_ROOTED_WITH_OUTGROUP
+        else:
+            assert False, "TODO: REMOVE OUTGROUP FROM ROOTED TREE AND SET TO GC.TREE_ROOTED"
         print("Rooted phylogeny output to: %s" % GC.TREE_ROOTED)
 
         # date the rooted phylogeny

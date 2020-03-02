@@ -18,8 +18,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
-    preprocess(seqs_filename, sample_times_filename)
-        Preprocess the sequences in ``seqs_filename`` and/or the sample times in ``sample_times_filename`` (if need be)
+    preprocess(seqs_filename, sample_times_filename, outgroups_filename)
+        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, and/or the IDs in ``outgroups_filename`` (if need be)
     '''
 
     @staticmethod
@@ -61,9 +61,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def preprocess(seqs_filename, sample_times_filename):
+    def preprocess(seqs_filename, sample_times_filename, outgroups_filename):
         '''
-        Preprocess the sequences in ``seqs_filename`` and/or the sample times in ``sample_times_filename`` (if need be)
+        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, and/or the IDs in ``outgroups_filename`` (if need be)
 
         Parameters
         ----------
@@ -71,6 +71,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
             Filename of the raw input sequences to preprocess (in the FASTA format)
         sample_times_filename : str
             Filename of the sample times to preprocess
+        outgroups_filename : str
+            Filename of the outgroups list to preprocess
 
         Returns
         -------
@@ -78,5 +80,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
             Filename of the output processed sequences (in the FASTA format)
         processed_sample_times_filename : str
             Filename of the output processed sample times
+        processed_outgroups_filename : str
+            Filename of the output processed outgroups list
         '''
         raise RuntimeError("Not implemented")
