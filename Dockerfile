@@ -41,6 +41,7 @@ RUN pip3 install -q biopython && \
     pip3 install -q bitsets && \
     pip3 install -q dendropy && \
     pip3 install -q niemads && \
+    pip3 install -q seaborn && \
     pip3 install -q treeswift
 
 # set up R
@@ -153,7 +154,8 @@ RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'))" &
 
 # install TreeN93
 RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.py" > /usr/local/bin/TreeN93.py && \
-    chmod a+x /usr/local/bin/TreeN93.py
+    wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93_cluster.py" > /usr/local/bin/TreeN93_cluster.py && \
+    chmod a+x /usr/local/bin/TreeN93*.py
 
 # set up ViReport
 RUN wget -q "https://github.com/niemasd/ViReport/archive/master.zip" && \
