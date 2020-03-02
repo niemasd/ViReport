@@ -39,7 +39,7 @@ class WriteReport_Default(WriteReport):
         else:
             med_date = dates[int(len(dates)/2)]
         dates_hist_filename = '%s/input_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(dates, dates_hist_filename, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
+        GC.create_barplot(dates, dates_hist_filename, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## write section
         section("Input Dataset")
@@ -66,7 +66,7 @@ class WriteReport_Default(WriteReport):
         else:
             med_proc_date = proc_dates[int(len(proc_dates)/2)]
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(proc_dates, proc_dates_hist_filename, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
+        GC.create_barplot(proc_dates, proc_dates_hist_filename, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## write section
         section("Preprocessed Dataset")

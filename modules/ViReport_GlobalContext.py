@@ -217,7 +217,7 @@ def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=No
     plt.close()
 
 # create a barplot from a list of labels
-def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False):
+def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
     count = dict(); x = list()
     for l in data:
         if l in count:
@@ -242,6 +242,8 @@ def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=No
         plt.ylim(ymin=ymin)
     elif ymax is not None:
         plt.ylim(ymax=ymax)
+    if rotate_labels != 0:
+        plt.xticks(rotation=rotate_labels)
     if hide_labels:
         ax.set_xticks(list())
     plt.tight_layout()
