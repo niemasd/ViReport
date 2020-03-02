@@ -29,6 +29,7 @@ RUN apk update -q && \
     python3-dev \
     R \
     R-dev \
+    texlive \
     wget
 
 # make bash the default shell and Python 3 the default Python
