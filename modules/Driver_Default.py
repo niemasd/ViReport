@@ -66,7 +66,8 @@ class Driver_Default(Driver):
 
         # align the preprocessed sequences
         print("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
-        GC.ALIGNMENT = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS)
+        GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS)
+        GC.ALIGNMENT = GC.remove_outgroups_fasta(GC.ALIGNMENT_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
         print("Multiple sequence alignment output to: %s" % GC.ALIGNMENT)
 
         # compute pairwise sequence distances
@@ -76,11 +77,8 @@ class Driver_Default(Driver):
 
         # infer a phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)
-        GC.TREE_UNROOTED_WITH_OUTGROUP = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
-        if GC.PROCESSED_OUTGROUPS is None:
-            GC.TREE_UNROOTED = GC.TREE_UNROOTED_WITH_OUTGROUP
-        else:
-            assert False, "TODO: REMOVE OUTGROUP FROM UNROOTED TREE AND SET TO GC.TREE_UNROOTED"
+        GC.TREE_UNROOTED_WITH_OUTGROUP = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT_WITH_OUTGROUP)
+        GC.TREE_UNROOTED = GC.remove_outgroups_newick(GC.TREE_UNROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
         print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)
 
         # compute pairwise phylogenetic distances
@@ -91,10 +89,7 @@ class Driver_Default(Driver):
         # root the phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['Rooting'].__name__)
         GC.TREE_ROOTED_WITH_OUTGROUP = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED_WITH_OUTGROUP)
-        if GC.PROCESSED_OUTGROUPS is None:
-            GC.TREE_ROOTED = GC.TREE_ROOTED_WITH_OUTGROUP
-        else:
-            assert False, "TODO: REMOVE OUTGROUP FROM ROOTED TREE AND SET TO GC.TREE_ROOTED"
+        GC.TREE_ROOTED = GC.remove_outgroups_newick(GC.TREE_ROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
         print("Rooted phylogeny output to: %s" % GC.TREE_ROOTED)
 
         # date the rooted phylogeny

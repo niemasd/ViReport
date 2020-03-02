@@ -6,6 +6,7 @@ from datetime import datetime,timedelta
 from matplotlib.ticker import MaxNLocator
 from os.path import isfile
 from seaborn import barplot,distplot
+from treeswift import read_tree_newick
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
@@ -117,6 +118,44 @@ def read_fasta(seqs_filename):
             seq += l
     out[ID] = seq
     return out
+
+# remove outgroups from a FASTA
+def remove_outgroups_fasta(seqs_filename, outgroups_filename):
+    if outgroups_filename is None:
+        return seqs_filename
+    if not isfile(seqs_filename):
+        raise ValueError("Invalid sequence file: %s" % seqs_filename)
+    outgroups = {l.strip() for l in open(outgroups_filename).read().strip().splitlines()}
+    out_filename = '%s.no_outgroup.%s' % ('.'.join(seqs_filename.split('.')[:-1]), seqs_filename.split('.')[-1])
+    out = open(out_filename, 'w'); ID = None; seq = None
+    for line in open(seqs_filename):
+        l = line.strip()
+        if len(l) == 0:
+            continue
+        if l[0] == '>':
+            if ID is not None and ID not in outgroups:
+                out.write(">%s\n%s\n" % (ID, seq))
+            ID = l[1:]; seq = ''
+        else:
+            seq += l
+    if ID not in outgroups:
+        out.write(">%s\n%s" % (ID, seq))
+    out.close()
+    return out_filename
+
+# remove outgroups from a Newick tree
+def remove_outgroups_newick(tree_filename, outgroups_filename):
+    if outgroups_filename is None:
+        return tree_filename
+    if not isfile(tree_filename):
+        raise ValueError("Invalid tree file: %s" % tree_filename)
+    outgroups = {l.strip() for l in open(outgroups_filename).read().strip().splitlines()}
+    tree = read_tree_newick(tree_filename)
+    out_filename = '%s.no_outgroup.%s' % ('.'.join(tree_filename.split('.')[:-1]), tree_filename.split('.')[-1])
+    tree_no_og = tree.extract_tree_without(outgroups)
+    tree_no_og.root.edge_length = None
+    out = open(out_filename, 'w'); out.write(tree_no_og.newick()); out.write('\n'); out.close()
+    return out_filename
 
 # read transmission clusters in the TreeCluster format and return (clusters, singletons)
 def read_transmission_clusters(clusters_filename):
