@@ -16,6 +16,7 @@ RUN apk update -q && \
     cmake \
     cython \
     file \
+    freetype-dev \
     g++ \
     gcc \
     libc-dev \
