@@ -27,7 +27,8 @@ CITATION_MUSCLE = 'Edgar R.C. (2004). "MUSCLE: multiple sequence alignment with 
 CITATION_PHYML = 'Guindon S., Dufayard J.F., Lefort V., Anisimova M., Hordijk W., Gascuel O. (2010). "New Algorithms and Methods to Estimate Maximum-Likelihood Phylogenies: Assessing the Performance of PhyML 3.0". Systematic Biology. 59(3), 307-321.'
 CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A. (2019). "RAxML-NG: A fast, scalable, and user-friendly tool for maximum likelihood phylogenetic inference". Bioinformatics. 35(21), 4453-4455.'
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
-CITATION_TREESWIFT = 'Moshiri N. (2020. "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
+CITATION_TREEN93 = 'Moshiri N. (2018). "TreeN93: a non-parametric distance-based method for inferring viral transmission clusters". bioRxiv.'
+CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)
@@ -116,6 +117,24 @@ def read_fasta(seqs_filename):
             seq += l
     out[ID] = seq
     return out
+
+# read transmission clusters in the TreeCluster format and return (clusters, singletons)
+def read_transmission_clusters(clusters_filename):
+    if not isfile(clusters_filename):
+        raise ValueError("Invalid transmission clustering file: %s" % clusters_filename)
+    clusters = dict()
+    for line in open(clusters_filename):
+        if line.startswith('SequenceName\t'):
+            continue
+        u,c = [v.strip() for v in line.strip().split('\t')]
+        if c not in clusters:
+            clusters[c] = set()
+        clusters[c].add(u)
+    if '-1' in clusters:
+        singletons = clusters['-1']; del clusters['-1']
+    else:
+        singletons = set()
+    return clusters,singletons
 
 # return the number of sequences in a FASTA file
 def num_seqs_fasta(seqs_filename):

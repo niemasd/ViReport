@@ -90,6 +90,11 @@ class Driver_Default(Driver):
         GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
         print("Dated phylogeny output to: %s" % GC.TREE_DATED)
 
+        # perform transmission clustering
+        print("\nRunning '%s'..." % GC.SELECTED['TransmissionClustering'].__name__)
+        GC.TRANSMISSION_CLUSTERS = GC.SELECTED['TransmissionClustering'].infer_transmission_clusters()
+        print("Transmission clusters output to: %s" % GC.TRANSMISSION_CLUSTERS)
+
         # write the report
         print("\nWriting report using '%s'..." % GC.SELECTED['WriteReport'].__name__)
         GC.REPORT = GC.SELECTED['WriteReport'].write_report()

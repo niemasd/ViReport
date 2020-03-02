@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 '''
-Implementation of the "PairwiseDistancesTree" module using tn93
+Implementation of the "PairwiseDistancesTree" module using TreeSwift
 '''
 from PairwiseDistancesTree import PairwiseDistancesTree
 import ViReport_GlobalContext as GC

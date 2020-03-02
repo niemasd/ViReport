@@ -126,13 +126,30 @@ class WriteReport_Default(WriteReport):
         tree_time_height = tree_time.height()
         tmrca = GC.days_to_date(GC.date_to_days(proc_dates[-1]) - tree_time_height)
 
-        # write section
+        ## write section
         section("Phylogenetic Dating")
         write(GC.SELECTED['Dating'].blurb())
         write("The height of the dated tree was %s days," % GC.num_str(tree_time_height))
         write("so given that the most recent sample was collected on %s," % proc_dates[-1])
         write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca)
         write("\n\nTODO INSERT DATED TREE VISUALIZATION HERE\n\n") # TODO
+
+        # Transmission Clustering
+        ## compute values of transmission clustering
+        clusters,singletons = GC.read_transmission_clusters(GC.TRANSMISSION_CLUSTERS)
+        cluster_sizes = [len(clusters[k]) for k in clusters]
+        cluster_sizes_hist_filename = '%s/cluster_sizes.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_histogram(cluster_sizes, cluster_sizes_hist_filename, hist=True, kde=False, title="Cluster Sizes", xlabel="Cluster Size", ylabel="Count")
+
+        ## write section
+        section("Transmission Clustering")
+        write(GC.SELECTED['TransmissionClustering'].blurb())
+        write("The total number of singletons (i.e., non-clustered individuals) was %d," % len(singletons))
+        write("and the total number of clusters (excluding singletons) was %d." % len(clusters))
+        write("The average cluster size (excluding singletons) was %s," % GC.num_str(mean(cluster_sizes)))
+        write("with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
+        write("and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
+        figure(cluster_sizes_hist_filename, width=0.75, caption="Distribution of cluster sizes (excluding singletons)")
 
         # finish up
         return close()
