@@ -21,10 +21,13 @@ CITATION_IQTREE_MFP = 'Kalyaanamoorthy S., Minh B.Q., Wong T.K.F., von Haeseler 
 CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating using least-squares criteria and algorithms". Systematic Biology. 65(1), 82-97.'
 CITATION_MAFFT = 'Katoh K., Standley D.M. (2013). "MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability". Molecular Biology and Evolution. 30(4), 772-780.'
 CITATION_MINVAR = 'Mai U., Sayyari E., Mirarab S. (2017). "Minimum Variance Rooting of Phylogenetic Trees and Implications for Species Tree Reconstruction". PLoS ONE. 12(8), e0182238.'
+CITATION_MODEL_GTR = 'Tavare S. (1986). ""Some Probabilistic and Statistical Problems in the Analysis of DNA Sequences". Lectures on Mathematics in the Life Sciences. 17, 57-86.'
+CITATION_MODEL_LG = 'Le S.Q., Gascuel O. (2008). "An Improved General Amino Acid Replacement Matrix". Molecular Biology and Evolution. 25(7), 1307-1320.'
 CITATION_MUSCLE = 'Edgar R.C. (2004). "MUSCLE: multiple sequence alignment with high accuracy and high throughput". Nucleic Acids Research. 32(5), 1792-1797.'
 CITATION_PHYML = 'Guindon S., Dufayard J.F., Lefort V., Anisimova M., Hordijk W., Gascuel O. (2010). "New Algorithms and Methods to Estimate Maximum-Likelihood Phylogenies: Assessing the Performance of PhyML 3.0". Systematic Biology. 59(3), 307-321.'
 CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A. (2019). "RAxML-NG: A fast, scalable, and user-friendly tool for maximum likelihood phylogenetic inference". Bioinformatics. 35(21), 4453-4455.'
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
+CITATION_TREESWIFT = 'Moshiri N. (2020. "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)

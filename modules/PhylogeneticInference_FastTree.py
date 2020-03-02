@@ -7,6 +7,10 @@ import ViReport_GlobalContext as GC
 from os import makedirs
 from os.path import isfile
 from subprocess import call
+MODEL = {
+    'DNA': 'General Time-Reversible (GTR) model (Tavare, 1986)',
+    'AA': 'LG model (Le & Gascuel, 2008)',
+}
 
 class PhylogeneticInference_FastTree(PhylogeneticInference):
     def init():
@@ -16,7 +20,10 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         pass
 
     def cite():
-        return GC.CITATION_FASTTREE
+        return [GC.CITATION_FASTTREE, GC.CITATION_MODEL_GTR, GC.CITATION_MODEL_LG]
+
+    def blurb():
+        return "A maximum-likelihood phylogeny was inferred under the %s using FastTree 2 (Price et al., 2010) using a Gamma20-based likelihood." % MODEL[GC.SEQ_TYPE]
 
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
@@ -29,13 +36,12 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         # the log file is somewhat large, so just disable for now
         #log_filename = '%s/log.txt' % fasttree_dir
         #command += ['-log', log_filename]
-        seq_type = GC.predict_seq_type(aln_filename)
-        if seq_type == 'DNA':
+        if GC.SEQ_TYPE == 'DNA':
             command += ['-nt', '-gtr']
-        elif seq_type == 'AA':
+        elif GC.SEQ_TYPE == 'AA':
             command.append('-lg')
         else:
-            raise ValueError("Invalid sequence type: %s" % seq_type)
+            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
         command.append(aln_filename)
         f = open('%s/command.txt' % fasttree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         call(command, stderr=progress_file)

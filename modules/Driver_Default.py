@@ -56,6 +56,7 @@ class Driver_Default(Driver):
         # run preprocessing
         print("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)
         GC.PROCESSED_SEQS, GC.PROCESSED_TIMES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES)
+        GC.SEQ_TYPE = GC.predict_seq_type(GC.PROCESSED_SEQS)
         print("Preprocessed sequence output to: %s" % GC.PROCESSED_SEQS)
         print("Preprocessed sample times output to: %s" % GC.PROCESSED_TIMES)
 
@@ -73,6 +74,11 @@ class Driver_Default(Driver):
         print("\nRunning '%s'..." % GC.SELECTED['PhylogeneticInference'].__name__)
         GC.TREE_UNROOTED = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT)
         print("Inferred (unrooted) phylogeny output to: %s" % GC.TREE_UNROOTED)
+
+        # compute pairwise phylogenetic distances
+        print("\nRunning '%s'..." % GC.SELECTED['PairwiseDistancesTree'].__name__)
+        GC.PAIRWISE_DISTS_TREE = GC.SELECTED['PairwiseDistancesTree'].pairwise_distances(GC.TREE_UNROOTED)
+        print("Pairwise phylogenetic distances output to: %s" % GC.PAIRWISE_DISTS_TREE)
 
         # root the phylogeny
         print("\nRunning '%s'..." % GC.SELECTED['Rooting'].__name__)

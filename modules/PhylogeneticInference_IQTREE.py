@@ -20,6 +20,9 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
     def cite():
         return [GC.CITATION_IQTREE, GC.CITATION_IQTREE_MFP]
 
+    def blurb():
+        return "A maximum-likelihood phylogeny was inferred using IQ-TREE (Nguyen et al., 2015) in ModelFinder Plus mode (Kalyaanamoorthy et al., 2017)."
+
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)

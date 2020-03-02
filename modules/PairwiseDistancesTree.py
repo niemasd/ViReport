@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 '''
-"PhylogeneticInference" module
+"PairwiseDistancesTree" module
 '''
 import abc
 
-class PhylogeneticInference(metaclass=abc.ABCMeta):
+class PairwiseDistancesTree(metaclass=abc.ABCMeta):
     '''
-    Abstract class defining the ``PhylogeneticInference`` module
+    Abstract class defining the ``PairwiseDistancesTree`` module
 
     Methods
     -------
@@ -14,12 +14,12 @@ class PhylogeneticInference(metaclass=abc.ABCMeta):
         Return a string describing what was done
     cite()
         Return citation string (or None)
-    infer_phylogeny(aln_filename)
-        Infer a phylogeny from the alignment in ``aln_filename``
     init()
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
+    pairwise_distances(tree_filename)
+        Compute the pairwise distances between the leaves of ``tree_filename``
     '''
 
     @staticmethod
@@ -61,18 +61,18 @@ class PhylogeneticInference(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def infer_phylogeny(aln_filename):
+    def pairwise_distances(tree_filename):
         '''
-        Infer a phylogeny from the alignment in ``aln_filename``
+        Compute the pairwise distances between the trees in ``tree_filename``
 
         Parameters
         ----------
-        aln_filename : str
-            Filename of the multiple sequence alignment (in the FASTA format)
+        tree_filename : str
+            Filename of the phylogenetic tree (in the Newick format)
 
         Returns
         -------
-        tree_filename : str
-            Filename of the output phylogeny (in the Newick format)
+        tree_dists_filename : str
+            Filename of the output pairwise phylogenetic distances (in the tn93 format)
         '''
         raise RuntimeError("Not implemented")

@@ -18,6 +18,9 @@ class Rooting_MinVar(Rooting):
     def cite():
         return GC.CITATION_MINVAR
 
+    def blurb():
+        return "The inferred phylogeny was MinVar-rooted using FastRoot (Mai et al., 2017)."
+
     def root(tree_filename):
         if not isfile(tree_filename):
             raise ValueError("Invalid tree file: %s" % tree_filename)

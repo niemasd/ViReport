@@ -20,6 +20,9 @@ class Dating_treedater(Dating):
     def cite():
         return GC.CITATION_TREEDATER
 
+    def blurb():
+        return "The rooted phylogeny was dated using treedater (Volz & Frost, 2017)."
+
     def date(rooted_tree_filename, sample_times_filename):
         if not isfile(rooted_tree_filename):
             raise ValueError("Invalid tree file: %s" % rooted_tree_filename)

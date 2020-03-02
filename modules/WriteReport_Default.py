@@ -6,6 +6,7 @@ from WriteReport import WriteReport
 import ViReport_GlobalContext as GC
 from numpy import mean,std
 from os import makedirs
+from treeswift import read_tree_newick
 
 class WriteReport_Default(WriteReport):
     def init():
@@ -98,7 +99,40 @@ class WriteReport_Default(WriteReport):
         write("with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
 
-        #
+        # Phylogenetic Inference
+        ## compute values of phylogeny
+        tree_mut = read_tree_newick(GC.TREE_ROOTED)
+        # TODO CREATE ROOTED TREE VISUALIZATION
+        dists_tree = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
+        dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Ditance", ylabel="Kernel Density Estimate")
+
+        ## write section
+        section("Phylogenetic Inference")
+        write(GC.SELECTED['PhylogeneticInference'].blurb())
+        write(GC.SELECTED['Rooting'].blurb())
+        write(GC.SELECTED['PairwiseDistancesTree'].blurb())
+        write("The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
+        write("and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
+        write("with a standard deviation of %s." % GC.num_str(std(dists_tree)))
+        write("\n\nTODO INSERT ROOTED TREE VISUALIZATION HERE\n\n") # TODO
+        figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
+
+        # Phylogenetic Dating
+        ## compute values of dated phylogeny
+        tree_time = read_tree_newick(GC.TREE_DATED)
+        # TODO CREATE DATED TREE VISUALIZATION
+        tree_time.root.edge_length = None
+        tree_time_height = tree_time.height()
+        tmrca = GC.days_to_date(GC.date_to_days(proc_dates[-1]) - tree_time_height)
+
+        # write section
+        section("Phylogenetic Dating")
+        write(GC.SELECTED['Dating'].blurb())
+        write("The height of the dated tree was %s days," % GC.num_str(tree_time_height))
+        write("so given that the most recent sample was collected on %s," % proc_dates[-1])
+        write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca)
+        write("\n\nTODO INSERT DATED TREE VISUALIZATION HERE\n\n") # TODO
 
         # finish up
         return close()

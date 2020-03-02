@@ -8,6 +8,10 @@ from os import makedirs
 from os.path import isfile
 from shutil import move
 from subprocess import call
+MODEL = {
+    'DNA': 'General Time-Reversible (GTR) model (Tavare, 1986)',
+    'AA': 'LG model (Le & Gascuel, 2008)',
+}
 
 class PhylogeneticInference_PhyML(PhylogeneticInference):
     def init():
@@ -19,6 +23,9 @@ class PhylogeneticInference_PhyML(PhylogeneticInference):
     def cite():
         return GC.CITATION_PHYML
 
+    def blurb():
+        return "A maximum-likelihood phylogeny was inferred under the %s using PhyML (Guindon et al., 2010)." % MODEL[GC.SEQ_TYPE]
+
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
@@ -29,13 +36,12 @@ class PhylogeneticInference_PhyML(PhylogeneticInference):
         phy_filename = '%s/alignment.phy' % phyml_dir
         f = open(phy_filename, 'w'); f.write(GC.fasta_to_phylip(aln_filename)); f.close()
         command = ['phyml', '--leave_duplicates', '-i', phy_filename, '-a', 'e']
-        seq_type = GC.predict_seq_type(aln_filename)
-        if seq_type == 'DNA':
+        if GC.SEQ_TYPE == 'DNA':
             command += ['-d', 'nt', '-m', 'GTR']
-        elif seq_type == 'AA':
+        elif GC.SEQ_TYPE == 'AA':
             command += ['-d', 'aa', '-m', 'LG']
         else:
-            raise ValueError("Invalid sequence type: %s" % seq_type)
+            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
         f = open('%s/command.txt' % phyml_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         call(command, stdout=log_file)
         log_file.close()

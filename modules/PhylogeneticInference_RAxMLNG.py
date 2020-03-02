@@ -9,6 +9,10 @@ from os import makedirs
 from os.path import isfile
 from shutil import move
 from subprocess import check_output
+MODEL = {
+    'DNA': 'General Time-Reversible (GTR) model (Tavare, 1986)',
+    'AA': 'LG model (Le & Gascuel, 2008)',
+}
 
 class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
     def init():
@@ -20,6 +24,9 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
     def cite():
         return GC.CITATION_RAXML_NG
 
+    def blurb():
+        return "A maximum-likelihood phylogeny was inferred under the %s using RAxML-NG (Kozlov et al., 2019) with GAMMA among-site rate heterogeneity (+G) and potential invariant sites (+I)." % MODEL[GC.SEQ_TYPE]
+
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
@@ -27,13 +34,12 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
         makedirs(raxmlng_dir, exist_ok=True)
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
         command = ['raxml-ng', '--force', '--msa', aln_filename, '--model']
-        seq_type = GC.predict_seq_type(aln_filename)
-        if seq_type == 'DNA':
+        if GC.SEQ_TYPE == 'DNA':
             command.append('GTR+I+G')
-        elif seq_type == 'AA':
-            command.append('PROTGAMMAAUTO')
+        elif GC.SEQ_TYPE == 'AA':
+            command.append('LG+I+G')
         else:
-            raise ValueError("Invalid sequence type: %s" % seq_type)
+            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
         f = open('%s/command.txt' % raxmlng_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         check_output(command)
         move('%s.raxml.bestTree' % aln_filename, out_filename)

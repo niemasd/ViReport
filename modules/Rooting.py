@@ -10,14 +10,16 @@ class Rooting(metaclass=abc.ABCMeta):
 
     Methods
     -------
-    root(tree_filname)
-        Root the phylogeny in ``tree_filename``
+    blurb()
+        Return a string describing what was done
     cite()
         Return citation string (or None)
     init()
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
+    root()
+        Root the phylogeny in ``tree_filename``
     '''
 
     @staticmethod
@@ -43,6 +45,19 @@ class Rooting(metaclass=abc.ABCMeta):
         Return the citation string (or None)
         '''
         pass
+
+    @staticmethod
+    @abc.abstractmethod
+    def blurb():
+        '''
+        Return a string describing what was done
+
+        Returns
+        -------
+        desc : str
+            A string describing what was done
+        '''
+        raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod

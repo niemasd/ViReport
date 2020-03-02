@@ -10,10 +10,12 @@ class Dating(metaclass=abc.ABCMeta):
 
     Methods
     -------
-    date(rooted_tree_filename, sample_times_filename)
-        Date the rooted phylogeny in ``tree_filename`` using the sample times in ``sample_times_filename``
+    blurb()
+        Return a string describing what was done
     cite()
         Return citation string (or None)
+    date(rooted_tree_filename, sample_times_filename)
+        Date the rooted phylogeny in ``tree_filename`` using the sample times in ``sample_times_filename``
     init()
         Initialize the module (if need be)
     finalize()
@@ -43,6 +45,18 @@ class Dating(metaclass=abc.ABCMeta):
         Return the citation string (or None)
         '''
         pass
+
+    @staticmethod
+    @abc.abstractmethod
+    def blurb():
+        '''
+        Return a string describing what was done
+
+        Returns
+        -------
+        A string describing what was done
+        '''
+        raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod
