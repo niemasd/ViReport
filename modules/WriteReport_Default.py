@@ -101,8 +101,9 @@ class WriteReport_Default(WriteReport):
 
         # Phylogenetic Inference
         ## compute values of phylogeny
-        tree_mut = read_tree_newick(GC.TREE_ROOTED)
-        # TODO CREATE ROOTED TREE VISUALIZATION
+        tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
+        tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
+        tree_mut.draw(show_labels=True, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
         dists_tree = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
         dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Ditance", ylabel="Kernel Density Estimate")
@@ -115,24 +116,28 @@ class WriteReport_Default(WriteReport):
         write("The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
         write("and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
         write("with a standard deviation of %s." % GC.num_str(std(dists_tree)))
-        write("\n\nTODO INSERT ROOTED TREE VISUALIZATION HERE\n\n") # TODO
+        figure(tree_mut_viz_filename, width=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
         figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
         # Phylogenetic Dating
         ## compute values of dated phylogeny
-        tree_time = read_tree_newick(GC.TREE_DATED)
-        # TODO CREATE DATED TREE VISUALIZATION
+        tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.scale_edges(1./365.)
+        tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
         tree_time.root.edge_length = None
         tree_time_height = tree_time.height()
-        tmrca = GC.days_to_date(GC.date_to_days(proc_dates[-1]) - tree_time_height)
+        tmrca_days = GC.date_to_days(proc_dates[-1]) - tree_time_height
+        tmrca_date = GC.days_to_date(tmrca_days)
+        tmrca_year = int(tmrca_date.split('-')[0])
+        tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
+        tree_time.draw(show_labels=True, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
 
         ## write section
         section("Phylogenetic Dating")
         write(GC.SELECTED['Dating'].blurb())
         write("The height of the dated tree was %s days," % GC.num_str(tree_time_height))
         write("so given that the most recent sample was collected on %s," % proc_dates[-1])
-        write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca)
-        write("\n\nTODO INSERT DATED TREE VISUALIZATION HERE\n\n") # TODO
+        write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
+        figure(tree_time_viz_filename, width=1, caption="Dated phylogenetic tree in unit of years")
 
         # Transmission Clustering
         ## compute values of transmission clustering
