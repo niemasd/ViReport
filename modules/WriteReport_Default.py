@@ -35,7 +35,7 @@ class WriteReport_Default(WriteReport):
         dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.INPUT_TIMES)}
         dates = sorted(dates_vireport[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>'))
         if len(dates) % 2 == 0:
-            med_date = GC.days_to_date((GC.date_to_dates(dates[int(len(dates)/2)]) + GC.date_to_dates(dates[int(len(dates)/2)-1])) / 2)
+            med_date = GC.days_to_date((GC.date_to_days(dates[int(len(dates)/2)]) + GC.date_to_days(dates[int(len(dates)/2)-1])) / 2)
         else:
             med_date = dates[int(len(dates)/2)]
         dates_hist_filename = '%s/input_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
