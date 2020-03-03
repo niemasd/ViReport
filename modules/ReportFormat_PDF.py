@@ -48,10 +48,15 @@ class ReportFormat_PDF(ReportFormat):
     def writeln(s, text_type='normal'):
         tex_init(); ReportFormat_PDF.write(s, text_type=text_type); ReportFormat_PDF.write('')
 
-    def figure(filename, caption=None, width=1):
+    def figure(filename, caption=None, width=None, height=None):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
-        GC.report_out_tex.write("\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=%s\\textwidth]{%s}\n" % (GC.num_str(width), filename.replace(GC.OUT_DIR_REPORTFILES, '.')))
+        GC.report_out_tex.write("\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[")
+        if width is not None:
+            GC.report_out_tex.write("width=%s\\textwidth," % GC.num_str(width))
+        if height is not None:
+            GC.report_out_tex.write("height=%s\\textheight," % GC.num_str(height))
+        GC.report_out_tex.write("keepaspectratio]{%s}\n" % filename.replace(GC.OUT_DIR_REPORTFILES,'.'))
         if caption is not None:
             GC.report_out_tex.write("\\caption{%s}\n" % tex_safe(caption))
         GC.report_out_tex.write("\\end{figure}\n\n")

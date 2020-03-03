@@ -116,7 +116,7 @@ class WriteReport_Default(WriteReport):
         write("The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
         write("and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
         write("with a standard deviation of %s." % GC.num_str(std(dists_tree)))
-        figure(tree_mut_viz_filename, width=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
+        figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
         figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
         # Phylogenetic Dating
@@ -137,7 +137,7 @@ class WriteReport_Default(WriteReport):
         write("The height of the dated tree was %s days," % GC.num_str(tree_time_height))
         write("so given that the most recent sample was collected on %s," % proc_dates[-1])
         write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
-        figure(tree_time_viz_filename, width=1, caption="Dated phylogenetic tree in unit of years")
+        figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
 
         # Transmission Clustering
         ## compute values of transmission clustering

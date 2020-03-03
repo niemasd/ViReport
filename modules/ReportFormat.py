@@ -127,7 +127,7 @@ class ReportFormat(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def figure(filename, caption=None):
+    def figure(filename, caption=None, width=None, height=None):
         '''
         Create a figure from the image in ``filename`` such that it is ``width`` proportion of the width and with caption ``caption``
 
@@ -138,7 +138,9 @@ class ReportFormat(metaclass=abc.ABCMeta):
         caption : str
             The caption for the figure (or ``None`` for no caption)
         width : float
-            The desired width (as a proportion of total width)
+            The desired width (as a proportion of total width of page)
+        height : float
+            The desired height (as a proportion of total height of page)
         '''
         raise RuntimeError("Not implemented")
 
