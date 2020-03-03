@@ -56,7 +56,8 @@ RUN echo "R_LIBS_SITE=\${R_LIBS_SITE-'/usr/local/lib/R/site-library:/usr/lib/R/l
     unzip -q master.zip && \
     R CMD INSTALL fs-master > /dev/null && \
     rm -rf fs-master master.zip && \
-    R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
+    R -e "install.packages(c('devtools'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)" && \
+    R -e "install.packages(c('BiocManager'), INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
 # install Clustal Omega (1.2.4)
 RUN wget -qO- "http://prdownloads.sourceforge.net/argtable/argtable2-13.tar.gz" | tar -zx && \
@@ -86,6 +87,9 @@ RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     gcc -DUSE_DOUBLE -DOPENMP -fopenmp -O3 -finline-functions -funroll-loops -Wall -o FastTree FastTree.c -lm && \
     mv FastTree /usr/local/bin && \
     rm FastTree.c
+
+# install ggtree
+RUN R -e "BiocManager::install('ggtree', INSTALL_opts = c('--no-html','--no-help','--no-html'), quiet=TRUE)"
 
 # install HIV-TRACE
 RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
