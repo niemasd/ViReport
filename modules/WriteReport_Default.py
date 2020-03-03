@@ -62,7 +62,7 @@ class WriteReport_Default(WriteReport):
         proc_dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.PROCESSED_TIMES)}
         proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in open(GC.PROCESSED_SEQS) if l.startswith('>'))
         if len(proc_dates) % 2 == 0:
-            med_proc_date = GC.days_to_date((GC.date_to_dates(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_dates(proc_dates[int(len(proc_dates)/2)-1])) / 2)
+            med_proc_date = GC.days_to_date((GC.date_to_days(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_days(proc_dates[int(len(proc_dates)/2)-1])) / 2)
         else:
             med_proc_date = proc_dates[int(len(proc_dates)/2)]
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
