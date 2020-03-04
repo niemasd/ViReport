@@ -55,6 +55,12 @@ class Driver_Default(Driver):
         GC.OUT_DIR_REPORTFIGS = '%s/figs' % GC.OUT_DIR_REPORTFILES
         makedirs(GC.OUT_DIR_REPORTFIGS, exist_ok=True)
 
+        # initialize module implementations
+        print("\nInitializing module implementations...", end=' ')
+        for k in GC.SELECTED:
+            GC.SELECTED[k].init()
+        print("done")
+
         # run preprocessing
         print("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)
         GC.PROCESSED_SEQS, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS)

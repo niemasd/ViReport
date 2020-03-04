@@ -5,10 +5,8 @@ Implementation of the "ReportFormat" module in HTML
 from ReportFormat import ReportFormat
 import ViReport_GlobalContext as GC
 from datetime import datetime
-from os import chdir,getcwd,makedirs
+from os.path import isfile
 from pdf2image import convert_from_path
-from shutil import move
-from subprocess import call
 GC.report_out_html = None
 
 def md_init():
@@ -44,7 +42,8 @@ class ReportFormat_HTML(ReportFormat):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
         if filename.lower().endswith('.pdf'):
             png_filename = '%s.%s' % ('.'.join(filename.split('.')[:-1]), 'png')
-            convert_from_path(filename, 500)[0].save(png_filename, 'PNG')
+            if not isfile(png_filename):
+                convert_from_path(filename, 500)[0].save(png_filename, 'PNG')
             filename = png_filename
         GC.report_out_html.write('\n</p>\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.'))
         if width is not None or height is not None:
