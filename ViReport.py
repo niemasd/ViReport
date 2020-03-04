@@ -23,7 +23,7 @@ DEFAULT = {
     'PairwiseDistancesTree': 'TreeSwift',
     'PhylogeneticInference': 'IQTREE',
     'Preprocessing': 'SafeNames',
-    'ReportFormat': 'PDF',
+    'ReportFormat': 'All',
     'Rooting': 'MinVar',
     'TransmissionClustering': 'TreeN93',
     'WriteReport': 'Default',
