@@ -37,10 +37,22 @@ def safe(s):
     return ''.join(c if c in SAFE_CHARS else '_' for c in s)
 
 # convert a number to a string, removing trailing 0s if applicable
-def num_str(n):
+def num_str(n, dec_sigfigs=3):
     s = str(n)
     if '.' in s:
-        return s.rstrip('0').rstrip('.')
+        s = s.rstrip('0').rstrip('.')
+        if '.' in s and s.index('.') <= len(s)-3:
+            left,right = s.split('.')
+            round_places = dec_sigfigs
+            for c in right:
+                if c == '0':
+                    round_places += 1
+                else:
+                    break
+            s = str(round(float(s), round_places))
+            return s + '0'*(round_places-len(s.split('.')[1]))
+        else:
+            return s
     else:
         return s
 

@@ -25,7 +25,7 @@ DEFAULT = {
     'Preprocessing': 'SafeNames',
     'ReportFormat': 'All',
     'Rooting': 'MinVar',
-    'TransmissionClustering': 'TreeN93',
+    'TransmissionClustering': 'TreeN93TreeDists',
     'WriteReport': 'Default',
 }
 
@@ -40,7 +40,7 @@ MODULE_TO_ARG = {
     'Preprocessing': 'preprocess',
     'ReportFormat': 'format',
     'Rooting': 'root',
-    'TransmissionClustering': 'TreeN93',
+    'TransmissionClustering': 'trans_clust',
     'WriteReport': 'report',
 }
 ARG_TO_MODULE = {MODULE_TO_ARG[k]:k for k in MODULE_TO_ARG}

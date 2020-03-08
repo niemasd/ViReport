@@ -1,13 +1,13 @@
 #! /usr/bin/env python3
 '''
-Implementation of the "TransmissionClustering" module using TreeN93
+Implementation of the "TransmissionClustering" module using TreeN93 using pairwise phylogenetic distances
 '''
 from TransmissionClustering import TransmissionClustering
 import ViReport_GlobalContext as GC
 from os import makedirs
 from subprocess import call
 
-class TransmissionClustering_TreeN93(TransmissionClustering):
+class TransmissionClustering_TreeN93TreeDists(TransmissionClustering):
     def init():
         pass
 
