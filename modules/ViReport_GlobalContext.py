@@ -41,7 +41,7 @@ def num_str(n, dec_sigfigs=3):
     s = str(n)
     if '.' in s:
         s = s.rstrip('0').rstrip('.')
-        if '.' in s and s.index('.') <= len(s)-3:
+        if '.' in s:
             left,right = s.split('.')
             round_places = dec_sigfigs
             for c in right:
@@ -49,8 +49,7 @@ def num_str(n, dec_sigfigs=3):
                     round_places += 1
                 else:
                     break
-            s = str(round(float(s), round_places))
-            return s + '0'*(round_places-len(s.split('.')[1]))
+            return str(round(float(s), round_places)).rstrip('0').rstrip('.')
         else:
             return s
     else:
