@@ -121,12 +121,12 @@ class WriteReport_Default(WriteReport):
 
         # Phylogenetic Dating
         ## compute values of dated phylogeny
-        tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.scale_edges(1./365.)
-        tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
-        tree_time.root.edge_length = None
+        tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
         tree_time_height = tree_time.height()
-        tmrca_days = GC.date_to_days(proc_dates[-1]) - tree_time_height
+        tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
         tmrca_date = GC.days_to_date(tmrca_days)
+        tree_time.scale_edges(1./365.)
+        tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
         tmrca_year = int(tmrca_date.split('-')[0])
         tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
         tree_time.draw(show_labels=True, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
