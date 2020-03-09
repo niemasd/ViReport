@@ -1,0 +1,52 @@
+#! /usr/bin/env python3
+'''
+Implementation of the "Dating" module using TreeTime
+'''
+from Dating import Dating
+import ViReport_GlobalContext as GC
+from os import makedirs
+from os.path import isfile
+from re import sub
+from shutil import move
+from subprocess import call,DEVNULL
+from treeswift import read_tree_nexus
+
+class Dating_TreeTime(Dating):
+    def init():
+        pass
+
+    def finalize():
+        pass
+
+    def cite():
+        return GC.CITATION_TREETIME
+
+    def blurb():
+        return "The rooted phylogeny was dated using TreeTime (Sagulenko et al., 2018)."
+
+    def date(rooted_tree_filename, sample_times_filename):
+        if not isfile(rooted_tree_filename):
+            raise ValueError("Invalid tree file: %s" % rooted_tree_filename)
+        if not isfile(sample_times_filename):
+            raise ValueError("Invalid sample times file: %s" % sample_times_filename)
+        treetime_dir = '%s/TreeTime_Dating' % GC.OUT_DIR_TMPFILES
+        makedirs(treetime_dir, exist_ok=True)
+        out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
+        treetime_dates_filename = '%s/dates.csv' % treetime_dir
+        log = open('%s/log.txt' % treetime_dir, 'w')
+        err = open('%s/err.txt' % treetime_dir, 'w')
+        treetime_tree_viz_filename = '%s/tree.pdf' % treetime_dir
+        treetime_rtt_viz_filename = '%s/rtt.pdf' % treetime_dir
+        msa = GC.read_fasta(GC.ALIGNMENT)
+        msa_columns = len(msa[list(msa.keys())[0]])
+        f = open(treetime_dates_filename, 'w'); f.write("name,date\n")
+        for l in open(sample_times_filename):
+            f.write("%s\n" % l.strip().replace('\t',','))
+        f.close()
+        command = ['treetime', '--sequence-length', str(msa_columns), '--keep-root', '--tree', rooted_tree_filename, '--dates', treetime_dates_filename, '--outdir', treetime_dir]
+        f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+        call(command, stdout=log, stderr=err)
+        log.close(); err.close()
+        tmp = read_tree_nexus(sub("[\[].*?[\]]", '', open('%s/timetree.nexus' % treetime_dir).read()))
+        f = open(out_filename, 'w'); f.write(tmp[list(tmp.keys())[0]].newick()); f.write('\n'); f.close()
+        return out_filename
