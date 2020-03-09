@@ -16,6 +16,7 @@ import ViReport_ModuleFactory as MF
 
 # set defaults
 DEFAULT = {
+    'AncestralSequenceReconstruction': 'TreeTime',
     'Dating': 'treedater',
     'Driver': 'Default',
     'MultipleSequenceAlignment': 'MAFFT',
@@ -31,6 +32,7 @@ DEFAULT = {
 
 # map module names to CLI args
 MODULE_TO_ARG = {
+    'AncestralSequenceReconstruction': 'ancestral',
     'Dating': 'date',
     'Driver': 'driver',
     'MultipleSequenceAlignment': 'msa',

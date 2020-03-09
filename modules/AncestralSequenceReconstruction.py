@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 '''
-"Dating" module
+"AncestralSequenceReconstruction" module
 '''
 import abc
 
-class Dating(metaclass=abc.ABCMeta):
+class AncestralSequenceReconstruction(metaclass=abc.ABCMeta):
     '''
-    Abstract class defining the ``Dating`` module
+    Abstract class defining the ``AncestralSequenceReconstruction`` module
 
     Methods
     -------
@@ -14,8 +14,8 @@ class Dating(metaclass=abc.ABCMeta):
         Return a string describing what was done
     cite()
         Return citation string (or None)
-    date(rooted_tree_filename, sample_times_filename)
-        Date the rooted phylogeny in ``rooted_tree_filename`` using the sample times in ``sample_times_filename``
+    reconstruct(rooted_tree_filename, aln_filename)
+        Reconstruct the ancestral sequence of ``rooted_tree_filename`` using the sequences in ``aln_filename``
     init()
         Initialize the module (if need be)
     finalize()
@@ -60,20 +60,20 @@ class Dating(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def date(rooted_tree_filename, sample_times_filename):
+    def reconstruct(rooted_tree_filename, aln_filename):
         '''
-        Date the rooted phylogeny in ``rooted_tree_filename`` using the sample times in ``sample_times_filename``
+        Reconstruct the ancestral sequence of ``rooted_tree_filename`` using the sequences in ``aln_filename``
 
         Parameters
         ----------
         rooted_tree_filename : str
             Filename of the input rooted phylogeny (in the Newick format)
-        sample_times_filename : str
-            Filename of the input sample times
+        aln_filename : str
+            Filename of the input multiple sequence alignment (in the FASTA format)
 
         Returns
         -------
-        dated_tree_filename : str
-            Filename of the output dated phylogeny (in the Newick format)
+        ancestral_seqs_filename : str
+            Filename of the output ancestral sequence(s) (in the FASTA format)
         '''
         raise RuntimeError("Not implemented")

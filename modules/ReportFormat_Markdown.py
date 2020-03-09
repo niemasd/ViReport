@@ -37,6 +37,20 @@ class ReportFormat_Markdown(ReportFormat):
     def writeln(s, text_type='normal'):
         md_init(); ReportFormat_Markdown.write(s, text_type=text_type); ReportFormat_Markdown.write('')
 
+    def bullets(items, level=0):
+        md_init()
+        if level == 0:
+            GC.report_out_md.write('\n')
+        for item in items:
+            if isinstance(item, str):
+                GC.report_out_md.write('%s* %s\n' % (level*'    ', item))
+            elif isinstance(item, list):
+                ReportFormat_Markdown.bullets(item, level=level+1)
+            else:
+                raise ValueError("Invalid bullet item type: %s" % type(item))
+        if level == 0:
+            GC.report_out_md.write('\n')
+
     def figure(filename, caption=None, width=None, height=None):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)

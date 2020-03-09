@@ -10,6 +10,8 @@ class ReportFormat(metaclass=abc.ABCMeta):
 
     Methods
     -------
+    bullets(items)
+        Write a new bulleted list containing ``items``
     cite()
         Return citation string (or None)
     close()
@@ -122,6 +124,19 @@ class ReportFormat(metaclass=abc.ABCMeta):
             String to write
         text_type : str
             Type of text (normal, bold, italic, both)
+        '''
+        raise RuntimeError("Not implemented")
+
+    @staticmethod
+    @abc.abstractmethod
+    def bullets(items):
+        '''
+        Write a new bulleted list containing ``items``
+
+        Parameters
+        ----------
+        items : list of (list of ...) str
+            Items to write to list
         '''
         raise RuntimeError("Not implemented")
 

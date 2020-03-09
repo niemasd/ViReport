@@ -48,6 +48,17 @@ class ReportFormat_PDF(ReportFormat):
     def writeln(s, text_type='normal'):
         tex_init(); ReportFormat_PDF.write(s, text_type=text_type); ReportFormat_PDF.write('')
 
+    def bullets(items):
+        tex_init(); GC.report_out_tex.write('\\begin{itemize}\n')
+        for item in items:
+            if isinstance(item, str):
+                GC.report_out_tex.write('\item %s' % tex_safe(item))
+            elif isinstance(item, list):
+                ReportFormat_PDF.bullets(item)
+            else:
+                raise ValueError("Invalid bullet item type: %s" % type(item))
+        GC.report_out_tex.write('\\end{itemize}\n')
+
     def figure(filename, caption=None, width=None, height=None):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)

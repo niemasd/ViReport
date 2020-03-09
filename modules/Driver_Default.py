@@ -29,6 +29,17 @@ class Driver_Default(Driver):
         return GC.CITATION_VIREPORT
 
     def run(seqs_filename, sample_times_filename, outgroups_filename):
+        # organize citations
+        GC.CITATIONS = set()
+        for m in GC.SELECTED:
+            cite = GC.SELECTED[m].cite()
+            if isinstance(cite,str):
+                GC.CITATIONS.add(cite.strip())
+            elif isinstance(cite,set) or isinstance(cite,list):
+                for c in cite:
+                    GC.CITATIONS.add(c.strip())
+        GC.CITATIONS = sorted(GC.CITATIONS)
+
         # print starting messages
         print_message()
         print("========================   Workflow Process   ========================")
@@ -103,6 +114,11 @@ class Driver_Default(Driver):
         GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
         print("Dated phylogeny output to: %s" % GC.TREE_DATED)
 
+        # infer ancestral sequence(s)
+        print("\nRunning '%s'..." % GC.SELECTED['AncestralSequenceReconstruction'].__name__)
+        GC.ANCESTRAL_SEQS = GC.SELECTED['AncestralSequenceReconstruction'].reconstruct(GC.TREE_ROOTED, GC.ALIGNMENT)
+        print("Ancestral sequence(s) output to: %s" % GC.ANCESTRAL_SEQS)
+
         # perform transmission clustering
         print("\nRunning '%s'..." % GC.SELECTED['TransmissionClustering'].__name__)
         GC.TRANSMISSION_CLUSTERS = GC.SELECTED['TransmissionClustering'].infer_transmission_clusters()
@@ -115,13 +131,5 @@ class Driver_Default(Driver):
 
         # print citations
         print("\n\n===========================   Citations   ============================")
-        citations = set()
-        for m in GC.SELECTED:
-            cite = GC.SELECTED[m].cite()
-            if isinstance(cite,str):
-                citations.add(cite.strip())
-            elif isinstance(cite,set) or isinstance(cite,list):
-                for c in cite:
-                    citations.add(c.strip())
-        for cite in sorted(citations):
+        for cite in GC.CITATIONS:
             print(cite)

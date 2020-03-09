@@ -9,7 +9,7 @@ from os.path import isfile
 from pdf2image import convert_from_path
 GC.report_out_html = None
 
-def md_init():
+def html_init():
     if GC.report_out_html is None:
         GC.report_out_html_filename = '%s/Report.html' % GC.OUT_DIR
         GC.report_out_html = open(GC.report_out_html_filename, 'w')
@@ -26,16 +26,28 @@ class ReportFormat_HTML(ReportFormat):
         return GC.CITATION_VIREPORT
 
     def section(s):
-        md_init(); GC.report_out_html.write("\n</p>\n<h2>%s</h2>\n<p>\n" % s)
+        html_init(); GC.report_out_html.write("\n</p>\n<h2>%s</h2>\n<p>\n" % s)
 
     def subsection(s):
-        md_init(); GC.report_out_html.write("\n</p>\n<h3>%s</h3>\n<p>\n" % s)
+        html_init(); GC.report_out_html.write("\n</p>\n<h3>%s</h3>\n<p>\n" % s)
 
     def write(s, text_type='normal'):
-        md_init(); GC.report_out_html.write(s); GC.report_out_html.write(' ')
+        html_init(); GC.report_out_html.write(s); GC.report_out_html.write(' ')
 
     def writeln(s, text_type='normal'):
-        md_init(); ReportFormat_Markdown.write(s, text_type=text_type); ReportFormat_Markdown.write('<br>')
+        html_init(); ReportFormat_HTML.write(s, text_type=text_type); ReportFormat_HTML.write('<br>\n')
+
+    def bullets(items, level=0):
+        html_init()
+        GC.report_out_html.write('\n%s<ul>\n' % ('  '*level))
+        for item in items:
+            if isinstance(item, str):
+                GC.report_out_html.write('%s  <li>%s</li>\n' % (level*'  ', item))
+            elif isinstance(item, list):
+                ReportFormat_HTML.bullets(item, level=level+1)
+            else:
+                raise ValueError("Invalid bullet item type: %s" % type(item))
+        GC.report_out_html.write('\n%s</ul>\n' % ('  '*level))
 
     def figure(filename, caption=None, width=None, height=None):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
@@ -59,7 +71,7 @@ class ReportFormat_HTML(ReportFormat):
         GC.report_out_html.write('</figure>\n\n<p>\n')
 
     def close():
-        md_init()
+        html_init()
         GC.report_out_html.write('\n</p>\n</body>\n</html>\n')
         GC.report_out_html.close()
         return GC.report_out_html_filename

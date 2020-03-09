@@ -32,6 +32,10 @@ class ReportFormat_All(ReportFormat):
         for fmt in GC.REPORTFORMATS:
             fmt.writeln(s, text_type=text_type)
 
+    def bullets(items):
+        for fmt in GC.REPORTFORMATS:
+            fmt.bullets(items)
+
     def figure(filename, caption=None, width=None, height=None):
         for fmt in GC.REPORTFORMATS:
             fmt.figure(filename, caption=caption, width=width, height=height)

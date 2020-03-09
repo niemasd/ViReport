@@ -24,6 +24,7 @@ class WriteReport_Default(WriteReport):
         write = GC.SELECTED['ReportFormat'].write
         close = GC.SELECTED['ReportFormat'].close
         figure = GC.SELECTED['ReportFormat'].figure
+        bullets = GC.SELECTED['ReportFormat'].bullets
 
         # Input Dataset
         ## make input sequence lengths figure
@@ -155,6 +156,10 @@ class WriteReport_Default(WriteReport):
         write("with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
         write("and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
         figure(cluster_sizes_hist_filename, width=0.75, caption="Distribution of cluster sizes (excluding singletons)")
+
+        # Citations
+        section("Citations")
+        bullets(sorted(GC.CITATIONS))
 
         # finish up
         return close()

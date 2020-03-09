@@ -30,6 +30,7 @@ CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A.
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
 CITATION_TREEN93 = 'Moshiri N. (2018). "TreeN93: a non-parametric distance-based method for inferring viral transmission clusters". bioRxiv.'
 CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
+CITATION_TREETIME = 'Sagulenko P., Puller V., Neher R.A. (2018). "TreeTime: Maximum-likelihood phylodynamic analysis". Virus Evolution. 4(1), vex042.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)
