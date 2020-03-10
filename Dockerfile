@@ -47,6 +47,8 @@ RUN wget -qO- "https://stat.ethz.ch/R/daily/R-devel.tar.gz" | tar -zx && \
     make install && \
     cd .. && \
     rm -rf R-devel
+RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/local/lib/R/etc/Rprofile.site && \
+    R -e "install.packages(c('fs','devtools','BiocManager'), quiet=TRUE)"
 
 # clean up
 RUN cd .. && \
