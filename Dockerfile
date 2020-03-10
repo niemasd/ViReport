@@ -16,6 +16,8 @@ RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q \
     liblzma-dev \
     libpcre3-dev \
     libreadline-dev \
+    libssl-dev \
+    libxml2-dev \
     python3 \
     python3-pip \
     texinfo \
