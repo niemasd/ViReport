@@ -35,8 +35,6 @@ class Dating_TreeTime(Dating):
         treetime_dates_filename = '%s/dates.csv' % treetime_dir
         log = open('%s/log.txt' % treetime_dir, 'w')
         err = open('%s/err.txt' % treetime_dir, 'w')
-        treetime_tree_viz_filename = '%s/tree.pdf' % treetime_dir
-        treetime_rtt_viz_filename = '%s/rtt.pdf' % treetime_dir
         msa = GC.read_fasta(GC.ALIGNMENT)
         msa_columns = len(msa[list(msa.keys())[0]])
         f = open(treetime_dates_filename, 'w'); f.write("name,date\n")
