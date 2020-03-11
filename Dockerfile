@@ -25,7 +25,7 @@ RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q \
     python3-pip \
     python3-pyqt5 \
     texinfo \
-    texlive-latex-base \
+    texlive-full \
     unzip \
     wget \
     xorg-dev \
