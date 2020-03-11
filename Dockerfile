@@ -155,5 +155,11 @@ RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-
     mv raxml-ng /usr/local/bin && \
     rm -rf raxml-ng*
 
+# install treedater
+RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'), quiet=TRUE)" && \
+    R -e "library(devtools); install_github('emvolz/treedater', quiet=TRUE)" && \
+    wget -qO- "https://raw.githubusercontent.com/emvolz/treedater/master/inst/tdcl" > /usr/local/bin/tdcl && \
+    chmod a+x /usr/local/bin/tdcl
+
 # run ViReport
 ENTRYPOINT ["/bin/bash", "-c", "ViReport.py"]
