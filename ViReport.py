@@ -3,11 +3,12 @@
 ViReport: Automated workflow for performing standard viral phylogenetic analyses and generating a report
 '''
 import argparse
-from warnings import warn
+from multiprocessing import cpu_count
 from os import environ,makedirs
 from os.path import abspath,expanduser,isdir,isfile
 from shutil import copyfile,rmtree
 from sys import argv,path
+from warnings import warn
 
 # set up path
 path.append('%s/modules' % abspath(expanduser('/'.join(argv[0].split('/')[:-1]))))
@@ -61,9 +62,14 @@ def parse_args():
     parser.add_argument('-og', '--outgroups', required=False, default=None, type=str, help="List of Outgroups")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
     parser.add_argument('-f', '--force_overwrite', action='store_true', help="Force Overwrite of Output")
+    parser.add_argument('-mt', '--max_threads', action='store_true', help="Use Maximum Number of Threads")
     for arg in ARG_TO_MODULE:
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
+    if args.max_threads:
+        GC.NUM_THREADS = cpu_count()
+    else:
+        GC.NUM_THREADS = None
 
     # check input files
     if not isfile(args.sequences):

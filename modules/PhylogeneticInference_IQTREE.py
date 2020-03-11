@@ -29,7 +29,11 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
         iqtree_dir = '%s/IQTREE' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
         makedirs(iqtree_dir, exist_ok=True)
-        command = ['iqtree', '-m', 'MFP', '-nt', 'AUTO', '-s', aln_filename]
+        command = ['iqtree', '-m', 'MFP', '-s', aln_filename, '-nt']
+        if GC.NUM_THREADS is None:
+            command.append('AUTO')
+        else:
+            command.append(str(GC.NUM_THREADS))
         f = open('%s/command.txt' % iqtree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         log = check_output(command)
         move('%s.treefile' % aln_filename , out_filename)

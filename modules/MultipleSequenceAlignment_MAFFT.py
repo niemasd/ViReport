@@ -29,7 +29,12 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
         f_stderr = open('%s/log.txt' % mafft_dir, 'w')
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
         f_stdout = open(out_filename, 'w')
-        command = ['mafft', '--thread', '-1', '--auto', seqs_filename]
+        command = ['mafft', '--thread']
+        if GC.NUM_THREADS is None:
+            command.append('-1')
+        else:
+            command.append(str(GC.NUM_THREADS))
+        command += ['--auto', seqs_filename]
         f = open('%s/command.txt' % mafft_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         call(command, stdout=f_stdout, stderr=f_stderr)
         f_stdout.close(); f_stderr.close()
