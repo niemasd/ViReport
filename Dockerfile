@@ -25,7 +25,7 @@ RUN pip install -q biopython && \
 # set up R
 RUN conda install -q -y r && \
     conda install -q -y -c conda-forge r-devtools && \
-    echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /usr/local/bin/miniconda3/lib/R/etc/Rprofile.site
+    echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"))' >> /opt/conda/lib/R/etc/Rprofile.site
 
 # install Clustal Omega (1.2.4)
 RUN wget -qO- "http://prdownloads.sourceforge.net/argtable/argtable2-13.tar.gz" | tar -zx && \
