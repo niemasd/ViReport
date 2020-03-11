@@ -1,6 +1,7 @@
 # ViReport Docker image using Ubuntu 20.04 base
 FROM continuumio/miniconda3:latest
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
+SHELL ["/bin/bash", "-c"]
 
 # create temporary setup folder for everything
 RUN mkdir /VIREPORT_SETUP
