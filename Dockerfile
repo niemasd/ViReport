@@ -7,7 +7,7 @@ SHELL ["/bin/bash", "-c"]
 RUN mkdir /VIREPORT_SETUP
 WORKDIR /VIREPORT_SETUP
 
-# set up environment (update Ubuntu and install Miniconda)
+# install required general programs
 RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q autoconf cmake g++ gcc make unzip wget && \
     ln -s /usr/bin/tar /bin/gtar
 
