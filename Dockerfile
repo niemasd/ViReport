@@ -40,10 +40,10 @@ RUN pip3 install -q biopython && \
     pip3 install -q dendropy && \
     pip3 install -q niemads && \
     pip3 install -q pdf2image && \
+    pip3 install -q phylo-treetime && \
     pip3 install -q pyqt5 && \
     pip3 install -q seaborn && \
-    pip3 install -q treeswift && \
-    pip3 install -q treetime
+    pip3 install -q treeswift
 
 # set up R (3.6.3)
 RUN wget -qO- "https://cran.r-project.org/src/base/R-3/R-3.6.3.tar.gz" | tar -zx && \
