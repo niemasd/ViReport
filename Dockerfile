@@ -105,11 +105,6 @@ RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
     rm -rf tn93-master master.zip
 #RUN pip3 install -q hivtrace
 
-# clean up
-RUN cd .. && \
-    rm -rf VIREPORT_SETUP && \
-    rm -f *.*
-
 # install IQ-TREE (1.6.12)
 RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree-1.6.12-Linux.tar.gz" | tar -zx && \
     mv iqtree*/bin/iqtree /usr/local/bin && \
@@ -179,6 +174,11 @@ RUN wget -q "https://github.com/niemasd/ViReport/archive/master.zip" && \
     chmod a+x /usr/local/bin/ViReport/ViReport.py && \
     alias ViReport.py='/usr/local/bin/ViReport/ViReport.py' && \
     rm -rf master.zip
+
+# clean up
+RUN cd .. && \
+    rm -rf VIREPORT_SETUP && \
+    rm -f *.*
 
 # run ViReport
 ENTRYPOINT ["/bin/bash", "-c", "ViReport.py"]
