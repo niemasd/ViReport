@@ -29,6 +29,8 @@ class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
         log_filename = '%s/log.txt' % clustalo_dir
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
         command = ['clustalo', '--auto', '-i', seqs_filename, '-o', out_filename, '-l', log_filename]
+        if GC.NUM_THREADS is not None:
+            command.append('--threads=%d' % GC.NUM_THREADS)
         f = open('%s/command.txt' % clustalo_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         call(command)
         return out_filename

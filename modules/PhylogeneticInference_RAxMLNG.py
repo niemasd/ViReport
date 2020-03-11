@@ -40,6 +40,8 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
             command.append('LG+I+G')
         else:
             raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
+        if GC.NUM_THREADS is not None:
+            command += ['--threads', str(GC.NUM_THREADS)]
         f = open('%s/command.txt' % raxmlng_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         check_output(command)
         move('%s.raxml.bestTree' % aln_filename, out_filename)
