@@ -9,7 +9,7 @@ WORKDIR /VIREPORT_SETUP
 
 # install required general programs
 RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q autoconf cmake g++ gcc libtool make unzip wget yaggo && \
-    ln -s /usr/bin/tar /bin/gtar
+    ln -s /bin/tar /bin/gtar
 
 # set up Python 3 packages
 RUN pip install -q biopython && \
