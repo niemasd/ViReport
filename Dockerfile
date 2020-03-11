@@ -20,13 +20,16 @@ RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q \
     libreadline-dev \
     libssl-dev \
     libxml2-dev \
+    poppler-utils \
     python3 \
     python3-pip \
+    python3-pyqt5 \
     texinfo \
     texlive-latex-base \
     unzip \
     wget \
     xorg-dev \
+    vim \
     zip
 RUN ln -s $(which python3) /usr/local/bin/python
 
@@ -36,8 +39,11 @@ RUN pip3 install -q biopython && \
     pip3 install -q cython && \
     pip3 install -q dendropy && \
     pip3 install -q niemads && \
+    pip3 install -q pdf2image && \
+    pip3 install -q pyqt5 && \
     pip3 install -q seaborn && \
-    pip3 install -q treeswift
+    pip3 install -q treeswift && \
+    pip3 install -q treetime
 
 # set up R (3.6.3)
 RUN wget -qO- "https://cran.r-project.org/src/base/R-3/R-3.6.3.tar.gz" | tar -zx && \
@@ -160,6 +166,19 @@ RUN R -e "install.packages(c('devtools','ape','lpSolve','limSolve','getopt'), qu
     R -e "library(devtools); install_github('emvolz/treedater', quiet=TRUE)" && \
     wget -qO- "https://raw.githubusercontent.com/emvolz/treedater/master/inst/tdcl" > /usr/local/bin/tdcl && \
     chmod a+x /usr/local/bin/tdcl
+
+# install TreeN93
+RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.py" > /usr/local/bin/TreeN93.py && \
+    wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93_cluster.py" > /usr/local/bin/TreeN93_cluster.py && \
+    chmod a+x /usr/local/bin/TreeN93*.py
+
+# set up ViReport
+RUN wget -q "https://github.com/niemasd/ViReport/archive/master.zip" && \
+    unzip -q master.zip && \
+    mv ViReport-master /usr/local/bin/ViReport && \
+    chmod a+x /usr/local/bin/ViReport/ViReport.py && \
+    alias ViReport.py='/usr/local/bin/ViReport/ViReport.py' && \
+    rm -rf master.zip
 
 # run ViReport
 ENTRYPOINT ["/bin/bash", "-c", "ViReport.py"]
