@@ -13,6 +13,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &
     bash Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/bin/miniconda3 && \
     rm Miniconda3-latest-Linux-x86_64.sh && \
     /usr/local/bin/miniconda3/bin/conda init
+SHELL ["/bin/bash", "-c"]
 
 # set up Python 3 packages
 RUN pip install -q biopython && \
