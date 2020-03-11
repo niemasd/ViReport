@@ -134,6 +134,11 @@ RUN wget -q "https://github.com/stephaneguindon/phyml/archive/master.zip" && \
     cd .. && \
     rm -rf phyml-master master.zip
 
+# install PRANK (170427)
+RUN wget -qO- "http://wasabiapp.org/download/prank/prank.linux64.170427.tgz" | tar -zx && \
+    mv prank/bin/* /usr/local/bin && \
+    rm -rf prank
+
 # install RAxML-NG (0.9.0)
 RUN wget -q "https://github.com/amkozlov/raxml-ng/releases/download/0.9.0/raxml-ng_v0.9.0_linux_x86_64.zip" && \
     unzip raxml-ng*.zip && \
