@@ -8,7 +8,7 @@ RUN mkdir /VIREPORT_SETUP
 WORKDIR /VIREPORT_SETUP
 
 # install required general programs
-RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q autoconf cmake g++ gcc make unzip wget && \
+RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q autoconf cmake g++ gcc libtool make unzip wget yaggo && \
     ln -s /usr/bin/tar /bin/gtar
 
 # set up Python 3 packages
@@ -55,6 +55,24 @@ RUN wget -q "http://www.microbesonline.org/fasttree/FastTree.c" && \
     gcc -DUSE_DOUBLE -DOPENMP -fopenmp -O3 -finline-functions -funroll-loops -Wall -o FastTree FastTree.c -lm && \
     mv FastTree /usr/local/bin && \
     rm FastTree.c
+
+# install FSA (1.15.9)
+RUN wget -q "https://github.com/mummer4/mummer/archive/master.zip" && \
+    unzip master.zip && \
+    cd mummer-master && \
+    autoreconf -fi && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf mummer-master master.zip
+RUN wget -qO- "https://ayera.dl.sourceforge.net/project/fsa/fsa-1.15.9.tar.gz" | tar -zx && \
+    cd fsa* && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf fsa*
 
 # install HIV-TRACE
 RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
