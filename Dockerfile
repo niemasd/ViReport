@@ -10,8 +10,5 @@ RUN mkdir VIREPORT_SETUP && \
 RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q wget
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/bin/miniconda3 && \
-    rm Miniconda3-latest-Linux-x86_64.sh
-
-# Make RUN commands use the new environment:
-SHELL ["/usr/local/bin/miniconda3/bin/conda", "run", "-n", "myenv", "/bin/bash", "-c"]
-RUN conda init
+    rm Miniconda3-latest-Linux-x86_64.sh && \
+    /usr/local/bin/miniconda3/bin/conda init
