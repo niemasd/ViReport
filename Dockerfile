@@ -65,7 +65,12 @@ RUN wget -q "https://github.com/mummer4/mummer/archive/master.zip" && \
     make && \
     make install && \
     cd .. && \
-    rm -rf mummer-master master.zip
+    rm -rf mummer-master master.zip && \
+    ldconfig
+RUN wget -qO- "http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.2.0-x86_64.tar.gz" | tar -zx && \
+    mv exonerate*/bin/* /usr/local/bin && \
+    mv exonerate*/share/* /usr/local/share && \
+    rm -rf exonerate*
 RUN wget -qO- "https://ayera.dl.sourceforge.net/project/fsa/fsa-1.15.9.tar.gz" | tar -zx && \
     cd fsa* && \
     ./configure && \
