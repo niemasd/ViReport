@@ -1,5 +1,5 @@
 # ViReport Docker image using Ubuntu 20.04 base
-FROM ubuntu:20.04
+FROM continuumio/miniconda3:latest
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 
 # create temporary setup folder for everything
@@ -9,11 +9,6 @@ WORKDIR /VIREPORT_SETUP
 # set up environment (update Ubuntu and install Miniconda)
 RUN apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q autoconf cmake g++ gcc make unzip wget && \
     ln -s /usr/bin/tar /bin/gtar
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/bin/miniconda3 && \
-    rm Miniconda3-latest-Linux-x86_64.sh && \
-    /usr/local/bin/miniconda3/bin/conda init
-SHELL ["/bin/bash", "-c"]
 
 # set up Python 3 packages
 RUN pip install -q biopython && \
