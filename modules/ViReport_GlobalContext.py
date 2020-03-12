@@ -237,6 +237,19 @@ def num_invariant_sites(aln_filename):
                 nucs[i].add(s[i])
     return sum(len(x) <= 1 for x in nucs)
 
+# color the internal nodes of a tree if all their children are the same color
+def color_internal(tree):
+    for node in tree.traverse_postorder(leaves=False):
+        if hasattr(node.children[0], 'color'):
+            color = node.children[0].color
+        else:
+            color = None
+        for child in node.children[1:]:
+            if not hasattr(child, 'color') or child.color != color:
+                color = None; break
+        if color is not None:
+            node.color = color
+
 # create a histogram figure from a list of numbers
 def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, kde_linestyle='-'):
     if not kde and not hist:
@@ -271,17 +284,19 @@ def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=No
     plt.close()
 
 # create a barplot from a list of labels
-def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
+def create_barplot(data, filename, all_labels=None, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
     count = dict(); x = list()
     for l in data:
         if l in count:
             count[l] += 1
         else:
             count[l] = 1; x.append(l)
-    y = [count[l] for l in x]
+    if all_labels is not None:
+        x = all_labels
+    y = [count[l] if l in count else 0 for l in x]
     fig, ax = plt.subplots()
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    barplot(x=x, y=y, ax=ax)
+    bp = barplot(x=x, y=y, ax=ax)
     if title is not None:
         plt.title(title)
     if xlabel is not None:
@@ -300,6 +315,16 @@ def create_barplot(data, filename, xlabel=None, ylabel=None, title=None, ymin=No
         plt.xticks(rotation=rotate_labels)
     if hide_labels:
         ax.set_xticks(list())
+    else:
+        xticks = ax.xaxis.get_major_ticks()
+        if len(x) < 20:
+            den = 1
+        else:
+            den = int(len(x)/20)
+        for ind, label in enumerate(bp.get_xticklabels()):
+            if ind % den != 0:
+                label.set_visible(False)
+                xticks[ind].set_visible(False)
     plt.tight_layout()
     fig.savefig(filename)
     plt.close()

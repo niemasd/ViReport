@@ -14,7 +14,7 @@ class Driver(metaclass=abc.ABCMeta):
         Return citation string (or None)
     init()
         Initialize the module (if need be)
-    run(seqs_filename, sample_times_filename)
+    run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename)
         Run the workflow
     '''
 
@@ -36,7 +36,7 @@ class Driver(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def run(seqs_filename, sample_times_filename, outgroups_filename):
+    def run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
         '''
         Run the workflow
 
@@ -48,5 +48,7 @@ class Driver(metaclass=abc.ABCMeta):
             Filename of the sample times
         outgroups_filename : str
             Filename of the list of outgroups (or None)
+        categories_filename : str
+            Filename of the categories (or None)
         '''
         raise RuntimeError("Not implemented")

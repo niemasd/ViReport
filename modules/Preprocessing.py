@@ -18,8 +18,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
-    preprocess(seqs_filename, sample_times_filename, outgroups_filename)
-        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, and/or the IDs in ``outgroups_filename`` (if need be)
+    preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename)
+        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename`` (if need be), and/or the IDs/categories in ``categories_filename`` (if need be)
     '''
 
     @staticmethod
@@ -61,9 +61,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def preprocess(seqs_filename, sample_times_filename, outgroups_filename):
+    def preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
         '''
-        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, and/or the IDs in ``outgroups_filename`` (if need be)
+        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename``, and/or the IDs/categories in ``categories_filename`` (if need be)
 
         Parameters
         ----------
@@ -73,6 +73,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
             Filename of the sample times to preprocess
         outgroups_filename : str
             Filename of the outgroups list to preprocess
+        categories_filename : str
+            Filename of the sample categories to preprocess
 
         Returns
         -------
@@ -82,5 +84,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
             Filename of the output processed sample times
         processed_outgroups_filename : str
             Filename of the output processed outgroups list
+        processed_categories_filename : str
+            Filename of the output processed sample categories
         '''
         raise RuntimeError("Not implemented")

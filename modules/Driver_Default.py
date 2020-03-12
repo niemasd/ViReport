@@ -28,7 +28,7 @@ class Driver_Default(Driver):
     def cite():
         return GC.CITATION_VIREPORT
 
-    def run(seqs_filename, sample_times_filename, outgroups_filename):
+    def run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
         # organize citations
         GC.CITATIONS = set()
         for m in GC.SELECTED:
@@ -54,7 +54,9 @@ class Driver_Default(Driver):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         if outgroups_filename is not None and not isfile(outgroups_filename):
             raise ValueError("Invalid outgroups list file: %s" % outgroups_filename)
-        GC.INPUT_SEQS = seqs_filename; GC.INPUT_TIMES = sample_times_filename; GC.INPUT_OUTGROUPS = outgroups_filename
+        if categories_filename is not None and not isfile(categories_filename):
+            raise ValueError("Invalid sample categories file: %s" % categories_filename)
+        GC.INPUT_SEQS = seqs_filename; GC.INPUT_TIMES = sample_times_filename; GC.INPUT_OUTGROUPS = outgroups_filename; GC.INPUT_CATEGORIES = categories_filename
 
         # set up output and intermediate folders
         GC.OUT_DIR_OUTFILES = "%s/output_files" % GC.OUT_DIR
@@ -74,12 +76,14 @@ class Driver_Default(Driver):
 
         # run preprocessing
         print("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)
-        GC.PROCESSED_SEQS, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS)
+        GC.PROCESSED_SEQS, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS, GC.PROCESSED_CATEGORIES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS, GC.INPUT_CATEGORIES)
         GC.SEQ_TYPE = GC.predict_seq_type(GC.PROCESSED_SEQS)
         print("Preprocessed sequences output to: %s" % GC.PROCESSED_SEQS)
         print("Preprocessed sample times output to: %s" % GC.PROCESSED_TIMES)
         if GC.PROCESSED_OUTGROUPS is not None:
             print("Preprocessed outgroups list output to: %s" % GC.PROCESSED_OUTGROUPS)
+        if GC.PROCESSED_CATEGORIES is not None:
+            print("Preprocessed sample categories output to: %s" % GC.PROCESSED_CATEGORIES)
 
         # align the preprocessed sequences
         print("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)

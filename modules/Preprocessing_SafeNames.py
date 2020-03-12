@@ -19,7 +19,7 @@ class Preprocessing_SafeNames(Preprocessing):
     def blurb():
         return "The input dataset was preprocessed such that sequences were given safe names: non-letters/digits in sequence IDs were converted to underscores."
 
-    def preprocess(seqs_filename, sample_times_filename, outgroups_filename):
+    def preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
         # set things up
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
@@ -33,6 +33,12 @@ class Preprocessing_SafeNames(Preprocessing):
             if not isfile(outgroups_filename):
                 raise ValueError("Invalid outgroups list file: %s" % outgroups_filename)
             out_outgroups_filename = '%s/outgroups_safe.txt' % GC.OUT_DIR_OUTFILES
+        if categories_filename is None:
+            out_categories_filename is None
+        else:
+            if not isfile(categories_filename):
+                raise ValueError("Invalid sample categories file: %s" % categories_filename)
+            out_categories_filename = '%s/categories_safe.txt' % GC.OUT_DIR_OUTFILES
 
         # output safe sequences
         f = open(out_seqs_filename, 'w')
@@ -52,10 +58,9 @@ class Preprocessing_SafeNames(Preprocessing):
         for line in open(sample_times_filename):
             parts = [v.strip() for v in line.strip().split('\t')]
             if len(parts) == 2:
-                f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1])
+                f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1]); f.write('\n')
             else:
                 raise ValueError("Invalid sample times file: %s" % sample_times_filename)
-            f.write('\n')
         f.close()
 
         # output safe outgroup names
@@ -65,5 +70,16 @@ class Preprocessing_SafeNames(Preprocessing):
                 f.write(GC.safe(line.strip())); f.write('\n')
             f.close()
 
+        # output safe categories
+        if categories_filename is not None:
+            f = open(out_categories_filename, 'w')
+            for line in open(categories_filename):
+                parts = [v.strip() for v in line.strip().split('\t')]
+                if len(parts) == 2:
+                    f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1]); f.write('\n')
+                else:
+                    raise ValueError("Invalid sample categories file: %s" % categories_filename)
+            f.close()
+
         # return output filenames
-        return out_seqs_filename, out_times_filename, out_outgroups_filename
+        return out_seqs_filename, out_times_filename, out_outgroups_filename, out_categories_filename

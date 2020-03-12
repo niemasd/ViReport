@@ -4,8 +4,10 @@ Default implementation of the "WriteReport" module
 '''
 from WriteReport import WriteReport
 import ViReport_GlobalContext as GC
+from matplotlib.patches import Patch
 from numpy import mean,std
 from os import makedirs
+from seaborn import color_palette
 from treeswift import read_tree_newick
 
 class WriteReport_Default(WriteReport):
@@ -34,13 +36,17 @@ class WriteReport_Default(WriteReport):
 
         ## make input sample times figure
         dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.INPUT_TIMES)}
-        dates = sorted(dates_vireport[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>'))
+        for l in open(GC.INPUT_OUTGROUPS):
+            if l.strip() in dates_vireport:
+                del dates_vireport[l.strip()]
+        dates = sorted(dates_vireport[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
         if len(dates) % 2 == 0:
             med_date = GC.days_to_date((GC.date_to_days(dates[int(len(dates)/2)]) + GC.date_to_days(dates[int(len(dates)/2)-1])) / 2)
         else:
             med_date = dates[int(len(dates)/2)]
+        all_dates = [GC.days_to_date(i) for i in range(GC.date_to_days(dates[0]), GC.date_to_days(dates[-1])+1)]
         dates_hist_filename = '%s/input_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(dates, dates_hist_filename, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
+        GC.create_barplot(dates, dates_hist_filename, all_labels=all_dates, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## write section
         section("Input Dataset")
@@ -54,6 +60,8 @@ class WriteReport_Default(WriteReport):
         figure(dates_hist_filename, width=0.75, caption="Distribution of input sample dates")
 
         # Preprocessing
+        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.PROCESSED_CATEGORIES)}
+
         ## make processed sequence lengths figure
         proc_seq_lengths = GC.seq_lengths_fasta(GC.PROCESSED_SEQS)
         proc_seq_lengths_hist_filename = '%s/processed_sequence_lengths.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -61,13 +69,17 @@ class WriteReport_Default(WriteReport):
 
         ## make processed sample times figure
         proc_dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.PROCESSED_TIMES)}
-        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in open(GC.PROCESSED_SEQS) if l.startswith('>'))
+        for l in open(GC.PROCESSED_OUTGROUPS):
+            if l.strip() in proc_dates_vireport:
+                del proc_dates_vireport[l.strip()]
+        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in open(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
         if len(proc_dates) % 2 == 0:
             med_proc_date = GC.days_to_date((GC.date_to_days(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_days(proc_dates[int(len(proc_dates)/2)-1])) / 2)
         else:
             med_proc_date = proc_dates[int(len(proc_dates)/2)]
+        all_proc_dates = [GC.days_to_date(i) for i in range(GC.date_to_days(proc_dates[0]), GC.date_to_days(proc_dates[-1])+1)]
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(proc_dates, proc_dates_hist_filename, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
+        GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## write section
         section("Preprocessed Dataset")
@@ -89,7 +101,7 @@ class WriteReport_Default(WriteReport):
         msa_num_unique = len(set(msa.values()))
         dists_seq = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
         dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        GC.create_histogram(dists_seq, dists_seq_hist_filename, ylog=True, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## write section
         section("Multiple Sequence Alignment")
@@ -103,11 +115,19 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Inference
         ## compute values of phylogeny
         tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
+        observed_cats_mut = {id_to_cat[node.label] for node in tree_mut.traverse_leaves() if node.label in id_to_cat}
+        colors_mut = list(color_palette("colorblind", n_colors=len(observed_cats_mut)))
+        pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(observed_cats_mut))}
+        handles_mut = [Patch(color=pal_mut[k], label=k) for k in sorted(observed_cats_mut)]
+        for node in tree_mut.traverse_leaves():
+            if node.label in id_to_cat:
+                node.color = pal_mut[id_to_cat[node.label]]
+        GC.color_internal(tree_mut)
         tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
-        tree_mut.draw(show_labels=True, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
+        tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
         dists_tree = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
         dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        GC.create_histogram(dists_tree, dists_tree_hist_filename, ylog=True, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## write section
         section("Phylogenetic Inference")
@@ -123,6 +143,14 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Dating
         ## compute values of dated phylogeny
         tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
+        observed_cats_time = {id_to_cat[node.label] for node in tree_time.traverse_leaves() if node.label in id_to_cat}
+        colors_time = list(color_palette("colorblind", n_colors=len(observed_cats_time)))
+        pal_time = {k:colors_time[i] for i,k in enumerate(sorted(observed_cats_time))}
+        handles_time = [Patch(color=pal_time[k], label=k) for k in sorted(observed_cats_time)]
+        for node in tree_time.traverse_leaves():
+            if node.label in id_to_cat:
+                node.color = pal_time[id_to_cat[node.label]]
+        GC.color_internal(tree_time)
         tree_time_height = tree_time.height()
         tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
         tmrca_date = GC.days_to_date(tmrca_days)
@@ -130,7 +158,7 @@ class WriteReport_Default(WriteReport):
         tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
         tmrca_year = int(tmrca_date.split('-')[0])
         tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
-        tree_time.draw(show_labels=True, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
+        tree_time.draw(show_labels=True, handles=handles_time, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
 
         ## write section
         section("Phylogenetic Dating")

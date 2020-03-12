@@ -59,6 +59,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s', '--sequences', required=True, type=str, help="Input Sequences (FASTA format)")
     parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (TSV format)")
+    parser.add_argument('-c', '--categories', required=False, default=None, type=str, help="Sample Categories (TSV format)")
     parser.add_argument('-og', '--outgroups', required=False, default=None, type=str, help="List of Outgroups")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
     parser.add_argument('-f', '--force_overwrite', action='store_true', help="Force Overwrite of Output")
@@ -82,6 +83,10 @@ def parse_args():
         if not isfile(args.outgroups):
             raise ValueError("Outgroups file not found: %s" % args.outgroups)
         args.outgroups = expanduser(abspath(args.outgroups))
+    if args.categories is not None:
+        if not isfile(args.categories):
+            raise ValueError("Sample categories file not found: %s" % args.categories)
+        args.categories = expanduser(abspath(args.categories))
 
     # parse module implementation selections
     GC.SELECTED = dict()
@@ -118,6 +123,11 @@ def parse_args():
     else:
         GC.OUT_DIR_INFILES_OUTGROUPS = "%s/%s" % (GC.OUT_DIR_INFILES, args.outgroups.split('/')[-1])
         copyfile(args.outgroups, GC.OUT_DIR_INFILES_OUTGROUPS)
+    if args.categories is None:
+        GC.OUT_DIR_INFILES_CATEGORIES = None
+    else:
+        GC.OUT_DIR_INFILES_CATEGORIES = "%s/%s" % (GC.OUT_DIR_INFILES, args.categories.split('/')[-1])
+        copyfile(args.categories, GC.OUT_DIR_INFILES_CATEGORIES)
 
 if __name__ == "__main__":
     # initialize ViReport
@@ -128,4 +138,4 @@ if __name__ == "__main__":
     GC.VIREPORT_COMMAND = ' '.join(argv)
 
     # run Driver
-    GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.OUT_DIR_INFILES_TIMES, GC.OUT_DIR_INFILES_OUTGROUPS)
+    GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.OUT_DIR_INFILES_TIMES, GC.OUT_DIR_INFILES_OUTGROUPS, GC.OUT_DIR_INFILES_CATEGORIES)
