@@ -101,7 +101,7 @@ class WriteReport_Default(WriteReport):
         msa_num_unique = len(set(msa.values()))
         dists_seq = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
         dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_seq, dists_seq_hist_filename, ylog=True, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## write section
         section("Multiple Sequence Alignment")
@@ -127,7 +127,7 @@ class WriteReport_Default(WriteReport):
         tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
         dists_tree = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
         dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_tree, dists_tree_hist_filename, ylog=True, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## write section
         section("Phylogenetic Inference")
