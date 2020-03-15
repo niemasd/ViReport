@@ -57,7 +57,7 @@ class ReportFormat_Markdown(ReportFormat):
         if filename.lower().endswith('.pdf'):
             png_filename = '%s.%s' % ('.'.join(filename.split('.')[:-1]), 'png')
             if not isfile(png_filename):
-                convert_from_path(filename, 500)[0].save(png_filename, 'PNG')
+                convert_from_path(filename, size=(2000,None))[0].save(png_filename, 'PNG')
             filename = png_filename
         GC.report_out_md.write('\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.'))
         if width is not None or height is not None:
