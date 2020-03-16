@@ -9,6 +9,7 @@ from numpy import mean,quantile,std
 from os import makedirs
 from seaborn import color_palette
 from treeswift import read_tree_newick
+ZERO_THRESHOLD = 0.0000001
 
 class WriteReport_Default(WriteReport):
     def init():
@@ -107,6 +108,15 @@ class WriteReport_Default(WriteReport):
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
+        msa_position_entropies_filename = '%s/%s.entropies.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
+        f = open(msa_position_entropies_filename, 'w')
+        for v in msa_position_entropies:
+            if abs(v) < ZERO_THRESHOLD:
+                f.write('0')
+            else:
+                f.write(str(v))
+            f.write('\n')
+        f.close()
         msa_position_entropies_q1 = quantile(msa_position_entropies, 0.25)
         msa_position_entropies_q3 = quantile(msa_position_entropies, 0.75)
         msa_entropy_manhattan_ythresh = msa_position_entropies_q3 + 1.5*(msa_position_entropies_q3-msa_position_entropies_q1)
@@ -123,6 +133,11 @@ class WriteReport_Default(WriteReport):
         write("The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
         write("with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
+        write("Across the positions of the multiple sequence alignment that had non-zero Shannon entropy,")
+        write("the minimum Shannon entropy was %s," % GC.num_str(min(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
+        write("the maximum Shannon entropy was %s," % GC.num_str(max(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
+        write("and the average Shannon entropy was %s," % GC.num_str(mean([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
+        write("with a standard deviation of %s." % GC.num_str(std([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
         figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment")
 
         # Phylogenetic Inference
