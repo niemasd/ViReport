@@ -3,6 +3,7 @@
 Store global variables/functions to be accessible by all ViReport modules
 '''
 from datetime import datetime,timedelta
+from math import log2
 from matplotlib.ticker import MaxNLocator
 from os.path import isfile
 from seaborn import barplot,distplot
@@ -249,6 +250,58 @@ def color_internal(tree):
                 color = None; break
         if color is not None:
             node.color = color
+
+# compute the Shannon entropy of each position of an MSA
+def msa_shannon_entropy(msa):
+    freq = None # freq[i] = dict of character frequencies at position i of MSA
+    for s in msa.values():
+        if freq is None:
+            freq = [dict() for _ in range(len(s))]
+        for i,c in enumerate(s.upper()):
+            if c not in freq[i]:
+                freq[i][c] = 0
+            freq[i][c] += 1
+    for p in freq:
+        if '-' in p:
+            del p['-']
+        tot = sum(p.values())
+        for c in p:
+            p[c] /= tot
+    return [0 if len(p) == 0 else -sum(p[c]*log2(p[c]) for c in p) for p in freq]
+
+# create a Manhattan plot from a list of y-coordinates
+def create_manhattan(data, filename, sig_thresh=None, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
+    if sig_thresh is None:
+        colors = None
+    else:
+        colors = ['black' if y < sig_thresh else 'red' for y in data]
+    fig, ax = plt.subplots()
+    plt.scatter(list(range(1,len(data)+1)), data, c=colors)
+    if title is not None:
+        plt.title(title)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    if xlog:
+        ax.set_xscale('log')
+    if ylog:
+        ax.set_yscale('log')
+    if xmin is not None and xmax is not None:
+        plt.xlim(xmin,xmax)
+    elif xmin is not None:
+        plt.xlim(xmin=xmin)
+    elif xmax is not None:
+        plt.xlim(xmax=xmax)
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin,ymax)
+    elif ymin is not None:
+        plt.ylim(ymin=ymin)
+    elif ymax is not None:
+        plt.ylim(ymax=ymax)
+    plt.tight_layout()
+    fig.savefig(filename)
+    plt.close()
 
 # create a histogram figure from a list of numbers
 def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, kde_linestyle='-'):

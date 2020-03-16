@@ -7,6 +7,7 @@ import ViReport_GlobalContext as GC
 from matplotlib.patches import Patch
 from numpy import mean,std
 from os import makedirs
+from scipy.signal import find_peaks_cwt
 from seaborn import color_palette
 from treeswift import read_tree_newick
 
@@ -99,9 +100,18 @@ class WriteReport_Default(WriteReport):
         msa_columns = len(msa[list(msa.keys())[0]])
         msa_num_invariant = GC.num_invariant_sites(msa)
         msa_num_unique = len(set(msa.values()))
+
+        ## make pairwise distances figure
         dists_seq = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
         dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+
+        ## make Manhattan plot of Shannon entropy
+        msa_position_entropies = GC.msa_shannon_entropy(msa)
+        msa_position_entropies_peaks = find_peaks_cwt(msa_position_entropies, widths=[1,2,3,4])
+        msa_entropy_manhattan_ythresh = min(msa_position_entropies[peak] for peak in msa_position_entropies_peaks)
+        msa_entropy_manhattan_filename = '%s/alignment_entropies.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_manhattan(msa_position_entropies, msa_entropy_manhattan_filename, sig_thresh=msa_entropy_manhattan_ythresh, title="Alignment Position Entropies", xlabel="Position of Multiple Sequence Alignment", ylabel="Shannon Entropy")
 
         ## write section
         section("Multiple Sequence Alignment")
@@ -111,6 +121,7 @@ class WriteReport_Default(WriteReport):
         write("The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
         write("with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
+        figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment")
 
         # Phylogenetic Inference
         ## compute values of phylogeny
