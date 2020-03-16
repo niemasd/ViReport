@@ -5,9 +5,8 @@ Default implementation of the "WriteReport" module
 from WriteReport import WriteReport
 import ViReport_GlobalContext as GC
 from matplotlib.patches import Patch
-from numpy import mean,std
+from numpy import mean,quantile,std
 from os import makedirs
-from scipy.signal import find_peaks_cwt
 from seaborn import color_palette
 from treeswift import read_tree_newick
 
@@ -108,8 +107,13 @@ class WriteReport_Default(WriteReport):
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
-        msa_position_entropies_peaks = find_peaks_cwt(msa_position_entropies, widths=[1,2,3,4])
-        msa_entropy_manhattan_ythresh = min(msa_position_entropies[peak] for peak in msa_position_entropies_peaks)
+        msa_position_entropies_q1 = quantile(msa_position_entropies, 0.25)
+        msa_position_entropies_q3 = quantile(msa_position_entropies, 0.75)
+        msa_entropy_manhattan_ythresh = msa_position_entropies_q3 + 1.5*(msa_position_entropies_q3-msa_position_entropies_q1)
+        if msa_entropy_manhattan_ythresh == 0:
+            msa_entropy_manhattan_ythresh = min(y for y in msa_position_entropies if y != 0)/2
+        #msa_position_entropies_peaks = find_peaks_cwt(msa_position_entropies, widths=[1,2,3,4])
+        #msa_entropy_manhattan_ythresh = min(msa_position_entropies[peak] for peak in msa_position_entropies_peaks)
         msa_entropy_manhattan_filename = '%s/alignment_entropies.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_entropies, msa_entropy_manhattan_filename, sig_thresh=msa_entropy_manhattan_ythresh, title="Alignment Position Entropies", xlabel="Position of Multiple Sequence Alignment", ylabel="Shannon Entropy")
 
