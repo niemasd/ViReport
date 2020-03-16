@@ -143,19 +143,24 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     outgroups = {l.strip() for l in open(outgroups_filename).read().strip().splitlines()}
     out_filename = '%s.no_outgroup.%s' % ('.'.join(seqs_filename.split('.')[:-1]), seqs_filename.split('.')[-1])
-    out = open(out_filename, 'w'); ID = None; seq = None
-    for line in open(seqs_filename):
-        l = line.strip()
-        if len(l) == 0:
-            continue
-        if l[0] == '>':
-            if ID is not None and ID not in outgroups:
-                out.write(">%s\n%s\n" % (ID, seq))
-            ID = l[1:]; seq = ''
-        else:
-            seq += l
-    if ID not in outgroups:
-        out.write(">%s\n%s" % (ID, seq))
+    seqs = read_fasta(seqs_filename)
+    for o in outgroups:
+        if o in seqs:
+            del seqs[o]
+    valid_pos = None
+    for s in seqs.values():
+        if valid_pos is None:
+            valid_pos = [False for _ in range(len(s))]
+        for i,c in enumerate(s.upper()):
+            if c != '-' and c != 'N':
+                valid_pos[i] = True
+    out = open(out_filename, 'w')
+    for k in sorted(seqs.keys()):
+        out.write('>'); out.write(k); out.write('\n')
+        for i,c in enumerate(seqs[k].upper()):
+            if valid_pos[i]:
+                out.write(c)
+        out.write('\n')
     out.close()
     return out_filename
 
