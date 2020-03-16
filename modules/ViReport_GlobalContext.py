@@ -270,14 +270,14 @@ def msa_shannon_entropy(msa):
     return [0 if len(p) == 0 else -sum(p[c]*log2(p[c]) for c in p) for p in freq]
 
 # create a Manhattan plot from a list of y-coordinates
-def create_manhattan(data, filename, sig_thresh=None, insig_color='black', sig_color='red', sig_linestyle='--', xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
+def create_manhattan(data, filename, sig_thresh=None, insig_color='black', sig_color='red', sig_linestyle='--', dot_size=None, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
     fig, ax = plt.subplots()
     if sig_thresh is None:
         colors = [insig_color]*len(data)
     else:
         colors = [insig_color if y < sig_thresh else sig_color for y in data]
         plt.plot([1,len(data)], [sig_thresh,sig_thresh], color=sig_color, linestyle=sig_linestyle)
-    plt.scatter(list(range(1,len(data)+1)), data, c=colors)
+    plt.scatter(list(range(1,len(data)+1)), data, s=dot_size, c=colors)
     if title is not None:
         plt.title(title)
     if xlabel is not None:
