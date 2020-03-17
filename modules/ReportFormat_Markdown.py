@@ -31,11 +31,11 @@ class ReportFormat_Markdown(ReportFormat):
     def subsection(s):
         md_init(); GC.report_out_md.write("\n### %s\n" % s)
 
-    def write(s, text_type='normal'):
-        md_init(); GC.report_out_md.write(s); GC.report_out_md.write('\n')
+    def write(s):
+        md_init(); GC.report_out_md.write(s)
 
-    def writeln(s, text_type='normal'):
-        md_init(); ReportFormat_Markdown.write(s, text_type=text_type); ReportFormat_Markdown.write('')
+    def writeln(s):
+        md_init(); ReportFormat_Markdown.write(s); ReportFormat_Markdown.write('\n\n')
 
     def bullets(items, level=0):
         md_init()

@@ -28,9 +28,9 @@ class ReportFormat(metaclass=abc.ABCMeta):
         New subsection ``s``
     subsubsection(s)
         New subsubsection ``s``
-    write(s,type)
+    write(s)
         Write string ``s`` to the output file 
-    writeln(s,type)
+    writeln(s)
         Write string ``s`` followed by a newline to the output file
     '''
 
@@ -99,7 +99,7 @@ class ReportFormat(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def write(s, text_type='normal'):
+    def write(s):
         '''
         Write string ``s`` to the output file
 
@@ -107,14 +107,12 @@ class ReportFormat(metaclass=abc.ABCMeta):
         ----------
         s : str
             String to write
-        text_type : str
-            Type of text (normal, bold, italic, both)
         '''
         raise RuntimeError("Not implemented")
 
     @staticmethod
     @abc.abstractmethod
-    def writeln(s, text_type='normal'):
+    def writeln(s):
         '''
         Write string ``s`` followed by a newline to the output file
 
@@ -122,8 +120,6 @@ class ReportFormat(metaclass=abc.ABCMeta):
         ----------
         s : str
             String to write
-        text_type : str
-            Type of text (normal, bold, italic, both)
         '''
         raise RuntimeError("Not implemented")
 

@@ -42,11 +42,11 @@ class ReportFormat_PDF(ReportFormat):
     def subsection(s):
         tex_init(); GC.report_out_tex.write("\\subsection{%s}\n" % tex_safe(s))
 
-    def write(s, text_type='normal'):
-        tex_init(); GC.report_out_tex.write(tex_safe(s)); GC.report_out_tex.write('\n')
+    def write(s):
+        tex_init(); GC.report_out_tex.write(tex_safe(s))
 
-    def writeln(s, text_type='normal'):
-        tex_init(); ReportFormat_PDF.write(s, text_type=text_type); ReportFormat_PDF.write('')
+    def writeln(s):
+        tex_init(); ReportFormat_PDF.write(s)
 
     def bullets(items):
         tex_init(); GC.report_out_tex.write('\\begin{itemize}\n')

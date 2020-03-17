@@ -52,11 +52,11 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Input Dataset")
         write("The analysis was conducted on a dataset containing %d sequences." % len(seq_lengths))
-        write("The average sequence length was %s," % GC.num_str(mean(seq_lengths)))
-        write("with a standard deviation of %s." % GC.num_str(std(seq_lengths)))
-        write("The earliest sample date was %s," % dates[0])
-        write("the median sample date was %s," % med_date)
-        write("and the most recent sample date was %s." % dates[-1])
+        write(" The average sequence length was %s," % GC.num_str(mean(seq_lengths)))
+        write(" with a standard deviation of %s." % GC.num_str(std(seq_lengths)))
+        write(" The earliest sample date was %s," % dates[0])
+        write(" the median sample date was %s," % med_date)
+        write(" and the most recent sample date was %s." % dates[-1])
         figure(seq_lengths_hist_filename, width=0.75, caption="Distribution of input sequence lengths")
         figure(dates_hist_filename, width=0.75, caption="Distribution of input sample dates")
 
@@ -85,12 +85,12 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Preprocessed Dataset")
         write(GC.SELECTED['Preprocessing'].blurb())
-        write("After preprocessing, the dataset contained %d sequences." % len(proc_seq_lengths))
-        write("The average sequence length was %s," % GC.num_str(mean(proc_seq_lengths)))
-        write("with a standard deviation of %s." % GC.num_str(std(proc_seq_lengths)))
-        write("The earliest sample date was %s," % proc_dates[0])
-        write("the median sample date was %s," % med_proc_date)
-        write("and the most recent sample date was %s." % proc_dates[-1])
+        write(" After preprocessing, the dataset contained %d sequences." % len(proc_seq_lengths))
+        write(" The average sequence length was %s," % GC.num_str(mean(proc_seq_lengths)))
+        write(" with a standard deviation of %s." % GC.num_str(std(proc_seq_lengths)))
+        write(" The earliest sample date was %s," % proc_dates[0])
+        write(" the median sample date was %s," % med_proc_date)
+        write(" and the most recent sample date was %s." % proc_dates[-1])
         figure(proc_seq_lengths_hist_filename, width=0.75, caption="Distribution of preprocessed sequence lengths")
         figure(proc_dates_hist_filename, width=0.75, caption="Distribution of preprocessed sample dates")
 
@@ -128,16 +128,16 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Multiple Sequence Alignment")
         write(GC.SELECTED['MultipleSequenceAlignment'].blurb())
-        write("There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment." % (msa_columns, msa_num_invariant, msa_num_unique))
+        write(" There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment. " % (msa_columns, msa_num_invariant, msa_num_unique))
         write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
-        write("The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
-        write("with a standard deviation of %s." % GC.num_str(std(dists_seq)))
+        write(" The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
+        write(" with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
-        write("Across the positions of the multiple sequence alignment that had non-zero Shannon entropy,")
-        write("the minimum Shannon entropy was %s," % GC.num_str(min(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
-        write("the maximum Shannon entropy was %s," % GC.num_str(max(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
-        write("and the average Shannon entropy was %s," % GC.num_str(mean([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
-        write("with a standard deviation of %s." % GC.num_str(std([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
+        write(" Across the positions of the multiple sequence alignment that had non-zero Shannon entropy,")
+        write(" the minimum Shannon entropy was %s," % GC.num_str(min(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
+        write(" the maximum Shannon entropy was %s," % GC.num_str(max(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
+        write(" and the average Shannon entropy was %s," % GC.num_str(mean([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
+        write(" with a standard deviation of %s." % GC.num_str(std([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
         figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment")
 
         # Phylogenetic Inference
@@ -160,11 +160,11 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Phylogenetic Inference")
         write(GC.SELECTED['PhylogeneticInference'].blurb())
-        write(GC.SELECTED['Rooting'].blurb())
-        write(GC.SELECTED['PairwiseDistancesTree'].blurb())
-        write("The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
-        write("and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
-        write("with a standard deviation of %s." % GC.num_str(std(dists_tree)))
+        write(' '); write(GC.SELECTED['Rooting'].blurb())
+        write(' '); write(GC.SELECTED['PairwiseDistancesTree'].blurb())
+        write(" The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
+        write(" and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
+        write(" with a standard deviation of %s." % GC.num_str(std(dists_tree)))
         figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
         figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
@@ -191,9 +191,9 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Phylogenetic Dating")
         write(GC.SELECTED['Dating'].blurb())
-        write("The height of the dated tree was %s days," % GC.num_str(tree_time_height))
-        write("so given that the most recent sample was collected on %s," % proc_dates[-1])
-        write("the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
+        write(" The height of the dated tree was %s days," % GC.num_str(tree_time_height))
+        write(" so given that the most recent sample was collected on %s," % proc_dates[-1])
+        write(" the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
         figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
 
         # Ancestral Sequence Reconstruction
@@ -210,11 +210,11 @@ class WriteReport_Default(WriteReport):
         ## write section
         section("Transmission Clustering")
         write(GC.SELECTED['TransmissionClustering'].blurb())
-        write("The total number of singletons (i.e., non-clustered individuals) was %d," % len(singletons))
-        write("and the total number of clusters (excluding singletons) was %d." % len(clusters))
-        write("The average cluster size (excluding singletons) was %s," % GC.num_str(mean(cluster_sizes)))
-        write("with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
-        write("and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
+        write(" The total number of singletons (i.e., non-clustered individuals) was %d," % len(singletons))
+        write(" and the total number of clusters (excluding singletons) was %d." % len(clusters))
+        write(" The average cluster size (excluding singletons) was %s," % GC.num_str(mean(cluster_sizes)))
+        write(" with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
+        write(" and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
         figure(cluster_sizes_hist_filename, width=0.75, caption="Distribution of cluster sizes (excluding singletons)")
 
         # Citations

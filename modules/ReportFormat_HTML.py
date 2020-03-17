@@ -31,11 +31,11 @@ class ReportFormat_HTML(ReportFormat):
     def subsection(s):
         html_init(); GC.report_out_html.write("\n</p>\n<h3>%s</h3>\n<p>\n" % s)
 
-    def write(s, text_type='normal'):
-        html_init(); GC.report_out_html.write(s); GC.report_out_html.write(' ')
+    def write(s):
+        html_init(); GC.report_out_html.write(s)
 
-    def writeln(s, text_type='normal'):
-        html_init(); ReportFormat_HTML.write(s, text_type=text_type); ReportFormat_HTML.write('<br>\n')
+    def writeln(s):
+        html_init(); ReportFormat_HTML.write(s); ReportFormat_HTML.write('\n<br>\n')
 
     def bullets(items, level=0):
         html_init()

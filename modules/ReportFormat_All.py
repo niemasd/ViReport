@@ -24,13 +24,13 @@ class ReportFormat_All(ReportFormat):
         for fmt in GC.REPORTFORMATS:
             fmt.subsection(s)
 
-    def write(s, text_type='normal'):
+    def write(s):
         for fmt in GC.REPORTFORMATS:
-            fmt.write(s, text_type=text_type)
+            fmt.write(s)
 
-    def writeln(s, text_type='normal'):
+    def writeln(s):
         for fmt in GC.REPORTFORMATS:
-            fmt.writeln(s, text_type=text_type)
+            fmt.writeln(s)
 
     def bullets(items):
         for fmt in GC.REPORTFORMATS:
