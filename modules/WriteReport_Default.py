@@ -120,8 +120,11 @@ class WriteReport_Default(WriteReport):
         msa_position_entropies_q1 = quantile(msa_position_entropies, 0.25)
         msa_position_entropies_q3 = quantile(msa_position_entropies, 0.75)
         msa_entropy_manhattan_ythresh = msa_position_entropies_q3 + 1.5*(msa_position_entropies_q3-msa_position_entropies_q1)
-        if msa_entropy_manhattan_ythresh == 0:
+        if abs(msa_entropy_manhattan_ythresh) < ZERO_THRESHOLD:
             msa_entropy_manhattan_ythresh = min(y for y in msa_position_entropies if y != 0)/2
+            msa_entropy_manhattan_ythresh_blurb = "Due to the abundance of zero-entropy positions, all non-zero entropies were deemed significant."
+        else:
+            msa_entropy_manhattan_ythresh_blurb = "A significance threshold was computed using Tukey's Rule: 1.5x the interquartile range added to the third quartile, which was %s." % GC.num_str(msa_entropy_manhattan_ythresh)
         msa_entropy_manhattan_filename = '%s/alignment_entropies.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_entropies, msa_entropy_manhattan_filename, sig_thresh=msa_entropy_manhattan_ythresh, dot_size=8, title="Alignment Position Entropies", xlabel="Position of Multiple Sequence Alignment", ylabel="Shannon Entropy")
 
@@ -138,7 +141,7 @@ class WriteReport_Default(WriteReport):
         write(" the maximum Shannon entropy was %s," % GC.num_str(max(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
         write(" and the average Shannon entropy was %s," % GC.num_str(mean([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
         write(" with a standard deviation of %s." % GC.num_str(std([v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD])))
-        figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment")
+        figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment. %s The significance threshold is shown as a red dashed line, and significant points are shown in red." % msa_entropy_manhattan_ythresh_blurb)
 
         # Phylogenetic Inference
         ## compute values of phylogeny
