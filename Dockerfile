@@ -19,6 +19,7 @@ RUN pip install -q biopython && \
     pip install -q niemads && \
     pip install -q pdf2image && \
     pip install -q phylo-treetime && \
+    pip install -q python-docx && \
     pip install -q seaborn && \
     pip install -q treeswift
 
