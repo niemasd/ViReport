@@ -81,6 +81,16 @@ RUN wget -qO- "https://ayera.dl.sourceforge.net/project/fsa/fsa-1.15.9.tar.gz" |
     cd .. && \
     rm -rf fsa*
 
+# install Kalign (3.2.3)
+RUN wget -qO- "https://github.com/TimoLassmann/kalign/archive/v3.2.3.tar.gz" | tar -zx && \
+    cd kalign-* && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf kalign-*
+
 # install HIV-TRACE
 RUN wget -q "https://github.com/veg/tn93/archive/master.zip" && \
     unzip master.zip && \
