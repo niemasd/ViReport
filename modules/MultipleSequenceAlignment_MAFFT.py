@@ -29,7 +29,7 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
         f_stderr = open('%s/log.txt' % mafft_dir, 'w')
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
         f_stdout = open(out_filename, 'w')
-        command = ['mafft', '--thread']
+        command = ['mafft', '--reorder', '--nomemsave', '--thread']
         if GC.NUM_THREADS is None:
             command.append('-1')
         else:
@@ -38,6 +38,6 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
         f = open('%s/command.txt' % mafft_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
         ret = call(command, stdout=f_stdout, stderr=f_stderr)
         f_stdout.close(); f_stderr.close()
-        if ret != 0:
+        if ret != 0 or '>' not in open(out_filename).read():
             raise RuntimeError("MAFFT did not run successfully")
         return out_filename
