@@ -36,6 +36,8 @@ class MultipleSequenceAlignment_MAFFT(MultipleSequenceAlignment):
             command.append(str(GC.NUM_THREADS))
         command += ['--auto', seqs_filename]
         f = open('%s/command.txt' % mafft_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stdout=f_stdout, stderr=f_stderr)
+        ret = call(command, stdout=f_stdout, stderr=f_stderr)
         f_stdout.close(); f_stderr.close()
+        if ret != 0:
+            raise RuntimeError("MAFFT did not run successfully")
         return out_filename

@@ -1,4 +1,4 @@
-# ViReport Docker image using Ubuntu 20.04 base
+# ViReport Docker image using miniconda3 base
 FROM continuumio/miniconda3:latest
 MAINTAINER Niema Moshiri <niemamoshiri@gmail.com>
 SHELL ["/bin/bash", "-c"]
