@@ -15,6 +15,8 @@ matplotlib.use('Agg')
 # useful constants
 VIREPORT_VERSION = '0.0.1'
 SAFE_CHARS = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+CIGAR_LETTERS = {'M','D','I','S','H','=','X'}
+COMPLEMENT = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
 CITATION_CLUSTALOMEGA = 'Sievers F., Wilm A., Dineen D.G., Gibson T.J., Karplus K., Li W., Lopez R., McWilliam H., Remmert M., Söding J., Thompson J.D., Higgins D.G. (2011). "Fast, scalable generation of high-quality protein multiple sequence alignments using Clustal Omega". Molecular Systems Biology. 7, 539.'
 CITATION_FASTTREE = 'Price M.N., Dehal P.S., Arkin A.P. (2010). "FastTree 2 -- Approximately Maximum-Likelihood Trees for Large Alignments". PLoS ONE. 5(3), e9490.'
 CITATION_FSA = 'Bradley R.K., Roberts A., Smoot M., Juvekar S., Do J., Dewey C., Holmes I., Pachter L. (2009). "Fast Statistical Alignment". PLoS Computational Biology. 5(5), e1000392.'
@@ -25,6 +27,7 @@ CITATION_KALIGN = 'Lassmann T. (2019). "Kalign 3: multiple sequence alignment of
 CITATION_LOGDATE = 'Mai U., Mirarab S. (2019). "Log Transformation Improves Dating of Phylogenies". bioRxiv.'
 CITATION_LSD2 = 'To T.H., Jung M., Lycett S., Gascuel O. (2016). "Fast dating using least-squares criteria and algorithms". Systematic Biology. 65(1), 82-97.'
 CITATION_MAFFT = 'Katoh K., Standley D.M. (2013). "MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability". Molecular Biology and Evolution. 30(4), 772-780.'
+CITATION_MINIMAP2 = 'Li H. (2018). "Minimap2: pairwise alignment for nucleotide sequences". Bioinformatics. 34(18), 3094-3100.'
 CITATION_MINVAR = 'Mai U., Sayyari E., Mirarab S. (2017). "Minimum Variance Rooting of Phylogenetic Trees and Implications for Species Tree Reconstruction". PLoS ONE. 12(8), e0182238.'
 CITATION_MODEL_GTR = 'Tavare S. (1986). ""Some Probabilistic and Statistical Problems in the Analysis of DNA Sequences". Lectures on Mathematics in the Life Sciences. 17, 57-86.'
 CITATION_MODEL_LG = 'Le S.Q., Gascuel O. (2008). "An Improved General Amino Acid Replacement Matrix". Molecular Biology and Evolution. 25(7), 1307-1320.'
@@ -60,6 +63,20 @@ def num_str(n, dec_sigfigs=3):
             return s
     else:
         return s
+
+# get the reverse complement of a DNA string
+def rev_comp(s):
+    return ''.join(COMPLEMENT[c] if c in COMPLEMENT else c for c in s.upper()[::-1])
+
+# parse a CIGAR string
+def parse_cigar(s):
+    out = list(); ind = len(s)-1
+    while ind >= 0:
+        let = s[ind]; ind -= 1; num = ''
+        while s[ind] not in CIGAR_LETTERS:
+            num += s[ind]; ind -= 1
+        out.append((let, int(num[::-1])))
+    return out[::-1]
 
 # check if a FASTA file contains DNA or protein sequences
 def predict_seq_type(filename, thresh=0.8):
