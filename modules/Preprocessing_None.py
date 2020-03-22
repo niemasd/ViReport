@@ -18,5 +18,5 @@ class Preprocessing_None(Preprocessing):
     def blurb():
         return "No preprocessing was done: the inputs were used as they were given."
 
-    def preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
-        return seqs_filename, sample_times_filename, outgroups_filename, categories_filename
+    def preprocess(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
+        return seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename

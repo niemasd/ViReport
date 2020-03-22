@@ -19,7 +19,7 @@ class Preprocessing_SafeNames(Preprocessing):
     def blurb():
         return "The input dataset was preprocessed such that sequences were given safe names: non-letters/digits in sequence IDs were converted to underscores."
 
-    def preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
+    def preprocess(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
         # set things up
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
@@ -55,6 +55,8 @@ class Preprocessing_SafeNames(Preprocessing):
                     f.write(l)
                 f.write('\n')
             f.close()
+        if ref_id is not None:
+            out_ref_id = GC.safe(ref_id)
 
         # output safe sample times
         if isfile(out_times_filename):
@@ -94,4 +96,4 @@ class Preprocessing_SafeNames(Preprocessing):
                 f.close()
 
         # return output filenames
-        return out_seqs_filename, out_times_filename, out_outgroups_filename, out_categories_filename
+        return out_seqs_filename, out_ref_id, out_times_filename, out_outgroups_filename, out_categories_filename

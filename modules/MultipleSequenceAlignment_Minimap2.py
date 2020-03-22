@@ -19,7 +19,7 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
         return GC.CITATION_MINIMAP2
 
     def blurb():
-        return "Multiple sequence alignment was performed using Minimap2 (Katoh & Standley, 2013) in automatic mode."
+        return "Multiple sequence alignment was performed using Minimap2 (Li, 2018). Each input sequence was aligned to the reference sequence (%s)" % GC.INPUT_REF_ID
 
     def align(seqs_filename, ref_id):
         if not isfile(seqs_filename):

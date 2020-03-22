@@ -80,7 +80,7 @@ class Driver_Default(Driver):
 
         # run preprocessing
         GC.SELECTED['Logging'].writeln("\nRunning '%s'..." % GC.SELECTED['Preprocessing'].__name__)
-        GC.PROCESSED_SEQS, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS, GC.PROCESSED_CATEGORIES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS, GC.INPUT_CATEGORIES)
+        GC.PROCESSED_SEQS, GC.PROCESSED_REF_ID, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS, GC.PROCESSED_CATEGORIES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_REF_ID, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS, GC.INPUT_CATEGORIES)
         GC.SEQ_TYPE = GC.predict_seq_type(GC.PROCESSED_SEQS)
         GC.SELECTED['Logging'].writeln("Preprocessed sequences output to: %s" % GC.PROCESSED_SEQS)
         GC.SELECTED['Logging'].writeln("Preprocessed sample times output to: %s" % GC.PROCESSED_TIMES)
@@ -91,7 +91,7 @@ class Driver_Default(Driver):
 
         # align the preprocessed sequences
         GC.SELECTED['Logging'].writeln("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
-        GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS, ref_id)
+        GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS, GC.PROCESSED_REF_ID)
         GC.ALIGNMENT = GC.remove_outgroups_fasta(GC.ALIGNMENT_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
         GC.SELECTED['Logging'].writeln("Multiple sequence alignment output to: %s" % GC.ALIGNMENT)
 

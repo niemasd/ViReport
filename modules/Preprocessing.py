@@ -18,8 +18,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         Initialize the module (if need be)
     finalize()
         Finalize the module (if need be)
-    preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename)
-        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename`` (if need be), and/or the IDs/categories in ``categories_filename`` (if need be)
+    preprocess(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename)
+        Preprocess the sequences in ``seqs_filename``, the reference ID ``ref_id``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename`` (if need be), and/or the IDs/categories in ``categories_filename`` (if need be)
     '''
 
     @staticmethod
@@ -61,14 +61,16 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def preprocess(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
+    def preprocess(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
         '''
-        Preprocess the sequences in ``seqs_filename``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename``, and/or the IDs/categories in ``categories_filename`` (if need be)
+        Preprocess the sequences in ``seqs_filename``, the reference ID ``ref_id``, the sample times in ``sample_times_filename``, the IDs in ``outgroups_filename``, and/or the IDs/categories in ``categories_filename`` (if need be)
 
         Parameters
         ----------
         seqs_filename : str
             Filename of the raw input sequences to preprocess (in the FASTA format)
+        ref_id : str
+            ID of the reference genome (should be in ``seqs_filename``)
         sample_times_filename : str
             Filename of the sample times to preprocess
         outgroups_filename : str
