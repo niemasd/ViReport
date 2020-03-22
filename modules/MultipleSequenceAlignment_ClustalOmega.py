@@ -21,16 +21,19 @@ class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
     def blurb():
         return "Multiple sequence alignment was performed using Clustal Omega (Sievers et al., 2011) in automatic mode."
 
-    def align(seqs_filename):
+    def align(seqs_filename, ref_id):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         clustalo_dir = '%s/ClustalOmega' % GC.OUT_DIR_TMPFILES
-        makedirs(clustalo_dir, exist_ok=True)
         log_filename = '%s/log.txt' % clustalo_dir
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
-        command = ['clustalo', '-v', '-v', '--auto', '-i', seqs_filename, '-o', out_filename, '-l', log_filename]
-        if GC.NUM_THREADS is not None:
-            command.append('--threads=%d' % GC.NUM_THREADS)
-        f = open('%s/command.txt' % clustalo_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command)
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
+        else:
+            makedirs(clustalo_dir, exist_ok=True)
+            command = ['clustalo', '-v', '-v', '--auto', '-i', seqs_filename, '-o', out_filename, '-l', log_filename]
+            if GC.NUM_THREADS is not None:
+                command.append('--threads=%d' % GC.NUM_THREADS)
+            f = open('%s/command.txt' % clustalo_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command)
         return out_filename

@@ -14,7 +14,7 @@ class Driver(metaclass=abc.ABCMeta):
         Return citation string (or None)
     init()
         Initialize the module (if need be)
-    run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename)
+    run(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename)
         Run the workflow
     '''
 
@@ -36,7 +36,7 @@ class Driver(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
+    def run(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
         '''
         Run the workflow
 
@@ -44,6 +44,8 @@ class Driver(metaclass=abc.ABCMeta):
         ----------
         seqs_filename : str
             Filename of the raw input sequences (in the FASTA format)
+        ref_id : str
+            ID of the reference genome (should be in ``seqs_filename``)
         sample_times_filename : str
             Filename of the sample times
         outgroups_filename : str

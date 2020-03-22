@@ -25,10 +25,13 @@ class Rooting_Midpoint(Rooting):
         if not isfile(tree_filename):
             raise ValueError("Invalid tree file: %s" % tree_filename)
         fastroot_dir = '%s/FastRoot' % GC.OUT_DIR_TMPFILES
-        makedirs(fastroot_dir, exist_ok=True)
         out_filename = '%s/rooted.tre' % GC.OUT_DIR_OUTFILES
-        command = ['FastRoot.py', '-i', tree_filename, '-m', 'MP']
-        f = open('%s/command.txt' % fastroot_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        o = check_output(command).decode().replace("'",'').strip()
-        f = open(out_filename, 'w'); f.write('%s\n' % o); f.close()
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Rooted phylogeny exists. Skipping recomputation.")
+        else:
+            makedirs(fastroot_dir, exist_ok=True)
+            command = ['FastRoot.py', '-i', tree_filename, '-m', 'MP']
+            f = open('%s/command.txt' % fastroot_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            o = check_output(command).decode().replace("'",'').strip()
+            f = open(out_filename, 'w'); f.write('%s\n' % o); f.close()
         return out_filename

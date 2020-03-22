@@ -28,7 +28,7 @@ class Driver_Default(Driver):
     def cite():
         return GC.CITATION_VIREPORT
 
-    def run(seqs_filename, sample_times_filename, outgroups_filename, categories_filename):
+    def run(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
         # organize citations
         GC.CITATIONS = set()
         for m in GC.SELECTED:
@@ -51,6 +51,7 @@ class Driver_Default(Driver):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         GC.INPUT_SEQS = seqs_filename
+        GC.INPUT_REF_ID = ref_id
         if not isfile(sample_times_filename):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         GC.INPUT_TIMES = sample_times_filename
@@ -90,7 +91,7 @@ class Driver_Default(Driver):
 
         # align the preprocessed sequences
         GC.SELECTED['Logging'].writeln("\nRunning '%s'..." % GC.SELECTED['MultipleSequenceAlignment'].__name__)
-        GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS)
+        GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS, ref_id)
         GC.ALIGNMENT = GC.remove_outgroups_fasta(GC.ALIGNMENT_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
         GC.SELECTED['Logging'].writeln("Multiple sequence alignment output to: %s" % GC.ALIGNMENT)
 

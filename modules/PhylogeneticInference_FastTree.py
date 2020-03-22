@@ -29,21 +29,24 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         fasttree_dir = '%s/FastTree' % GC.OUT_DIR_TMPFILES
-        makedirs(fasttree_dir, exist_ok=True)
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        progress_file = open('%s/progress.txt' % fasttree_dir, 'w')
-        command = ['FastTree', '-out', out_filename, '-gamma']
-        # the log file is somewhat large, so just disable for now
-        #log_filename = '%s/log.txt' % fasttree_dir
-        #command += ['-log', log_filename]
-        if GC.SEQ_TYPE == 'DNA':
-            command += ['-nt', '-gtr']
-        elif GC.SEQ_TYPE == 'AA':
-            command.append('-lg')
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
-            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
-        command.append(aln_filename)
-        f = open('%s/command.txt' % fasttree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stderr=progress_file)
-        progress_file.close()
+            makedirs(fasttree_dir, exist_ok=True)
+            progress_file = open('%s/progress.txt' % fasttree_dir, 'w')
+            command = ['FastTree', '-out', out_filename, '-gamma']
+            # the log file is somewhat large, so just disable for now
+            #log_filename = '%s/log.txt' % fasttree_dir
+            #command += ['-log', log_filename]
+            if GC.SEQ_TYPE == 'DNA':
+                command += ['-nt', '-gtr']
+            elif GC.SEQ_TYPE == 'AA':
+                command.append('-lg')
+            else:
+                raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
+            command.append(aln_filename)
+            f = open('%s/command.txt' % fasttree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command, stderr=progress_file)
+            progress_file.close()
         return out_filename

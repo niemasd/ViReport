@@ -8,7 +8,6 @@ from os import environ,makedirs
 from os.path import abspath,expanduser,isdir,isfile
 from shutil import copyfile,rmtree
 from sys import argv,path
-from warnings import warn
 
 # set up path
 path.append('%s/modules' % abspath(expanduser('/'.join(argv[0].split('/')[:-1]))))
@@ -60,12 +59,13 @@ def parse_args():
     # use argparse to parse user arguments
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s', '--sequences', required=True, type=str, help="Input Sequences (FASTA format)")
+    parser.add_argument('-r', '--reference_id', required=False, default=None, type=str, help="Reference Genome ID")
     parser.add_argument('-t', '--times', required=True, type=str, help="Sample Times (TSV format)")
     parser.add_argument('-c', '--categories', required=False, default=None, type=str, help="Sample Categories (TSV format)")
     parser.add_argument('-og', '--outgroups', required=False, default=None, type=str, help="List of Outgroups")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
-    parser.add_argument('-f', '--force_overwrite', action='store_true', help="Force Overwrite of Output")
     parser.add_argument('-mt', '--max_threads', action='store_true', help="Use Maximum Number of Threads")
+    parser.add_argument('--continue_workflow', action='store_true', help="Continue Workflow Execution")
     for arg in ARG_TO_MODULE:
         parser.add_argument('--%s'%arg, required=False, type=str, default=DEFAULT[ARG_TO_MODULE[arg]], help="%s Module" % ARG_TO_MODULE[arg])
     args = parser.parse_args()
@@ -73,6 +73,7 @@ def parse_args():
         GC.NUM_THREADS = cpu_count()
     else:
         GC.NUM_THREADS = None
+    GC.REF_ID = args.reference_id
 
     # check input files
     if not isfile(args.sequences):
@@ -105,12 +106,10 @@ def parse_args():
     else:
         GC.OUT_DIR = expanduser(abspath(args.out_dir))
         GC.OUT_DIR_PRINT = GC.OUT_DIR
-        if isdir(GC.OUT_DIR) or isfile(GC.OUT_DIR):
-            if args.force_overwrite:
-                warn("Overwriting output directory: %s" % GC.OUT_DIR)
-                rmtree(GC.OUT_DIR)
-            else:
-                raise ValueError("Output folder exits: %s" % GC.OUT_DIR)
+        if isfile(GC.OUT_DIR):
+            raise ValueError("Output destination exists as a file: %s" % GC.OUT_DIR)
+        if isdir(GC.OUT_DIR) and not args.continue_workflow:
+            raise ValueError("Output folder exits: %s" % GC.OUT_DIR)
     makedirs(GC.OUT_DIR, exist_ok=True)
 
     # copy input files to output directory
@@ -140,4 +139,4 @@ if __name__ == "__main__":
     GC.VIREPORT_COMMAND = ' '.join(argv)
 
     # run Driver
-    GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.OUT_DIR_INFILES_TIMES, GC.OUT_DIR_INFILES_OUTGROUPS, GC.OUT_DIR_INFILES_CATEGORIES)
+    GC.SELECTED['Driver'].run(GC.OUT_DIR_INFILES_SEQS, GC.REF_ID, GC.OUT_DIR_INFILES_TIMES, GC.OUT_DIR_INFILES_OUTGROUPS, GC.OUT_DIR_INFILES_CATEGORIES)

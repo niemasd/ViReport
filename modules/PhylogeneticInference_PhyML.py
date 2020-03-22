@@ -30,20 +30,23 @@ class PhylogeneticInference_PhyML(PhylogeneticInference):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         phyml_dir = '%s/PhyML' % GC.OUT_DIR_TMPFILES
-        makedirs(phyml_dir, exist_ok=True)
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        log_file = open('%s/log.txt' % phyml_dir, 'w')
-        phy_filename = '%s/alignment.phy' % phyml_dir
-        f = open(phy_filename, 'w'); f.write(GC.fasta_to_phylip(aln_filename)); f.close()
-        command = ['phyml', '--leave_duplicates', '-i', phy_filename, '-a', 'e']
-        if GC.SEQ_TYPE == 'DNA':
-            command += ['-d', 'nt', '-m', 'GTR']
-        elif GC.SEQ_TYPE == 'AA':
-            command += ['-d', 'aa', '-m', 'LG']
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
-            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
-        f = open('%s/command.txt' % phyml_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stdout=log_file)
-        log_file.close()
-        move('%s_phyml_tree.txt' % phy_filename, out_filename)
+            makedirs(phyml_dir, exist_ok=True)
+            log_file = open('%s/log.txt' % phyml_dir, 'w')
+            phy_filename = '%s/alignment.phy' % phyml_dir
+            f = open(phy_filename, 'w'); f.write(GC.fasta_to_phylip(aln_filename)); f.close()
+            command = ['phyml', '--leave_duplicates', '-i', phy_filename, '-a', 'e']
+            if GC.SEQ_TYPE == 'DNA':
+                command += ['-d', 'nt', '-m', 'GTR']
+            elif GC.SEQ_TYPE == 'AA':
+                command += ['-d', 'aa', '-m', 'LG']
+            else:
+                raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
+            f = open('%s/command.txt' % phyml_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command, stdout=log_file)
+            log_file.close()
+            move('%s_phyml_tree.txt' % phy_filename, out_filename)
         return out_filename

@@ -31,20 +31,23 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         raxmlng_dir = '%s/RAxML-NG' % GC.OUT_DIR_TMPFILES
-        makedirs(raxmlng_dir, exist_ok=True)
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        command = ['raxml-ng', '--force', '--msa', aln_filename, '--model']
-        if GC.SEQ_TYPE == 'DNA':
-            command.append('GTR+I+G')
-        elif GC.SEQ_TYPE == 'AA':
-            command.append('LG+I+G')
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
-            raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
-        if GC.NUM_THREADS is not None:
-            command += ['--threads', str(GC.NUM_THREADS)]
-        f = open('%s/command.txt' % raxmlng_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        check_output(command)
-        move('%s.raxml.bestTree' % aln_filename, out_filename)
-        for f in glob('%s.*' % aln_filename):
-            move(f, '%s/%s' % (raxmlng_dir, f.split('/')[-1]))
+            makedirs(raxmlng_dir, exist_ok=True)
+            command = ['raxml-ng', '--force', '--msa', aln_filename, '--model']
+            if GC.SEQ_TYPE == 'DNA':
+                command.append('GTR+I+G')
+            elif GC.SEQ_TYPE == 'AA':
+                command.append('LG+I+G')
+            else:
+                raise ValueError("Invalid sequence type: %s" % GC.SEQ_TYPE)
+            if GC.NUM_THREADS is not None:
+                command += ['--threads', str(GC.NUM_THREADS)]
+            f = open('%s/command.txt' % raxmlng_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            check_output(command)
+            move('%s.raxml.bestTree' % aln_filename, out_filename)
+            for f in glob('%s.*' % aln_filename):
+                move(f, '%s/%s' % (raxmlng_dir, f.split('/')[-1]))
         return out_filename

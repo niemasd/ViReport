@@ -10,7 +10,7 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
 
     Methods
     -------
-    align(seqs_filename)
+    align(seqs_filename, ref_id)
         Align the sequences in ``seqs_filename``
     blurb()
         Return a string describing what was done
@@ -69,6 +69,8 @@ class MultipleSequenceAlignment(metaclass=abc.ABCMeta):
         ----------
         seqs_filename : str
             Filename of the raw sequences to align (in the FASTA format)
+        ref_id : str
+            ID of the reference genome (should be in ``seqs_filename``)
 
         Returns
         -------

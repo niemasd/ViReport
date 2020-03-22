@@ -25,11 +25,14 @@ class PairwiseDistancesSequence_tn93(PairwiseDistancesSequence):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         tn93_dir = '%s/tn93' % GC.OUT_DIR_TMPFILES
-        makedirs(tn93_dir, exist_ok=True)
         out_filename = '%s/pairwise_distances_sequence.csv' % GC.OUT_DIR_OUTFILES
-        log = open('%s/log.txt' % tn93_dir, 'w')
-        command = ['tn93', '-t', '1', '-l', '1', '-q', '-o', out_filename, aln_filename]
-        f = open('%s/command.txt' % tn93_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stdout=log, stderr=DEVNULL)
-        log.close()
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Pairwise sequence distances exist. Skipping recomputation.")
+        else:
+            makedirs(tn93_dir, exist_ok=True)
+            log = open('%s/log.txt' % tn93_dir, 'w')
+            command = ['tn93', '-t', '1', '-l', '1', '-q', '-o', out_filename, aln_filename]
+            f = open('%s/command.txt' % tn93_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command, stdout=log, stderr=DEVNULL)
+            log.close()
         return out_filename

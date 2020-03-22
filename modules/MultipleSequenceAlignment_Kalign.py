@@ -21,14 +21,17 @@ class MultipleSequenceAlignment_Kalign(MultipleSequenceAlignment):
     def blurb():
         return "Multiple sequence alignment was performed using Kalign (Lassmann, 2019)."
 
-    def align(seqs_filename):
+    def align(seqs_filename, ref_id):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         kalign_dir = '%s/Kalign' % GC.OUT_DIR_TMPFILES
-        makedirs(kalign_dir, exist_ok=True)
-        log = open('%s/log.txt' % kalign_dir, 'w')
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
-        command = ['kalign', '-i', seqs_filename, '-o', out_filename]
-        f = open('%s/command.txt' % kalign_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stdout=log); log.close()
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
+        else:
+            makedirs(kalign_dir, exist_ok=True)
+            log = open('%s/log.txt' % kalign_dir, 'w')
+            command = ['kalign', '-i', seqs_filename, '-o', out_filename]
+            f = open('%s/command.txt' % kalign_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command, stdout=log); log.close()
         return out_filename

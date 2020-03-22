@@ -29,20 +29,22 @@ class AncestralSequenceReconstruction_TreeTime(AncestralSequenceReconstruction):
         if not isfile(aln_filename):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         treetime_dir = '%s/TreeTime_AncestralSequenceReconstruction' % GC.OUT_DIR_TMPFILES
-        makedirs(treetime_dir, exist_ok=True)
         out_filename = '%s/ancestral_sequences.fas' % GC.OUT_DIR_OUTFILES
-        tree_with_internal_labels_filename = '%s/tree_with_internal_labels.tre' % treetime_dir
-        log = open('%s/log.txt' % treetime_dir, 'w')
-        tmp = read_tree_newick(rooted_tree_filename)
-        for i,node in enumerate(tmp.traverse_levelorder(leaves=False)):
-            if node.is_root():
-                node.label = "ROOT"
-            else:
-                node.label = "I%d" % i
-        f = open(tree_with_internal_labels_filename, 'w'); f.write(tmp.newick()); f.write('\n'); f.close()
-        command = ['treetime', 'ancestral', '--aln', aln_filename, '--tree', tree_with_internal_labels_filename, '--outdir', treetime_dir]
-        f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-        call(command, stdout=log)
-        log.close()
-        move('%s/ancestral_sequences.fasta' % treetime_dir, out_filename)
+        if isfile(out_filename):
+            GC.SELECTED['Logging'].writeln("Ancestral sequences exist. Skipping recomputation.")
+        else:
+            makedirs(treetime_dir, exist_ok=True)
+            tree_with_internal_labels_filename = '%s/tree_with_internal_labels.tre' % treetime_dir
+            log = open('%s/log.txt' % treetime_dir, 'w')
+            tmp = read_tree_newick(rooted_tree_filename)
+            for i,node in enumerate(tmp.traverse_levelorder(leaves=False)):
+                if node.is_root():
+                    node.label = "ROOT"
+                else:
+                    node.label = "I%d" % i
+            f = open(tree_with_internal_labels_filename, 'w'); f.write(tmp.newick()); f.write('\n'); f.close()
+            command = ['treetime', 'ancestral', '--aln', aln_filename, '--tree', tree_with_internal_labels_filename, '--outdir', treetime_dir]
+            f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
+            call(command, stdout=log); log.close()
+            move('%s/ancestral_sequences.fasta' % treetime_dir, out_filename)
         return out_filename
