@@ -5,7 +5,8 @@ Store global variables/functions to be accessible by all ViReport modules
 from datetime import datetime,timedelta
 from math import log2
 from matplotlib.ticker import MaxNLocator
-from os.path import isfile
+from os import walk
+from os.path import getsize,isdir,isfile,join
 from seaborn import barplot,distplot
 from treeswift import read_tree_newick
 import matplotlib.pyplot as plt
@@ -40,6 +41,24 @@ CITATION_TREEN93 = 'Moshiri N. (2018). "TreeN93: a non-parametric distance-based
 CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
 CITATION_TREETIME = 'Sagulenko P., Puller V., Neher R.A. (2018). "TreeTime: Maximum-likelihood phylodynamic analysis". Virus Evolution. 4(1), vex042.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
+
+# return the current time as a string
+def get_time():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# get the filesize of a file or folder
+def filesize(p):
+    if isfile(p):
+        return getsize(p)
+    elif isdir(p):
+        out = 0
+        for dirpath,dirnames,filenames in walk(p):
+            for f in filenames:
+                fp = join(dirpath, f)
+                out += getsize(fp)
+        return out
+    else:
+        raise ValueError("Path not found: %s" % p)
 
 # convert a string to a "safe" string (all non-letter/digit characters --> underscore)
 def safe(s):

@@ -55,7 +55,9 @@ class Preprocessing_SafeNames(Preprocessing):
                     f.write(l)
                 f.write('\n')
             f.close()
-        if ref_id is not None:
+        if ref_id is None:
+            out_ref_id = None
+        else:
             out_ref_id = GC.safe(ref_id)
 
         # output safe sample times
