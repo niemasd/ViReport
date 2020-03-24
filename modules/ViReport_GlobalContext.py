@@ -304,8 +304,9 @@ def msa_shannon_entropy(msa):
                 freq[i][c] = 0
             freq[i][c] += 1
     for p in freq:
-        if '-' in p:
-            del p['-']
+        for c in ['-','N','n']:
+            if c in p:
+                del p[c]
         tot = sum(p.values())
         for c in p:
             p[c] /= tot
