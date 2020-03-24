@@ -18,7 +18,7 @@ class ReportFormat(metaclass=abc.ABCMeta):
         Finish writing the output file and close
     init()
         Initialize the module (if need be)
-    figure(filename, caption, width)
+    figure(filename, caption, width, keep_aspect_ratio)
         Create a figure from the image in ``filename`` such that it is ``width`` proportion of the width and with caption ``caption``
     finalize()
         Finalize the module (if need be)
@@ -138,7 +138,7 @@ class ReportFormat(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def figure(filename, caption=None, width=None, height=None):
+    def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         '''
         Create a figure from the image in ``filename`` such that it is ``width`` proportion of the width and with caption ``caption``
 

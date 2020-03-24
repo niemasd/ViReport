@@ -36,9 +36,9 @@ class ReportFormat_All(ReportFormat):
         for fmt in GC.REPORTFORMATS:
             fmt.bullets(items)
 
-    def figure(filename, caption=None, width=None, height=None):
+    def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         for fmt in GC.REPORTFORMATS:
-            fmt.figure(filename, caption=caption, width=width, height=height)
+            fmt.figure(filename, caption=caption, width=width, height=height, keep_aspect_ratio=keep_aspect_ratio)
 
     def close():
         for fmt in GC.REPORTFORMATS:

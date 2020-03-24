@@ -7,15 +7,17 @@ from math import log2
 from matplotlib.ticker import MaxNLocator
 from os import walk
 from os.path import getsize,isdir,isfile,join
+from pdf2image import convert_from_path
+from PIL import Image
 from seaborn import barplot,distplot
 from treeswift import read_tree_newick
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
+Image.MAX_IMAGE_PIXELS = 1000000000 # to avoid PIL decompression bomb warnings
 
 # useful constants
 VIREPORT_VERSION = '0.0.1'
-MAX_IMAGE_PIXELS = 1000000000 # to avoid PIL decompression bomb warnings
 SAFE_CHARS = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 CIGAR_LETTERS = {'M','D','I','S','H','=','X'}
 COMPLEMENT = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
@@ -312,6 +314,10 @@ def msa_shannon_entropy(msa):
         for c in p:
             p[c] /= tot
     return [0 if len(p) == 0 else -sum(p[c]*log2(p[c]) for c in p) for p in freq]
+
+# convert a PDF to PNG
+def pdf_to_png(pdf_filename, png_filename):
+    convert_from_path(pdf_filename, dpi=300, size=(1500,None))[0].save(png_filename, 'PNG')
 
 # create a Manhattan plot from a list of y-coordinates
 def create_manhattan(data, filename, sig_thresh=None, insig_color='black', sig_color='red', sig_linestyle='--', dot_size=None, xlabel=None, ylabel=None, title=None, xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):

@@ -9,9 +9,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches
 from os.path import isfile
-from pdf2image import convert_from_path
 from PIL import Image
-Image.MAX_IMAGE_PIXELS = GC.MAX_IMAGE_PIXELS
 GC.report_out_doc = None
 
 def list_number(doc, par, prev=None, level=None, num=True):
@@ -159,13 +157,13 @@ class ReportFormat_DOCX(ReportFormat):
             else:
                 raise ValueError("Invalid bullet item type: %s" % type(item))
 
-    def figure(filename, caption=None, width=None, height=None):
+    def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
         if filename.lower().endswith('.pdf'):
             png_filename = '%s.%s' % ('.'.join(filename.split('.')[:-1]), 'png')
             if not isfile(png_filename):
-                convert_from_path(filename, size=(2000,None))[0].save(png_filename, 'PNG')
+                GC.pdf_to_png(filename, png_filename)
             filename = png_filename
         w,h = Image.open(filename).size; ar = w/h
         if width is not None:
@@ -173,10 +171,11 @@ class ReportFormat_DOCX(ReportFormat):
         if height is not None:
             height = Inches(8.5*height)
         pic = GC.report_out_doc.add_picture(filename, width=width, height=height)
-        if pic.width/pic.height > ar:
-            pic.width = int(pic.height * ar)
-        else:
-            pic.height = int(pic.width / ar)
+        if keep_aspect_ratio:
+            if pic.width/pic.height > ar:
+                pic.width = int(pic.height * ar)
+            else:
+                pic.height = int(pic.width / ar)
         GC.report_out_doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
         if caption is not None:
             GC.report_out_doc.add_paragraph(caption, style='Caption')

@@ -6,9 +6,6 @@ from ReportFormat import ReportFormat
 import ViReport_GlobalContext as GC
 from datetime import datetime
 from os.path import isfile
-from pdf2image import convert_from_path
-from PIL import Image
-Image.MAX_IMAGE_PIXELS = GC.MAX_IMAGE_PIXELS
 GC.report_out_md = None
 
 def md_init():
@@ -53,13 +50,13 @@ class ReportFormat_Markdown(ReportFormat):
         if level == 0:
             GC.report_out_md.write('\n')
 
-    def figure(filename, caption=None, width=None, height=None):
+    def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
         if filename.lower().endswith('.pdf'):
             png_filename = '%s.%s' % ('.'.join(filename.split('.')[:-1]), 'png')
             if not isfile(png_filename):
-                convert_from_path(filename, size=(2000,None))[0].save(png_filename, 'PNG')
+                GC.pdf_to_png(filename, png_filename)
             filename = png_filename
         GC.report_out_md.write('\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.'))
         if width is not None or height is not None:
