@@ -390,11 +390,13 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
     if all_labels is not None:
         x = all_labels
     y = [count[l] if l in count else 0 for l in x]
-    fig, ax = plt.subplots()
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     if horizontal:
+        fig, ax = plt.subplots(figsize=(8,0.65*len(x)))
         bp = barplot(x=y, y=x, ax=ax)
+        #print(x); print(y); exit()
     else:
+        fig, ax = plt.subplots()
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         bp = barplot(x=x, y=y, ax=ax)
     if title is not None:
         plt.title(title)
