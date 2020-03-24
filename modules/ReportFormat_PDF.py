@@ -59,7 +59,7 @@ class ReportFormat_PDF(ReportFormat):
                 raise ValueError("Invalid bullet item type: %s" % type(item))
         GC.report_out_tex.write('\\end{itemize}\n')
 
-    def figure(filename, caption=None, width=None, height=None):
+    def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
             raise ValueError("Figures must be in report files directory: %s" % GC.OUT_DIR_REPORTFILES)
         GC.report_out_tex.write("\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[")
