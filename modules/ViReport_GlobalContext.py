@@ -391,7 +391,7 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
         x = all_labels
     y = [count[l] if l in count else 0 for l in x]
     if horizontal:
-        fig, ax = plt.subplots(figsize=(8,0.5*len(x)))
+        fig, ax = plt.subplots(figsize=(8,0.4*len(x)))
         bp = barplot(x=y, y=x, ax=ax)
     else:
         fig, ax = plt.subplots()
