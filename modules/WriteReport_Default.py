@@ -160,10 +160,16 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Inference
         ## compute values of phylogeny
         tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
-        observed_cats_mut = {proc_id_to_cat[node.label] for node in tree_mut.traverse_leaves() if node.label in proc_id_to_cat}
-        colors_mut = list(color_palette("colorblind", n_colors=len(observed_cats_mut)))
-        pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(observed_cats_mut))}
-        handles_mut = [Patch(color=pal_mut[k], label=k) for k in sorted(observed_cats_mut)]
+        count_cats_mut = dict()
+        for node in tree_mut.traverse_leaves():
+            if node.label in proc_id_to_cat:
+                cat = proc_id_to_cat[node.label]
+                if cat not in count_cats_mut:
+                    count_cats_mut[cat] = 0
+                count_cats_mut[cat] += 1
+        colors_mut = list(color_palette("colorblind", n_colors=len(count_cats_mut)))
+        pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(count_cats_mut.keys()))}
+        handles_mut = [Patch(color=pal_mut[k], label='%s (%d)' % (k, count_cats_mut[k])) for k in sorted(count_cats_mut.keys())]
         for node in tree_mut.traverse_leaves():
             if node.label in proc_id_to_cat:
                 node.color = pal_mut[proc_id_to_cat[node.label]]
@@ -188,10 +194,16 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Dating
         ## compute values of dated phylogeny
         tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
-        observed_cats_time = {proc_id_to_cat[node.label] for node in tree_time.traverse_leaves() if node.label in proc_id_to_cat}
-        colors_time = list(color_palette("colorblind", n_colors=len(observed_cats_time)))
-        pal_time = {k:colors_time[i] for i,k in enumerate(sorted(observed_cats_time))}
-        handles_time = [Patch(color=pal_time[k], label=k) for k in sorted(observed_cats_time)]
+        count_cats_time = dict()
+        for node in tree_time.traverse_leaves():
+            if node.label in proc_id_to_cat:
+                cat = proc_id_to_cat[node.label]
+                if cat not in count_cats_time:
+                    count_cats_time[cat] = 0
+                count_cats_time[cat] += 1
+        colors_time = list(color_palette("colorblind", n_colors=len(count_cats_time)))
+        pal_time = {k:colors_time[i] for i,k in enumerate(sorted(count_cats_time.keys()))}
+        handles_time = [Patch(color=pal_time[k], label='%s (%d)' % (k, count_cats_time[k])) for k in sorted(count_cats_time.keys())]
         for node in tree_time.traverse_leaves():
             if node.label in proc_id_to_cat:
                 node.color = pal_time[proc_id_to_cat[node.label]]
