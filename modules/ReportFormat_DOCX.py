@@ -11,6 +11,7 @@ from docx.shared import Inches
 from os.path import isfile
 from pdf2image import convert_from_path
 from PIL import Image
+Image.MAX_IMAGE_PIXELS = GC.MAX_IMAGE_PIXELS
 GC.report_out_doc = None
 
 def list_number(doc, par, prev=None, level=None, num=True):

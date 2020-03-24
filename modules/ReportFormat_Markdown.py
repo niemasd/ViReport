@@ -7,6 +7,8 @@ import ViReport_GlobalContext as GC
 from datetime import datetime
 from os.path import isfile
 from pdf2image import convert_from_path
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = GC.MAX_IMAGE_PIXELS
 GC.report_out_md = None
 
 def md_init():

@@ -15,6 +15,7 @@ matplotlib.use('Agg')
 
 # useful constants
 VIREPORT_VERSION = '0.0.1'
+MAX_IMAGE_PIXELS = 1000000000 # to avoid PIL decompression bomb warnings
 SAFE_CHARS = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 CIGAR_LETTERS = {'M','D','I','S','H','=','X'}
 COMPLEMENT = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
