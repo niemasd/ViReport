@@ -380,7 +380,7 @@ def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=No
     plt.close()
 
 # create a barplot from a list of labels
-def create_barplot(data, filename, all_labels=None, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
+def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
     count = dict(); x = list()
     for l in data:
         if l in count:
@@ -392,7 +392,10 @@ def create_barplot(data, filename, all_labels=None, xlabel=None, ylabel=None, ti
     y = [count[l] if l in count else 0 for l in x]
     fig, ax = plt.subplots()
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    bp = barplot(x=x, y=y, ax=ax)
+    if horizontal:
+        bp = barplot(x=y, y=x, ax=ax)
+    else:
+        bp = barplot(x=x, y=y, ax=ax)
     if title is not None:
         plt.title(title)
     if xlabel is not None:

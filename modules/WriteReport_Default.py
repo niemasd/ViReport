@@ -30,6 +30,8 @@ class WriteReport_Default(WriteReport):
         bullets = GC.SELECTED['ReportFormat'].bullets
 
         # Input Dataset
+        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.INPUT_CATEGORIES)}
+
         ## make input sequence lengths figure
         seq_lengths = GC.seq_lengths_fasta(GC.INPUT_SEQS)
         seq_lengths_hist_filename = '%s/input_sequence_lengths.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -49,6 +51,11 @@ class WriteReport_Default(WriteReport):
         dates_hist_filename = '%s/input_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(dates, dates_hist_filename, all_labels=all_dates, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
 
+        ## make input categories figure
+        sample_cats = sorted(id_to_cat[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+        cats_hist_filename = '%s/input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_barplot(sample_cats, cats_hist_filename, horizontal=True, title="Input Sample Categories", ylabel="Category", xlabel="Count")
+
         ## write section
         section("Input Dataset")
         write("The analysis was conducted on a dataset containing %d sequences." % len(seq_lengths))
@@ -59,9 +66,10 @@ class WriteReport_Default(WriteReport):
         write(" and the most recent sample date was %s." % dates[-1])
         figure(seq_lengths_hist_filename, width=0.75, caption="Distribution of input sequence lengths")
         figure(dates_hist_filename, width=0.75, caption="Distribution of input sample dates")
+        figure(cats_hist_filename, width=0.75, caption="Distribution of input sample categories")
 
         # Preprocessing
-        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.PROCESSED_CATEGORIES)}
+        proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.PROCESSED_CATEGORIES)}
 
         ## make processed sequence lengths figure
         proc_seq_lengths = GC.seq_lengths_fasta(GC.PROCESSED_SEQS)
@@ -82,6 +90,11 @@ class WriteReport_Default(WriteReport):
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
 
+        ## make processed categories figure
+        proc_sample_cats = sorted(id_to_cat[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+        proc_cats_hist_filename = '%s/processed_input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_barplot(proc_sample_cats, proc_cats_hist_filename, horizontal=True, title="Processed Sample Categories", ylabel="Category", xlabel="Count")
+
         ## write section
         section("Preprocessed Dataset")
         write(GC.SELECTED['Preprocessing'].blurb())
@@ -93,6 +106,7 @@ class WriteReport_Default(WriteReport):
         write(" and the most recent sample date was %s." % proc_dates[-1])
         figure(proc_seq_lengths_hist_filename, width=0.75, caption="Distribution of preprocessed sequence lengths")
         figure(proc_dates_hist_filename, width=0.75, caption="Distribution of preprocessed sample dates")
+        figure(proc_cats_hist_filename, width=0.75, caption="Distribution of preprocessed sample categories")
 
         # Multiple Sequence Alignment
         ## compute values of MSA
@@ -146,13 +160,13 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Inference
         ## compute values of phylogeny
         tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
-        observed_cats_mut = {id_to_cat[node.label] for node in tree_mut.traverse_leaves() if node.label in id_to_cat}
+        observed_cats_mut = {proc_id_to_cat[node.label] for node in tree_mut.traverse_leaves() if node.label in proc_id_to_cat}
         colors_mut = list(color_palette("colorblind", n_colors=len(observed_cats_mut)))
         pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(observed_cats_mut))}
         handles_mut = [Patch(color=pal_mut[k], label=k) for k in sorted(observed_cats_mut)]
         for node in tree_mut.traverse_leaves():
-            if node.label in id_to_cat:
-                node.color = pal_mut[id_to_cat[node.label]]
+            if node.label in proc_id_to_cat:
+                node.color = pal_mut[proc_id_to_cat[node.label]]
         GC.color_internal(tree_mut)
         tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
         tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
@@ -174,13 +188,13 @@ class WriteReport_Default(WriteReport):
         # Phylogenetic Dating
         ## compute values of dated phylogeny
         tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
-        observed_cats_time = {id_to_cat[node.label] for node in tree_time.traverse_leaves() if node.label in id_to_cat}
+        observed_cats_time = {proc_id_to_cat[node.label] for node in tree_time.traverse_leaves() if node.label in proc_id_to_cat}
         colors_time = list(color_palette("colorblind", n_colors=len(observed_cats_time)))
         pal_time = {k:colors_time[i] for i,k in enumerate(sorted(observed_cats_time))}
         handles_time = [Patch(color=pal_time[k], label=k) for k in sorted(observed_cats_time)]
         for node in tree_time.traverse_leaves():
-            if node.label in id_to_cat:
-                node.color = pal_time[id_to_cat[node.label]]
+            if node.label in proc_id_to_cat:
+                node.color = pal_time[proc_id_to_cat[node.label]]
         GC.color_internal(tree_time)
         tree_time_height = tree_time.height()
         tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
