@@ -69,7 +69,6 @@ class ReportFormat_Markdown(ReportFormat):
         GC.report_out_md.write('>\n')
         if caption is not None:
             GC.report_out_md.write('<figcaption>%s</figcaption>\n' % caption)
-        GC.report_out_md.write('<br>\n')
         GC.report_out_md.write('</figure>\n\n\n')
 
     def close():
