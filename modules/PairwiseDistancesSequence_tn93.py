@@ -26,7 +26,7 @@ class PairwiseDistancesSequence_tn93(PairwiseDistancesSequence):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         tn93_dir = '%s/tn93' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/pairwise_distances_sequence.csv' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Pairwise sequence distances exist. Skipping recomputation.")
         else:
             makedirs(tn93_dir, exist_ok=True)

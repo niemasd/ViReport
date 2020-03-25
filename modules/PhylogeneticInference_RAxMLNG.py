@@ -32,7 +32,7 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         raxmlng_dir = '%s/RAxML-NG' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
             makedirs(raxmlng_dir, exist_ok=True)

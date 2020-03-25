@@ -27,7 +27,7 @@ class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
         clustalo_dir = '%s/ClustalOmega' % GC.OUT_DIR_TMPFILES
         log_filename = '%s/log.txt' % clustalo_dir
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
             makedirs(clustalo_dir, exist_ok=True)

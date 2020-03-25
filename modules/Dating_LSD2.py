@@ -30,7 +30,7 @@ class Dating_LSD2(Dating):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         lsd2_dir = '%s/LSD2' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Dated tree exists. Skipping recomputation.")
         else:
             makedirs(lsd2_dir, exist_ok=True)

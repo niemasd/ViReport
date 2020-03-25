@@ -29,7 +29,7 @@ class Dating_LogDate(Dating):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         logdate_dir = '%s/LogDate' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Dated tree exists. Skipping recomputation.")
         else:
             makedirs(logdate_dir, exist_ok=True)

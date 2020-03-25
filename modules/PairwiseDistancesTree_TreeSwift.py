@@ -24,7 +24,7 @@ class PairwiseDistancesTree_TreeSwift(PairwiseDistancesTree):
         if not isfile(tree_filename):
             raise ValueError("Invalid tree file: %s" % tree_filename)
         out_filename = '%s/pairwise_distances_phylogeny.csv' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Pairwise phylogenetic distances exist. Skipping recomputation.")
         else:
             out = open(out_filename, 'w'); out.write("ID1,ID2,Distance\n")

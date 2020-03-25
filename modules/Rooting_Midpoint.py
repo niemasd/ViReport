@@ -26,7 +26,7 @@ class Rooting_Midpoint(Rooting):
             raise ValueError("Invalid tree file: %s" % tree_filename)
         fastroot_dir = '%s/FastRoot' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/rooted.tre' % GC.OUT_DIR_OUTFILES
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Rooted phylogeny exists. Skipping recomputation.")
         else:
             makedirs(fastroot_dir, exist_ok=True)

@@ -27,7 +27,7 @@ class MultipleSequenceAlignment_PRANK(MultipleSequenceAlignment):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         prank_dir = '%s/PRANK' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
             makedirs(prank_dir, exist_ok=True)

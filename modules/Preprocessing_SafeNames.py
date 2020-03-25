@@ -41,7 +41,7 @@ class Preprocessing_SafeNames(Preprocessing):
             out_categories_filename = '%s/categories_safe.txt' % GC.OUT_DIR_OUTFILES
 
         # output safe sequences
-        if isfile(out_seqs_filename):
+        if isfile(out_seqs_filename) or isfile('%s.gz' % out_seqs_filename):
             GC.SELECTED['Logging'].writeln("Safename sequences exist. Skipping recomputation.")
         else:
             f = open(out_seqs_filename, 'w')
@@ -61,7 +61,7 @@ class Preprocessing_SafeNames(Preprocessing):
             out_ref_id = GC.safe(ref_id)
 
         # output safe sample times
-        if isfile(out_times_filename):
+        if isfile(out_times_filename) or isfile('%s.gz' % out_times_filename):
             GC.SELECTED['Logging'].writeln("Safename sample times exist. Skipping recomputation.")
         else:
             f = open(out_times_filename, 'w')
@@ -75,7 +75,7 @@ class Preprocessing_SafeNames(Preprocessing):
 
         # output safe outgroup names
         if outgroups_filename is not None:
-            if isfile(out_outgroups_filename):
+            if isfile(out_outgroups_filename) or isfile('%s.gz' % out_outgroups_filename):
                 GC.SELECTED['Logging'].writeln("Safename outgroups exist. Skipping recomputation.")
             else:
                 f = open(out_outgroups_filename, 'w')
@@ -85,7 +85,7 @@ class Preprocessing_SafeNames(Preprocessing):
 
         # output safe categories
         if categories_filename is not None:
-            if isfile(out_categories_filename):
+            if isfile(out_categories_filename) or isfile('%s.gz' % out_categories_filename):
                 GC.SELECTED['Logging'].writeln("Safename sample categories exist. Skipping recomputation.")
             else:
                 f = open(out_categories_filename, 'w')
