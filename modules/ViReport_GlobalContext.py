@@ -315,6 +315,18 @@ def msa_shannon_entropy(msa):
             p[c] /= tot
     return [0 if len(p) == 0 else -sum(p[c]*log2(p[c]) for c in p) for p in freq]
 
+# compute the coverage of each position of an MSA
+def msa_coverage(msa, seq_type='DNA'):
+    tot = 0.; cov = None # cov[i] = number of sequences with non-gap (and non-N for DNA)
+    for s in msa.values():
+        tot += 1
+        if cov is None:
+            cov = [0 for _ in range(len(s))]
+        for i,c in enumerate(s.upper()):
+            if (seq_type == 'DNA' and c not in {'-','N'}) or (seq_type == 'AA' and c not in {'-'}):
+                cov[i] += 1
+    return [v/tot for v in cov]
+
 # convert a PDF to PNG
 def pdf_to_png(pdf_filename, png_filename):
     convert_from_path(pdf_filename, dpi=300, size=(1500,None))[0].save(png_filename, 'PNG')

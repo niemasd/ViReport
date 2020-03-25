@@ -142,6 +142,20 @@ class WriteReport_Default(WriteReport):
         msa_entropy_manhattan_filename = '%s/alignment_entropies.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_entropies, msa_entropy_manhattan_filename, sig_thresh=msa_entropy_manhattan_ythresh, dot_size=8, title="Alignment Position Entropies", xlabel="Position of Multiple Sequence Alignment", ylabel="Shannon Entropy")
 
+        ## make Manhattan plot of coverage
+        msa_position_coverage = GC.msa_coverage(msa)
+        msa_position_coverage_filename = '%s/%s.coverage.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
+        f = open(msa_position_coverage_filename, 'w')
+        for v in msa_position_coverage:
+            if abs(v) < ZERO_THRESHOLD:
+                f.write('0')
+            else:
+                f.write(str(v))
+            f.write('\n')
+        f.close()
+        msa_coverage_manhattan_filename = '%s/alignment_coverage.pdf' % GC.OUT_DIR_REPORTFIGS
+        GC.create_manhattan(msa_position_coverage, msa_coverage_manhattan_filename, dot_size=8, title="Alignment Position Coverage", xlabel="Position of Multiple Sequence Alignment", ylabel="Proportion Non-Gap")
+
         ## write section
         section("Multiple Sequence Alignment")
         write(GC.SELECTED['MultipleSequenceAlignment'].blurb())
@@ -150,6 +164,12 @@ class WriteReport_Default(WriteReport):
         write(" The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
         write(" with a standard deviation of %s." % GC.num_str(std(dists_seq)))
         figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
+        write("Across the positions of the multiple sequence alignment,")
+        write(" the minimum coverage was %s," % GC.num_str(min(v for v in msa_position_coverage)))
+        write(" the maximum coverage was %s," % GC.num_str(max(v for v in msa_position_coverage)))
+        write(" and the average coverage was %s," % GC.num_str(mean(msa_position_coverage)))
+        write(" with a standard deviation of %s." % GC.num_str(std(msa_position_coverage)))
+        figure(msa_coverage_manhattan_filename, width=0.75, caption="Coverage (proportion of non-gap characters) across the positions of the multiple sequence alignment")
         write(" Across the positions of the multiple sequence alignment that had non-zero Shannon entropy,")
         write(" the minimum Shannon entropy was %s," % GC.num_str(min(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
         write(" the maximum Shannon entropy was %s," % GC.num_str(max(v for v in msa_position_entropies if abs(v) > ZERO_THRESHOLD)))
