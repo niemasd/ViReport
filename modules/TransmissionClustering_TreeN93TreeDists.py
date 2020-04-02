@@ -23,12 +23,16 @@ class TransmissionClustering_TreeN93TreeDists(TransmissionClustering):
 
     def infer_transmission_clusters():
         out_filename = '%s/transmission_clusters.tsv' % GC.OUT_DIR_OUTFILES
+        if GC.GZIP_OUTPUT:
+            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Transmission clusters exist. Skipping recomputation.")
         else:
             treen93_dir = '%s/TreeN93' % GC.OUT_DIR_TMPFILES
             makedirs(treen93_dir)
             treen93_tree_filename = '%s/treen93.tre' % treen93_dir
+            if GC.GZIP_OUTPUT:
+                treen93_tree_filename += '.gz'
             log1 = open('%s/log1.txt' % treen93_dir, 'w'); log2 = open('%s/log2.txt' % treen93_dir, 'w')
             command1 = ['TreeN93.py', '-v', '-i', GC.PAIRWISE_DISTS_TREE, '-o', treen93_tree_filename]
             command2 = ['TreeN93_cluster.py', '-v', '-i', treen93_tree_filename, '-o', out_filename]

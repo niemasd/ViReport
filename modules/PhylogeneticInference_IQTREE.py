@@ -28,10 +28,16 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         iqtree_dir = '%s/IQTREE' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
+        if GC.GZIP_OUTPUT:
+            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
             makedirs(iqtree_dir, exist_ok=True)
+            if aln_filename.lower().endswith('.gz'):
+                unzipped_filename = '%s/aln_unzipped.fas' % iqtree_dir
+                GC.write_file('\n'.join(GC.read_file(aln_filename)), unzipped_filename)
+                aln_filename = unzipped_filename
             command = ['iqtree', '-m', 'MFP', '-s', aln_filename, '-nt']
             if GC.NUM_THREADS is None:
                 command.append('AUTO')
@@ -39,7 +45,7 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
                 command.append(str(GC.NUM_THREADS))
             f = open('%s/command.txt' % iqtree_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             log = check_output(command)
-            move('%s.treefile' % aln_filename , out_filename)
+            GC.write_file('\n'.join(GC.read_file('%s.treefile' % aln_filename)), out_filename)
             for f in glob('%s.*' % aln_filename):
                 move(f, '%s/%s' % (iqtree_dir, f.split('/')[-1]))
         return out_filename

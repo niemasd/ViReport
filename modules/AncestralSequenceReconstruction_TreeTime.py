@@ -44,7 +44,11 @@ class AncestralSequenceReconstruction_TreeTime(AncestralSequenceReconstruction):
                     node.label = "ROOT"
                 else:
                     node.label = "I%d" % i
-            f = open(tree_with_internal_labels_filename, 'w'); f.write(tmp.newick()); f.write('\n'); f.close()
+            GC.write_file('%s\n' % tmp.newick(), tree_with_internal_labels_filename)
+            if aln_filename.endswith('.gz'):
+                unzipped_filename = '%s/aln_unzipped.fas' % treetime_dir
+                GC.write_file('\n'.join(GC.read_file(aln_filename)), unzipped_filename)
+                aln_filename = unzipped_filename
             command = ['treetime', 'ancestral', '--aln', aln_filename, '--tree', tree_with_internal_labels_filename, '--outdir', treetime_dir]
             f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log); log.close()

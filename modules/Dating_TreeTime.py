@@ -43,9 +43,13 @@ class Dating_TreeTime(Dating):
             msa = GC.read_fasta(GC.ALIGNMENT)
             msa_columns = len(msa[list(msa.keys())[0]])
             f = open(treetime_dates_filename, 'w'); f.write("name,date\n")
-            for l in open(sample_times_filename):
+            for l in GC.read_file(sample_times_filename):
                 f.write("%s\n" % l.strip().replace('\t',','))
             f.close()
+            if rooted_tree_filename.endswith('.gz'):
+                unzipped_filename = '%s/tree_unzipped.fas' % treetime_dir
+                GC.write_file('\n'.join(GC.read_file(rooted_tree_filename)), unzipped_filename)
+                rooted_tree_filename = unzipped_filename
             command = ['treetime', '--sequence-length', str(msa_columns), '--keep-root', '--tree', rooted_tree_filename, '--dates', treetime_dates_filename, '--outdir', treetime_dir]
             f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log, stderr=err)

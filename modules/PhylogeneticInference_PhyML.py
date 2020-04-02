@@ -31,13 +31,15 @@ class PhylogeneticInference_PhyML(PhylogeneticInference):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         phyml_dir = '%s/PhyML' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
+        if GC.GZIP_OUTPUT:
+            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
             makedirs(phyml_dir, exist_ok=True)
             log_file = open('%s/log.txt' % phyml_dir, 'w')
             phy_filename = '%s/alignment.phy' % phyml_dir
-            f = open(phy_filename, 'w'); f.write(GC.fasta_to_phylip(aln_filename)); f.close()
+            GC.write_file(GC.fasta_to_phylip(aln_filename), phy_filename)
             command = ['phyml', '--leave_duplicates', '-i', phy_filename, '-a', 'e']
             if GC.SEQ_TYPE == 'DNA':
                 command += ['-d', 'nt', '-m', 'GTR']
@@ -48,5 +50,5 @@ class PhylogeneticInference_PhyML(PhylogeneticInference):
             f = open('%s/command.txt' % phyml_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log_file)
             log_file.close()
-            move('%s_phyml_tree.txt' % phy_filename, out_filename)
+            GC.write_file('\n'.join(GC.read_file('%s_phyml_tree.txt' % phy_filename)), out_filename)
         return out_filename

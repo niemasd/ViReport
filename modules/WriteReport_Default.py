@@ -30,7 +30,7 @@ class WriteReport_Default(WriteReport):
         bullets = GC.SELECTED['ReportFormat'].bullets
 
         # Input Dataset
-        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.INPUT_CATEGORIES)}
+        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.INPUT_CATEGORIES)}
 
         ## make input sequence lengths figure
         seq_lengths = GC.seq_lengths_fasta(GC.INPUT_SEQS)
@@ -39,10 +39,10 @@ class WriteReport_Default(WriteReport):
 
         ## make input sample times figure
         dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.INPUT_TIMES)}
-        for l in open(GC.INPUT_OUTGROUPS):
+        for l in GC.read_file(GC.INPUT_OUTGROUPS):
             if l.strip() in dates_vireport:
                 del dates_vireport[l.strip()]
-        dates = sorted(dates_vireport[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
+        dates = sorted(dates_vireport[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
         if len(dates) % 2 == 0:
             med_date = GC.days_to_date((GC.date_to_days(dates[int(len(dates)/2)]) + GC.date_to_days(dates[int(len(dates)/2)-1])) / 2)
         else:
@@ -52,7 +52,7 @@ class WriteReport_Default(WriteReport):
         GC.create_barplot(dates, dates_hist_filename, all_labels=all_dates, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## make input categories figure
-        sample_cats = sorted(id_to_cat[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+        sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
         cats_hist_filename = '%s/input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(sample_cats, cats_hist_filename, horizontal=True, title="Input Sample Categories", ylabel="Category", xlabel="Count")
 
@@ -69,7 +69,7 @@ class WriteReport_Default(WriteReport):
         figure(cats_hist_filename, width=0.75, caption="Distribution of input sample categories")
 
         # Preprocessing
-        proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in open(GC.PROCESSED_CATEGORIES)}
+        proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.PROCESSED_CATEGORIES)}
 
         ## make processed sequence lengths figure
         proc_seq_lengths = GC.seq_lengths_fasta(GC.PROCESSED_SEQS)
@@ -78,10 +78,10 @@ class WriteReport_Default(WriteReport):
 
         ## make processed sample times figure
         proc_dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.PROCESSED_TIMES)}
-        for l in open(GC.PROCESSED_OUTGROUPS):
+        for l in GC.read_file(GC.PROCESSED_OUTGROUPS):
             if l.strip() in proc_dates_vireport:
                 del proc_dates_vireport[l.strip()]
-        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in open(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
+        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in GC.read_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
         if len(proc_dates) % 2 == 0:
             med_proc_date = GC.days_to_date((GC.date_to_days(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_days(proc_dates[int(len(proc_dates)/2)-1])) / 2)
         else:
@@ -91,7 +91,7 @@ class WriteReport_Default(WriteReport):
         GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## make processed categories figure
-        proc_sample_cats = sorted(id_to_cat[l[1:].strip()] for l in open(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+        proc_sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
         proc_cats_hist_filename = '%s/processed_input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(proc_sample_cats, proc_cats_hist_filename, horizontal=True, title="Processed Sample Categories", ylabel="Category", xlabel="Count")
 
@@ -116,21 +116,22 @@ class WriteReport_Default(WriteReport):
         msa_num_unique = len(set(msa.values()))
 
         ## make pairwise distances figure
-        dists_seq = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
+        dists_seq = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
         dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
         msa_position_entropies_filename = '%s/%s.entropies.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
-        f = open(msa_position_entropies_filename, 'w')
+        if GC.GZIP_OUTPUT:
+            msa_position_entropies_filename += '.gz'
+        out_lines = list()
         for v in msa_position_entropies:
             if abs(v) < ZERO_THRESHOLD:
-                f.write('0')
+                out_lines.append('0')
             else:
-                f.write(str(v))
-            f.write('\n')
-        f.close()
+                out_lines.append(str(v))
+        GC.write_file('\n'.join(out_lines), msa_position_entropies_filename)
         msa_position_entropies_q1 = quantile(msa_position_entropies, 0.25)
         msa_position_entropies_q3 = quantile(msa_position_entropies, 0.75)
         msa_entropy_manhattan_ythresh = msa_position_entropies_q3 + 1.5*(msa_position_entropies_q3-msa_position_entropies_q1)
@@ -145,14 +146,15 @@ class WriteReport_Default(WriteReport):
         ## make Manhattan plot of coverage
         msa_position_coverage = GC.msa_coverage(msa)
         msa_position_coverage_filename = '%s/%s.coverage.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
-        f = open(msa_position_coverage_filename, 'w')
+        if GC.GZIP_OUTPUT:
+            msa_position_coverage_filename += '.gz'
+        out_lines = list()
         for v in msa_position_coverage:
             if abs(v) < ZERO_THRESHOLD:
-                f.write('0')
+                out_lines.append('0')
             else:
-                f.write(str(v))
-            f.write('\n')
-        f.close()
+                out_lines.append(str(v))
+        GC.write_file('\n'.join(out_lines), msa_position_coverage_filename)
         msa_coverage_manhattan_filename = '%s/alignment_coverage.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_coverage, msa_coverage_manhattan_filename, dot_size=8, title="Alignment Position Coverage", xlabel="Position of Multiple Sequence Alignment", ylabel="Proportion Non-Gap")
 
@@ -196,7 +198,7 @@ class WriteReport_Default(WriteReport):
         GC.color_internal(tree_mut)
         tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
         tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
-        dists_tree = [float(l.split(',')[2]) for l in open(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
+        dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
         dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 

@@ -202,7 +202,9 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     outgroups = {l.strip() for l in read_file(outgroups_filename)}
-    out_filename = '%s.no_outgroup.%s' % ('.'.join(seqs_filename.split('.')[:-1]), seqs_filename.split('.')[-1])
+    out_filename = '%s.no_outgroup.%s' % ('.'.join(rstrip_gz(seqs_filename).split('.')[:-1]), rstrip_gz(seqs_filename).split('.')[-1])
+    if GZIP_OUTPUT:
+        out_filename += '.gz'
     seqs = read_fasta(seqs_filename)
     for o in outgroups:
         if o in seqs:
@@ -233,10 +235,12 @@ def remove_outgroups_newick(tree_filename, outgroups_filename):
         raise ValueError("Invalid tree file: %s" % tree_filename)
     outgroups = {l.strip() for l in read_file(outgroups_filename)}
     tree = read_tree_newick(tree_filename)
-    out_filename = '%s.no_outgroup.%s' % ('.'.join(tree_filename.split('.')[:-1]), tree_filename.split('.')[-1])
+    out_filename = '%s.no_outgroup.%s' % ('.'.join(rstrip_gz(tree_filename).split('.')[:-1]), rstrip_gz(tree_filename).split('.')[-1])
+    if GZIP_OUTPUT:
+        out_filename += '.gz'
     tree_no_og = tree.extract_tree_without(outgroups)
     tree_no_og.root.edge_length = None
-    write_file('%s\n' % tree_no_og.newick(), out_filename)
+    write_file('%s\n' % tree_no_og.newick().lstrip('[&R] '), out_filename)
     return out_filename
 
 # read transmission clusters in the TreeCluster format and return (clusters, singletons)
