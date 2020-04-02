@@ -6,7 +6,7 @@ from MultipleSequenceAlignment import MultipleSequenceAlignment
 import ViReport_GlobalContext as GC
 from os import makedirs
 from os.path import isfile
-from subprocess import call
+from subprocess import check_output
 
 class MultipleSequenceAlignment_MUSCLE(MultipleSequenceAlignment):
     def init():
@@ -31,7 +31,7 @@ class MultipleSequenceAlignment_MUSCLE(MultipleSequenceAlignment):
         else:
             makedirs(muscle_dir, exist_ok=True)
             log_filename = '%s/log.txt' % muscle_dir
-            command = ['muscle', '-quiet', '-in', seqs_filename, '-out', out_filename, '-log', log_filename]
+            command = ['muscle', '-quiet', '-log', log_filename]
             f = open('%s/command.txt' % muscle_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-            call(command)
+            GC.write_file(check_output(command, input='\n'.join(GC.read_file(seqs_filename)).encode()).decode(), out_filename)
         return out_filename

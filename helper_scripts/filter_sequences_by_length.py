@@ -22,10 +22,11 @@ if __name__ == "__main__":
         lines = [l.strip() for l in gopen(args.input).read().decode().strip().splitlines()]
     else:
         lines = [l.strip() for l in open(args.input).read().strip().splitlines()]
+    GZIP_OUT = False
     if args.output == 'stdout':
         out = stdout
     elif args.output.lower().endswith('.gz'):
-        out = gopen(args.output, 'wb', 9)
+        out = gopen(args.output, 'wb', 9); GZIP_OUT = True
     else:
         out = open(args.output, 'w')
 
@@ -36,7 +37,11 @@ if __name__ == "__main__":
             continue
         if l[0] == '>':
             if ID is not None and args.min_length <= len(seq) <= args.max_length:
-                out.write(ID); out.write('\n'); out.write(seq); out.write('\n')
+                curr = "%s\n%s\n" % (ID, seq)
+                if GZIP_OUT:
+                    out.write(curr.encode())
+                else:
+                    out.write(curr)
             ID = l.strip(); seq = ''
         else:
             if args.keep_gaps:
@@ -44,4 +49,8 @@ if __name__ == "__main__":
             else:
                 seq += l.strip().replace('-','')
     if ID is not None and args.min_length <= len(seq) <= args.max_length:
-        out.write(ID); out.write('\n'); out.write(seq); out.write('\n'); out.close()
+        curr = "%s\n%s\n" % (ID, seq)
+        if GZIP_OUT:
+            out.write(curr.encode())
+        else:
+            out.write(curr)

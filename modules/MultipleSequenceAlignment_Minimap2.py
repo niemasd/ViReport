@@ -25,7 +25,9 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
         if not isfile(seqs_filename):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         minimap2_dir = '%s/Minimap2' % GC.OUT_DIR_TMPFILES
-        out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(seqs_filename.split('/')[-1].split('.')[:-1]))
+        out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.rstrip_gz(seqs_filename.split('/')[-1]).split('.')[:-1]))
+        if GC.GZIP_OUTPUT:
+            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
@@ -61,8 +63,8 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
             command += [ref_filename, seqs_filename]
             f = open('%s/command.txt' % minimap2_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stderr=f_stderr); f_stderr.close()
-            out = open(out_filename, 'w')
-            out.write(found_ref_id); out.write('\n'); out.write(ref_seq); out.write('\n') # write ref to output alignment
+            out_lines = list()
+            out_lines += [found_ref_id, ref_seq] # write ref to output alignment
             for line in open(sam_filename):
                 if line[0] == '@':
                     continue
@@ -75,21 +77,22 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
                 cigar = parts[5].strip()
                 seq = parts[9]
                 edits = GC.parse_cigar(cigar)
-                out.write('>'); out.write(ID); out.write('\n')
+                out_lines.append('>%s' % ID)
+                out_seq = ''
                 if ref_ind > 0:
-                    out.write('-'*ref_ind) # write gaps before alignment
+                    out_seq = '-'*ref_ind # write gaps before alignment
                 ind = 0; seq_len = ref_ind
                 for e, e_len in edits:
                     if e in {'M','=','X'}: # (mis)match
-                        out.write(seq[ind:ind+e_len]); ind += e_len; seq_len += e_len
+                        out_seq += seq[ind:ind+e_len]; ind += e_len; seq_len += e_len
                     elif e == 'D':         # deletion (gap in query)
-                        out.write('-'*e_len); seq_len += e_len
+                        out_seq += '-'*e_len; seq_len += e_len
                     elif e == 'I':         # insertion (gap in reference)
                         ind += e_len
                     elif e in {'S','H'}:   # starting/ending segment of query not in reference (i.e., span of insertions)
                         ind += e_len
                 if seq_len < len(ref_seq):
-                    out.write('-'*(len(ref_seq)-seq_len)) # write gaps after alignment
-                out.write('\n')
-            out.close()
+                    out_seq += '-'*(len(ref_seq)-seq_len) # write gaps after alignment
+                out_lines.append(out_seq)
+            GC.write_file('\n'.join(out_lines), out_filename)
         return out_filename

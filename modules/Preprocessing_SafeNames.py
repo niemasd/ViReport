@@ -26,35 +26,37 @@ class Preprocessing_SafeNames(Preprocessing):
         if not isfile(sample_times_filename):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         out_seqs_filename = '%s/sequences_safe.fas' % GC.OUT_DIR_OUTFILES
+        if GC.GZIP_OUTPUT:
+            out_seqs_filename += '.gz'
         out_times_filename = '%s/times_safe.txt' % GC.OUT_DIR_OUTFILES
+        if GC.GZIP_OUTPUT:
+            out_times_filename += '.gz'
         if outgroups_filename is None:
             out_outgroups_filename = None
         else:
             if not isfile(outgroups_filename):
                 raise ValueError("Invalid outgroups list file: %s" % outgroups_filename)
             out_outgroups_filename = '%s/outgroups_safe.txt' % GC.OUT_DIR_OUTFILES
+            if GC.GZIP_OUTPUT:
+                out_outgroups_filename += '.gz'
         if categories_filename is None:
             out_categories_filename is None
         else:
             if not isfile(categories_filename):
                 raise ValueError("Invalid sample categories file: %s" % categories_filename)
             out_categories_filename = '%s/categories_safe.txt' % GC.OUT_DIR_OUTFILES
+            if GC.GZIP_OUTPUT:
+                out_categories_filename += '.gz'
 
         # output safe sequences
         if isfile(out_seqs_filename) or isfile('%s.gz' % out_seqs_filename):
             GC.SELECTED['Logging'].writeln("Safename sequences exist. Skipping recomputation.")
         else:
-            f = open(out_seqs_filename, 'w')
-            for line in open(seqs_filename):
-                l = line.strip()
-                if len(l) == 0:
-                    continue
-                elif l[0] == '>':
-                    f.write('>'); f.write(GC.safe(l[1:]))
-                else:
-                    f.write(l)
-                f.write('\n')
-            f.close()
+            lines = GC.read_file(seqs_filename)
+            for i in range(len(lines)):
+                if lines[i].startswith('>'):
+                    lines[i] = ">%s" % GC.safe(lines[i][1:])
+            GC.write_file('\n'.join(lines), out_seqs_filename)
         if ref_id is None:
             out_ref_id = None
         else:
@@ -64,38 +66,23 @@ class Preprocessing_SafeNames(Preprocessing):
         if isfile(out_times_filename) or isfile('%s.gz' % out_times_filename):
             GC.SELECTED['Logging'].writeln("Safename sample times exist. Skipping recomputation.")
         else:
-            f = open(out_times_filename, 'w')
-            for line in open(sample_times_filename):
-                parts = [v.strip() for v in line.strip().split('\t')]
-                if len(parts) == 2:
-                    f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1]); f.write('\n')
-                else:
-                    raise ValueError("Invalid sample times file: %s" % sample_times_filename)
-            f.close()
+            lines = [l.strip().split('\t') for l in GC.read_file(sample_times_filename)]
+            GC.write_file('\n'.join('%s\t%s' % (GC.safe(u),t) for u,t in lines), out_times_filename)
 
         # output safe outgroup names
         if outgroups_filename is not None:
             if isfile(out_outgroups_filename) or isfile('%s.gz' % out_outgroups_filename):
                 GC.SELECTED['Logging'].writeln("Safename outgroups exist. Skipping recomputation.")
             else:
-                f = open(out_outgroups_filename, 'w')
-                for line in open(outgroups_filename):
-                    f.write(GC.safe(line.strip())); f.write('\n')
-                f.close()
+                GC.write_file('\n'.join(GC.safe(l.strip()) for l in GC.read_file(outgroups_filename)), out_outgroups_filename)
 
         # output safe categories
         if categories_filename is not None:
             if isfile(out_categories_filename) or isfile('%s.gz' % out_categories_filename):
                 GC.SELECTED['Logging'].writeln("Safename sample categories exist. Skipping recomputation.")
             else:
-                f = open(out_categories_filename, 'w')
-                for line in open(categories_filename):
-                    parts = [v.strip() for v in line.strip().split('\t')]
-                    if len(parts) == 2:
-                        f.write(GC.safe(parts[0])); f.write('\t'); f.write(parts[1]); f.write('\n')
-                    else:
-                        raise ValueError("Invalid sample categories file: %s" % categories_filename)
-                f.close()
+                lines = [l.strip().split('\t') for l in GC.read_file(categories_filename)]
+                GC.write_file('\n'.join('%s\t%s' % (GC.safe(u),c) for u,c in lines), out_categories_filename)
 
         # return output filenames
         return out_seqs_filename, out_ref_id, out_times_filename, out_outgroups_filename, out_categories_filename

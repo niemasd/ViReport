@@ -3,6 +3,7 @@
 Store global variables/functions to be accessible by all ViReport modules
 '''
 from datetime import datetime,timedelta
+from gzip import open as gopen
 from math import log2
 from matplotlib.ticker import MaxNLocator
 from os import walk
@@ -48,6 +49,25 @@ CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/V
 # return the current time as a string
 def get_time():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# rstrip Gzip extension
+def rstrip_gz(s):
+    return s.rstrip('.gz').rstrip('.GZ').rstrip('.Gz').rstrip('.gZ')
+
+# read a file and return the lines as a list of str
+def read_file(fn):
+    if fn.lower().endswith('.gz'):
+        return [l.strip() for l in gopen(fn).read().decode().strip().splitlines()]
+    else:
+        return [l.strip() for l in open(fn).read().strip().splitlines()]
+
+# write a str to a file
+def write_file(s, fn):
+    if fn.lower().endswith('.gz'):
+        f = gopen(fn, 'wb', 9); f.write(s.encode())
+    else:
+        f = open(fn, 'w'); f.write(s)
+    f.close()
 
 # get the filesize of a file or folder
 def filesize(p):
@@ -105,7 +125,7 @@ def predict_seq_type(filename, thresh=0.8):
     if not isfile(filename):
         raise ValueError("Invalid FASTA file: %s" % filename)
     count = dict()
-    for line in open(filename):
+    for line in read_file(filename):
         l = line.strip()
         if len(l) == 0 or l[0] == '>':
             continue
@@ -141,7 +161,7 @@ def days_to_date(days):
 
 # load ViReport sample times as a list of [ID, time] pairs
 def load_dates_ViReport(dates_filename):
-    return [[v.strip() for v in l.strip().split('\t')] for l in open(dates_filename) if len(l.strip()) != 0]
+    return [[v.strip() for v in l.strip().split('\t')] for l in read_file(dates_filename) if len(l.strip()) != 0]
 
 # read sample times in the ViReport format and return a single string in the LSD format
 def convert_dates_LSD(dates_filename):
@@ -162,7 +182,7 @@ def read_fasta(seqs_filename):
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     out = dict(); ID = None; seq = None
-    for line in open(seqs_filename):
+    for line in read_file(seqs_filename):
         l = line.strip()
         if len(l) == 0:
             continue
@@ -181,7 +201,7 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
         return seqs_filename
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
-    outgroups = {l.strip() for l in open(outgroups_filename).read().strip().splitlines()}
+    outgroups = {l.strip() for l in read_file(outgroups_filename)}
     out_filename = '%s.no_outgroup.%s' % ('.'.join(seqs_filename.split('.')[:-1]), seqs_filename.split('.')[-1])
     seqs = read_fasta(seqs_filename)
     for o in outgroups:
@@ -194,14 +214,15 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
         for i,c in enumerate(s.upper()):
             if c != '-' and c != 'N':
                 valid_pos[i] = True
-    out = open(out_filename, 'w')
+    out_lines = list()
     for k in sorted(seqs.keys()):
-        out.write('>'); out.write(k); out.write('\n')
+        out_lines.append('>%s' % k)
+        seq = ''
         for i,c in enumerate(seqs[k].upper()):
             if valid_pos[i]:
-                out.write(c)
-        out.write('\n')
-    out.close()
+                seq += c
+        out_lines.append(seq)
+    write_file('\n'.join(out_lines), out_filename)
     return out_filename
 
 # remove outgroups from a Newick tree
@@ -210,12 +231,12 @@ def remove_outgroups_newick(tree_filename, outgroups_filename):
         return tree_filename
     if not isfile(tree_filename):
         raise ValueError("Invalid tree file: %s" % tree_filename)
-    outgroups = {l.strip() for l in open(outgroups_filename).read().strip().splitlines()}
+    outgroups = {l.strip() for l in read_file(outgroups_filename)}
     tree = read_tree_newick(tree_filename)
     out_filename = '%s.no_outgroup.%s' % ('.'.join(tree_filename.split('.')[:-1]), tree_filename.split('.')[-1])
     tree_no_og = tree.extract_tree_without(outgroups)
     tree_no_og.root.edge_length = None
-    out = open(out_filename, 'w'); out.write(tree_no_og.newick()); out.write('\n'); out.close()
+    write_file('%s\n' % tree_no_og.newick(), out_filename)
     return out_filename
 
 # read transmission clusters in the TreeCluster format and return (clusters, singletons)
@@ -223,7 +244,7 @@ def read_transmission_clusters(clusters_filename):
     if not isfile(clusters_filename):
         raise ValueError("Invalid transmission clustering file: %s" % clusters_filename)
     clusters = dict()
-    for line in open(clusters_filename):
+    for line in read_file(clusters_filename):
         if line.startswith('SequenceName\t'):
             continue
         u,c = [v.strip() for v in line.strip().split('\t')]
@@ -240,14 +261,14 @@ def read_transmission_clusters(clusters_filename):
 def num_seqs_fasta(seqs_filename):
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
-    return sum(l.startswith('>') for l in open(seqs_filename))
+    return sum(l.startswith('>') for l in read_file(seqs_filename))
 
 # return the lengths of the sequences in a FASTA file
 def seq_lengths_fasta(seqs_filename):
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     out = list(); curr = None
-    for line in open(seqs_filename):
+    for line in read_file(seqs_filename):
         l = line.strip()
         if len(l) == 0:
             continue
