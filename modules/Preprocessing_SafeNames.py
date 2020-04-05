@@ -40,7 +40,7 @@ class Preprocessing_SafeNames(Preprocessing):
             if GC.GZIP_OUTPUT:
                 out_outgroups_filename += '.gz'
         if categories_filename is None:
-            out_categories_filename is None
+            out_categories_filename = None
         else:
             if not isfile(categories_filename):
                 raise ValueError("Invalid sample categories file: %s" % categories_filename)
