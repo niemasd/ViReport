@@ -197,7 +197,10 @@ class WriteReport_Default(WriteReport):
                 node.color = pal_mut[proc_id_to_cat[node.label]]
         GC.color_internal(tree_mut)
         tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
-        tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
+        try:
+            tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
+        except:
+            tree_mut_viz_filename = None
         dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
         dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
@@ -210,7 +213,10 @@ class WriteReport_Default(WriteReport):
         write(" The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
         write(" and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
         write(" with a standard deviation of %s." % GC.num_str(std(dists_tree)))
-        figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
+        if tree_mut_viz_filename is None:
+            write(" The tree was too large to draw.")
+        else:
+            figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
         figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
         # Phylogenetic Dating
@@ -237,7 +243,10 @@ class WriteReport_Default(WriteReport):
         tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
         tmrca_year = int(tmrca_date.split('-')[0])
         tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
-        tree_time.draw(show_labels=True, handles=handles_time, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
+        try:
+            tree_time.draw(show_labels=True, handles=handles_time, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
+        except:
+            tree_time_viz_filename = None
 
         ## write section
         section("Phylogenetic Dating")
@@ -245,7 +254,10 @@ class WriteReport_Default(WriteReport):
         write(" The height of the dated tree was %s days," % GC.num_str(tree_time_height))
         write(" so given that the most recent sample was collected on %s," % proc_dates[-1])
         write(" the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
-        figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
+        if tree_time_viz_filename is None:
+            write(" The tree was too large to draw.")
+        else:
+            figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
 
         # Ancestral Sequence Reconstruction
         section("Ancestral Sequence Reconstruction")
