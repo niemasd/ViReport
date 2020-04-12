@@ -110,7 +110,7 @@ RUN wget -qO- "https://github.com/Cibiv/IQ-TREE/releases/download/v1.6.12/iqtree
 RUN wget -q "https://github.com/uym2/LogDate/archive/master.zip" && \
     unzip -q master.zip && \
     mv LogDate-master/Software /usr/local/bin/LogDate && \
-    ln -s /usr/local/bin/LogDate/launch_LogDate.py /usr/local/bin/launch_LogDate.py && \
+    ln -s /usr/local/bin/LogDate/launch_LogDate.py /usr/local/bin/LogDate.py && \
     rm -rf LogDate-master master.zip /usr/local/bin/LogDate/dendropy/test
 
 # install LSD2
