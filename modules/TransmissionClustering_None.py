@@ -4,9 +4,6 @@ Implementation of the "TransmissionClustering" module that just doesn't perform 
 '''
 from TransmissionClustering import TransmissionClustering
 import ViReport_GlobalContext as GC
-from os import makedirs
-from os.path import isfile
-from subprocess import call
 
 class TransmissionClustering_None(TransmissionClustering):
     def init():
