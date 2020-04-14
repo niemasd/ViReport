@@ -86,7 +86,6 @@ class Driver_Default(Driver):
         # run preprocessing
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Preprocessing'].__name__))
         GC.PROCESSED_SEQS, GC.PROCESSED_REF_ID, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS, GC.PROCESSED_CATEGORIES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_REF_ID, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS, GC.INPUT_CATEGORIES)
-        GC.SEQ_TYPE = GC.predict_seq_type(GC.PROCESSED_SEQS)
         LOG.writeln("[%s] Preprocessed sequences output to: %s" % (GC.get_time(), GC.PROCESSED_SEQS))
         if GC.PROCESSED_REF_ID is not None:
             LOG.writeln("[%s] Preprocessed reference ID: %s" % (GC.get_time(), GC.PROCESSED_REF_ID))

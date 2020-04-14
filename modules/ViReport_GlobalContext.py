@@ -121,28 +121,6 @@ def parse_cigar(s):
         out.append((let, int(num[::-1])))
     return out[::-1]
 
-# check if a FASTA file contains DNA or protein sequences
-def predict_seq_type(filename, thresh=0.8):
-    if not isfile(filename):
-        raise ValueError("Invalid FASTA file: %s" % filename)
-    count = dict()
-    for line in read_file(filename):
-        l = line.strip()
-        if len(l) == 0 or l[0] == '>':
-            continue
-        for c in l.upper():
-            if c == '-':
-                continue
-            if c not in count:
-                count[c] = 0
-            count[c] += 1
-    tot = sum(count[c] for c in count)
-    acgt = sum(count[c] for c in 'ACGT' if c in count)
-    if acgt > tot*thresh:
-        return 'DNA'
-    else:
-        return 'AA' # amino acid
-
 # convert a date (YYYY-MM-DD) to days since 0001-01-01
 def date_to_days(sample_time):
     num_dashes = sample_time.count('-')
@@ -360,14 +338,14 @@ def msa_shannon_entropy(msa):
     return [0 if len(p) == 0 else -sum(p[c]*log2(p[c]) for c in p) for p in freq]
 
 # compute the coverage of each position of an MSA
-def msa_coverage(msa, seq_type='DNA'):
+def msa_coverage(msa):
     tot = 0.; cov = None # cov[i] = number of sequences with non-gap (and non-N for DNA)
     for s in msa.values():
         tot += 1
         if cov is None:
             cov = [0 for _ in range(len(s))]
         for i,c in enumerate(s.upper()):
-            if (seq_type == 'DNA' and c not in {'-','N'}) or (seq_type == 'AA' and c not in {'-'}):
+            if c != '-' and c != 'N':
                 cov[i] += 1
     return [v/tot for v in cov]
 
