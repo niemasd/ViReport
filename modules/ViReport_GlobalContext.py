@@ -10,6 +10,7 @@ from os import walk
 from os.path import getsize,isdir,isfile,join
 from pdf2image import convert_from_path
 from PIL import Image
+from scipy.stats import linregress
 from seaborn import barplot,distplot
 from treeswift import read_tree_newick
 import matplotlib.pyplot as plt
@@ -176,6 +177,24 @@ def convert_dates_treedater(dates_filename):
         raise ValueError("Invalid dates file: %s" % dates_filename)
     times = load_dates_ViReport(dates_filename)
     return '\n'.join("%s,%s" % (u,date_to_days(t)) for u,t in times)
+
+# estimate mutation rate linear regression (strict molecular clock)
+def estimate_mutation_rate(rooted_tree_filename, dates_filename):
+    tree = read_tree_newick(rooted_tree_filename)
+    dates = dict()
+    for u,t in load_dates_ViReport(dates_filename):
+        dates[u] = date_to_days(t)
+    rtt = dict(); x = list(); y = list() # x is time, y is root-to-tip
+    for node in tree.traverse_preorder():
+        if node.is_root():
+            rtt[node] = 0
+        else:
+            rtt[node] = rtt[node.parent]
+            if node.edge_length is not None:
+                rtt[node] += node.edge_length
+        if node.is_leaf():
+            x.append(dates[node.label]); y.append(rtt[node])
+    return linregress(x,y)[0] # slope is mutations/site/time, x-intercept is tMRCA
 
 # read a FASTA file as a dictionary (keys = IDs, values = sequences)
 def read_fasta(seqs_filename):
