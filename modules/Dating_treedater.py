@@ -52,7 +52,7 @@ class Dating_treedater(Dating):
             mut_rate_est = GC.estimate_mutation_rate(rooted_tree_filename, sample_times_filename)
             rscript_filename = '%s/run_treedater.R' % treedater_dir
             f = open(rscript_filename, 'w')
-            f.write("require(treedater)\ntree <- ape::read.tree('%s')\nseqlen <- %d\ntimes_tab <- read.csv('%s', header=FALSE)\ntimes <- setNames(times_tab[,2], times_tab[,1])\nout <- dater(tree, times, seqlen, omega0=%f, numStartConditions=0" % (unzipped_intree_filename, msa_columns, treedater_times_filename, mut_rate_est))
+            f.write("require(treedater)\ntree <- ape::read.tree('%s')\nseqlen <- %d\ntimes_tab <- read.csv('%s', header=FALSE)\ntimes <- setNames(times_tab[,2], times_tab[,1])\nout <- dater(tree, times, seqlen, clock='uncorrelated', omega0=%f, numStartConditions=0" % (unzipped_intree_filename, msa_columns, treedater_times_filename, mut_rate_est))
             if GC.NUM_THREADS is not None:
                 f.write(", ncpu=%s" % str(GC.NUM_THREADS))
             f.write(")\nwrite.tree(out, '%s')\n" % tree_filename); f.close()
