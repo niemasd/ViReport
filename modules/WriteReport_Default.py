@@ -116,9 +116,10 @@ class WriteReport_Default(WriteReport):
         msa_num_unique = len(set(msa.values()))
 
         ## make pairwise distances figure
-        dists_seq = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
-        dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        if GC.PAIRWISE_DISTS_SEQS is not None:
+            dists_seq = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
+            dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
@@ -162,10 +163,11 @@ class WriteReport_Default(WriteReport):
         section("Multiple Sequence Alignment")
         write(GC.SELECTED['MultipleSequenceAlignment'].blurb())
         write(" There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment. " % (msa_columns, msa_num_invariant, msa_num_unique))
-        write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
-        write(" The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
-        write(" with a standard deviation of %s." % GC.num_str(std(dists_seq)))
-        figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
+        if GC.PAIRWISE_DISTS_SEQS is not None:
+            write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
+            write(" The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
+            write(" with a standard deviation of %s." % GC.num_str(std(dists_seq)))
+            figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
         write("Across the positions of the multiple sequence alignment,")
         write(" the minimum coverage was %s," % GC.num_str(min(v for v in msa_position_coverage)))
         write(" the maximum coverage was %s," % GC.num_str(max(v for v in msa_position_coverage)))
@@ -201,23 +203,25 @@ class WriteReport_Default(WriteReport):
             tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
         except:
             tree_mut_viz_filename = None
-        dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
-        dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+        if GC.PAIRWISE_DISTS_TREE is not None:
+            dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
+            dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
         ## write section
         section("Phylogenetic Inference")
         write(GC.SELECTED['PhylogeneticInference'].blurb())
         write(' '); write(GC.SELECTED['Rooting'].blurb())
-        write(' '); write(GC.SELECTED['PairwiseDistancesTree'].blurb())
-        write(" The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
-        write(" and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
-        write(" with a standard deviation of %s." % GC.num_str(std(dists_tree)))
         if tree_mut_viz_filename is None:
             write(" The tree was too large to draw.")
         else:
             figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
-        figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
+        if GC.PAIRWISE_DISTS_TREE is not None:
+            write(GC.SELECTED['PairwiseDistancesTree'].blurb())
+            write(" The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
+            write(" and the average pairwise phylogenetic distance was %s," % GC.num_str(mean(dists_tree)))
+            write(" with a standard deviation of %s." % GC.num_str(std(dists_tree)))
+            figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
         # Phylogenetic Dating
         ## compute values of dated phylogeny
