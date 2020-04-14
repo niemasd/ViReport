@@ -40,7 +40,7 @@ class Dating_LSD2(Dating):
             lsd_times_filename = '%s/times_lsd.txt' % lsd2_dir
             f = open(lsd_times_filename, 'w'); f.write(GC.convert_dates_LSD(sample_times_filename)); f.close()
             if rooted_tree_filename.lower().endswith('.gz'):
-                unzipped_filename = '%s/tree_unzipped.fas' % lsd2_dir
+                unzipped_filename = '%s/tree_unzipped.tre' % lsd2_dir
                 GC.write_file('\n'.join(GC.read_file(rooted_tree_filename)), unzipped_filename)
                 rooted_tree_filename = unzipped_filename
             command = ['lsd2', '-c', '-i', rooted_tree_filename, '-d', lsd_times_filename]

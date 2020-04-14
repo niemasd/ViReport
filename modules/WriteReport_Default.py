@@ -264,21 +264,22 @@ class WriteReport_Default(WriteReport):
         write(GC.SELECTED['AncestralSequenceReconstruction'].blurb())
 
         # Transmission Clustering
-        ## compute values of transmission clustering
-        clusters,singletons = GC.read_transmission_clusters(GC.TRANSMISSION_CLUSTERS)
-        cluster_sizes = [len(clusters[k]) for k in clusters]
-        cluster_sizes_hist_filename = '%s/cluster_sizes.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_histogram(cluster_sizes, cluster_sizes_hist_filename, hist=True, kde=False, title="Cluster Sizes", xlabel="Cluster Size", ylabel="Count")
+        if GC.TRANSMISSION_CLUSTERS is not None:
+            ## compute values of transmission clustering
+            clusters,singletons = GC.read_transmission_clusters(GC.TRANSMISSION_CLUSTERS)
+            cluster_sizes = [len(clusters[k]) for k in clusters]
+            cluster_sizes_hist_filename = '%s/cluster_sizes.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_histogram(cluster_sizes, cluster_sizes_hist_filename, hist=True, kde=False, title="Cluster Sizes", xlabel="Cluster Size", ylabel="Count")
 
-        ## write section
-        section("Transmission Clustering")
-        write(GC.SELECTED['TransmissionClustering'].blurb())
-        write(" The total number of singletons (i.e., non-clustered individuals) was %d," % len(singletons))
-        write(" and the total number of clusters (excluding singletons) was %d." % len(clusters))
-        write(" The average cluster size (excluding singletons) was %s," % GC.num_str(mean(cluster_sizes)))
-        write(" with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
-        write(" and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
-        figure(cluster_sizes_hist_filename, width=0.75, caption="Distribution of cluster sizes (excluding singletons)")
+            ## write section
+            section("Transmission Clustering")
+            write(GC.SELECTED['TransmissionClustering'].blurb())
+            write(" The total number of singletons (i.e., non-clustered individuals) was %d," % len(singletons))
+            write(" and the total number of clusters (excluding singletons) was %d." % len(clusters))
+            write(" The average cluster size (excluding singletons) was %s," % GC.num_str(mean(cluster_sizes)))
+            write(" with a standard deviation of %s," % GC.num_str(std(cluster_sizes)))
+            write(" and the maximum and minimum cluster sizes were %d and %d, respectively." % (max(cluster_sizes), min(cluster_sizes)))
+            figure(cluster_sizes_hist_filename, width=0.75, caption="Distribution of cluster sizes (excluding singletons)")
 
         # Citations
         section("Citations")
