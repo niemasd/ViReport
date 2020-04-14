@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 '''
-Implementation of the "TransmissionClustering" module that just doesn't perform transmission clustering
+Implementation of the "TransmissionClustering" module that does nothing
 '''
 from TransmissionClustering import TransmissionClustering
 import ViReport_GlobalContext as GC
@@ -13,7 +13,7 @@ class TransmissionClustering_None(TransmissionClustering):
         pass
 
     def cite():
-        return GC.CITATION_TREEN93
+        return GC.CITATION_VIREPORT
 
     def blurb():
         return "Transmission clustering was not performed."

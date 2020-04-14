@@ -260,8 +260,9 @@ class WriteReport_Default(WriteReport):
             figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
 
         # Ancestral Sequence Reconstruction
-        section("Ancestral Sequence Reconstruction")
-        write(GC.SELECTED['AncestralSequenceReconstruction'].blurb())
+        if GC.ANCESTRAL_SEQS is not None:
+            section("Ancestral Sequence Reconstruction")
+            write(GC.SELECTED['AncestralSequenceReconstruction'].blurb())
 
         # Transmission Clustering
         if GC.TRANSMISSION_CLUSTERS is not None:
