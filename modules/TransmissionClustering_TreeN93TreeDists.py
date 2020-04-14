@@ -10,7 +10,8 @@ from subprocess import call
 
 class TransmissionClustering_TreeN93TreeDists(TransmissionClustering):
     def init():
-        pass
+        if GC.SELECTED['PairwiseDistancesTree'].__name__ == 'PairwiseDistancesTree_None':
+            raise ValueError("TransmissionClustering_TreeN93TreeDists cannot run with PairwiseDistancesTree_None")
 
     def finalize():
         pass
