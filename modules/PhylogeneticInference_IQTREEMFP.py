@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 '''
-Implementation of the "PhylogeneticInference" module using IQ-TREE with GTR + invariable sites + FreeRate model of rate heterogeneity across sites
+Implementation of the "PhylogeneticInference" module using IQ-TREE with ModelFinder Plus
 '''
 from PhylogeneticInference import PhylogeneticInference
 import ViReport_GlobalContext as GC
@@ -10,7 +10,7 @@ from os.path import isfile
 from shutil import move
 from subprocess import check_output
 
-class PhylogeneticInference_IQTREE(PhylogeneticInference):
+class PhylogeneticInference_IQTREEMFP(PhylogeneticInference):
     def init():
         pass
 
@@ -18,10 +18,10 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
         pass
 
     def cite():
-        return GC.CITATION_IQTREE
+        return [GC.CITATION_IQTREE, GC.CITATION_IQTREE_MFP]
 
     def blurb():
-        return "A maximum-likelihood phylogeny was inferred under the General Time-Reversible (GTR) model (Tavare, 1986) and under the FreeRate model of rate heterogeneity across sites (Soubrier et al., 2012) with sites allowed to be invariable using IQ-TREE (Nguyen et al., 2015)."
+        return "A maximum-likelihood phylogeny was inferred using IQ-TREE (Nguyen et al., 2015) in ModelFinder Plus mode (Kalyaanamoorthy et al., 2017)."
 
     def infer_phylogeny(aln_filename):
         if not isfile(aln_filename):
@@ -38,7 +38,7 @@ class PhylogeneticInference_IQTREE(PhylogeneticInference):
                 unzipped_filename = '%s/aln_unzipped.fas' % iqtree_dir
                 GC.write_file('\n'.join(GC.read_file(aln_filename)), unzipped_filename)
                 aln_filename = unzipped_filename
-            command = ['iqtree', '-m', 'GTR+I+R', '-s', aln_filename, '-nt']
+            command = ['iqtree', '-m', 'MFP', '-s', aln_filename, '-nt']
             if GC.NUM_THREADS is None:
                 command.append('AUTO')
             else:
