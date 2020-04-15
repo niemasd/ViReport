@@ -29,9 +29,6 @@ class WriteReport_Default(WriteReport):
         figure = GC.SELECTED['ReportFormat'].figure
         bullets = GC.SELECTED['ReportFormat'].bullets
 
-        # Input Dataset
-        id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.INPUT_CATEGORIES)}
-
         ## make input sequence lengths figure
         seq_lengths = GC.seq_lengths_fasta(GC.INPUT_SEQS)
         seq_lengths_hist_filename = '%s/input_sequence_lengths.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -52,9 +49,11 @@ class WriteReport_Default(WriteReport):
         GC.create_barplot(dates, dates_hist_filename, all_labels=all_dates, rotate_labels=90, title="Input Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## make input categories figure
-        sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
-        cats_hist_filename = '%s/input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(sample_cats, cats_hist_filename, horizontal=True, title="Input Sample Categories", ylabel="Category", xlabel="Count")
+        if GC.INPUT_CATEGORIES is not None:
+            id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.INPUT_CATEGORIES)}
+            sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+            cats_hist_filename = '%s/input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_barplot(sample_cats, cats_hist_filename, horizontal=True, title="Input Sample Categories", ylabel="Category", xlabel="Count")
 
         ## write section
         section("Input Dataset")
@@ -66,10 +65,8 @@ class WriteReport_Default(WriteReport):
         write(" and the most recent sample date was %s." % dates[-1])
         figure(seq_lengths_hist_filename, width=0.75, caption="Distribution of input sequence lengths")
         figure(dates_hist_filename, width=0.75, caption="Distribution of input sample dates")
-        figure(cats_hist_filename, width=0.75, caption="Distribution of input sample categories")
-
-        # Preprocessing
-        proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.PROCESSED_CATEGORIES)}
+        if GC.INPUT_CATEGORIES is not None:
+            figure(cats_hist_filename, width=0.75, caption="Distribution of input sample categories")
 
         ## make processed sequence lengths figure
         proc_seq_lengths = GC.seq_lengths_fasta(GC.PROCESSED_SEQS)
@@ -91,9 +88,13 @@ class WriteReport_Default(WriteReport):
         GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
 
         ## make processed categories figure
-        proc_sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
-        proc_cats_hist_filename = '%s/processed_input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
-        GC.create_barplot(proc_sample_cats, proc_cats_hist_filename, horizontal=True, title="Processed Sample Categories", ylabel="Category", xlabel="Count")
+        if GC.PROCESSED_CATEGORIES is None:
+            proc_id_to_cat = dict()
+        else:
+            proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.PROCESSED_CATEGORIES)}
+            proc_sample_cats = sorted(proc_id_to_cat[l[1:].strip()] for l in GC.read_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_id_to_cat)
+            proc_cats_hist_filename = '%s/processed_input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_barplot(proc_sample_cats, proc_cats_hist_filename, horizontal=True, title="Processed Sample Categories", ylabel="Category", xlabel="Count")
 
         ## write section
         section("Preprocessed Dataset")
@@ -106,7 +107,8 @@ class WriteReport_Default(WriteReport):
         write(" and the most recent sample date was %s." % proc_dates[-1])
         figure(proc_seq_lengths_hist_filename, width=0.75, caption="Distribution of preprocessed sequence lengths")
         figure(proc_dates_hist_filename, width=0.75, caption="Distribution of preprocessed sample dates")
-        figure(proc_cats_hist_filename, width=0.75, caption="Distribution of preprocessed sample categories")
+        if GC.PROCESSED_CATEGORIES is not None:
+            figure(proc_cats_hist_filename, width=0.75, caption="Distribution of preprocessed sample categories")
 
         # Multiple Sequence Alignment
         ## compute values of MSA
