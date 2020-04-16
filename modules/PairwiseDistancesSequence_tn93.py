@@ -40,6 +40,6 @@ class PairwiseDistancesSequence_tn93(PairwiseDistancesSequence):
             if GC.GZIP_OUTPUT:
                 GC.write_file(check_output(command, input='\n'.join(GC.read_file(aln_filename)).encode(), stderr=log).decode(), out_filename)
             else:
-                check_output(command)
+                check_output(command, stderr=log)
             log.close()
         return out_filename
