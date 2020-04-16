@@ -34,6 +34,12 @@ class PairwiseDistancesSequence_tn93(PairwiseDistancesSequence):
             makedirs(tn93_dir, exist_ok=True)
             log = open('%s/log.txt' % tn93_dir, 'w')
             command = ['tn93', '-t', '1', '-l', '1', '-q']
+            if not GC.GZIP_OUTPUT:
+                command += ['-o', out_filename, aln_filename]
             f = open('%s/command.txt' % tn93_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-            GC.write_file(check_output(command, input='\n'.join(GC.read_file(aln_filename)).encode(), stderr=log).decode(), out_filename); log.close()
+            if GC.GZIP_OUTPUT:
+                GC.write_file(check_output(command, input='\n'.join(GC.read_file(aln_filename)).encode(), stderr=log).decode(), out_filename)
+            else:
+                check_output(command)
+            log.close()
         return out_filename
