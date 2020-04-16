@@ -23,7 +23,7 @@ DEFAULT = {
     'MultipleSequenceAlignment': 'MAFFT',
     'PairwiseDistancesSequence': 'tn93',
     'PairwiseDistancesTree': 'TreeSwift',
-    'PhylogeneticInference': 'IQTREE',
+    'PhylogeneticInference': 'IQTREEMFP',
     'Preprocessing': 'SafeNames',
     'ReportFormat': 'All',
     'Rooting': 'MinVar',

@@ -36,9 +36,10 @@ class WriteReport_Default(WriteReport):
 
         ## make input sample times figure
         dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.INPUT_TIMES)}
-        for l in GC.read_file(GC.INPUT_OUTGROUPS):
-            if l.strip() in dates_vireport:
-                del dates_vireport[l.strip()]
+        if GC.INPUT_OUTGROUPS is not None:
+            for l in GC.read_file(GC.INPUT_OUTGROUPS):
+                if l.strip() in dates_vireport:
+                    del dates_vireport[l.strip()]
         dates = sorted(dates_vireport[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
         if len(dates) % 2 == 0:
             med_date = GC.days_to_date((GC.date_to_days(dates[int(len(dates)/2)]) + GC.date_to_days(dates[int(len(dates)/2)-1])) / 2)
@@ -75,9 +76,10 @@ class WriteReport_Default(WriteReport):
 
         ## make processed sample times figure
         proc_dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.PROCESSED_TIMES)}
-        for l in GC.read_file(GC.PROCESSED_OUTGROUPS):
-            if l.strip() in proc_dates_vireport:
-                del proc_dates_vireport[l.strip()]
+        if GC.PROCESSED_OUTGROUPS is not None:
+            for l in GC.read_file(GC.PROCESSED_OUTGROUPS):
+                if l.strip() in proc_dates_vireport:
+                    del proc_dates_vireport[l.strip()]
         proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in GC.read_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
         if len(proc_dates) % 2 == 0:
             med_proc_date = GC.days_to_date((GC.date_to_days(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_days(proc_dates[int(len(proc_dates)/2)-1])) / 2)
