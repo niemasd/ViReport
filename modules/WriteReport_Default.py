@@ -8,6 +8,7 @@ from matplotlib.patches import Patch
 from numpy import mean,quantile,std
 from os import makedirs
 from seaborn import color_palette
+from subprocess import call
 from treeswift import read_tree_newick
 ZERO_THRESHOLD = 0.0000001
 
@@ -28,6 +29,10 @@ class WriteReport_Default(WriteReport):
         close = GC.SELECTED['ReportFormat'].close
         figure = GC.SELECTED['ReportFormat'].figure
         bullets = GC.SELECTED['ReportFormat'].bullets
+        GC.OUT_DIR_REPORTFILES = "%s/report_files" % GC.OUT_DIR
+        makedirs(GC.OUT_DIR_REPORTFILES, exist_ok=True)
+        GC.OUT_DIR_REPORTFIGS = '%s/figs' % GC.OUT_DIR_REPORTFILES
+        makedirs(GC.OUT_DIR_REPORTFIGS, exist_ok=True)
 
         ## make input sequence lengths figure
         seq_lengths = GC.seq_lengths_fasta(GC.INPUT_SEQS)
@@ -128,15 +133,16 @@ class WriteReport_Default(WriteReport):
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
         msa_position_entropies_filename = '%s/%s.entropies.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
-        if GC.GZIP_OUTPUT:
-            msa_position_entropies_filename += '.gz'
-        out_lines = list()
+        out = open(msa_position_entropies_filename, 'w')
         for v in msa_position_entropies:
             if abs(v) < ZERO_THRESHOLD:
-                out_lines.append('0')
+                out.write('0\n')
             else:
-                out_lines.append(str(v))
-        GC.write_file('\n'.join(out_lines), msa_position_entropies_filename)
+                out.write(str(v)); out.write('\n')
+        out.close()
+        if GC.GZIP_OUTPUT:
+            call(GC.PIGZ_COMMAND + [msa_position_entropies_filename])
+            msa_position_entropies_filename += '.gz'
         msa_position_entropies_q1 = quantile(msa_position_entropies, 0.25)
         msa_position_entropies_q3 = quantile(msa_position_entropies, 0.75)
         msa_entropy_manhattan_ythresh = msa_position_entropies_q3 + 1.5*(msa_position_entropies_q3-msa_position_entropies_q1)
@@ -151,15 +157,16 @@ class WriteReport_Default(WriteReport):
         ## make Manhattan plot of coverage
         msa_position_coverage = GC.msa_coverage(msa)
         msa_position_coverage_filename = '%s/%s.coverage.txt' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.ALIGNMENT.split('/')[-1].split('.')[:-1]))
-        if GC.GZIP_OUTPUT:
-            msa_position_coverage_filename += '.gz'
-        out_lines = list()
+        out = open(msa_position_coverage_filename, 'w')
         for v in msa_position_coverage:
             if abs(v) < ZERO_THRESHOLD:
-                out_lines.append('0')
+                out.write('0\n')
             else:
-                out_lines.append(str(v))
-        GC.write_file('\n'.join(out_lines), msa_position_coverage_filename)
+                out.write(str(v)); out.write('\n')
+        out.close()
+        if GC.GZIP_OUTPUT:
+            call(GC.PIGZ_COMMAND + [msa_position_coverage_filename])
+            msa_position_coverage_filename += '.gz'
         msa_coverage_manhattan_filename = '%s/alignment_coverage.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_coverage, msa_coverage_manhattan_filename, dot_size=8, title="Alignment Position Coverage", xlabel="Position of Multiple Sequence Alignment", ylabel="Proportion Non-Gap")
 
