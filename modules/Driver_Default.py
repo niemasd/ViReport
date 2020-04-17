@@ -125,7 +125,6 @@ class Driver_Default(Driver):
             GC.ALIGNMENT_WITH_OUTGROUP += '.gz'
             GC.ALIGNMENT += '.gz'
         LOG.writeln("[%s] Multiple sequence alignment output to: %s" % (GC.get_time(), GC.ALIGNMENT))
-        exit()
 
         # compute pairwise sequence distances
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PairwiseDistancesSequence'].__name__))
