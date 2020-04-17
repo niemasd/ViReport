@@ -26,8 +26,6 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         minimap2_dir = '%s/Minimap2' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.rstrip_gz(seqs_filename.split('/')[-1]).split('.')[:-1]))
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
@@ -63,8 +61,8 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
             command += [ref_filename, seqs_filename]
             f = open('%s/command.txt' % minimap2_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stderr=f_stderr); f_stderr.close()
-            out_lines = list()
-            out_lines += [found_ref_id, ref_seq] # write ref to output alignment
+            out = open(out_filename, 'w')
+            out.write(found_ref_id); out.write('\n'); out.write(ref_seq); out.write('\n') # write ref to output alignment
             for line in open(sam_filename):
                 if line[0] == '@':
                     continue
@@ -77,7 +75,7 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
                 cigar = parts[5].strip()
                 seq = parts[9]
                 edits = GC.parse_cigar(cigar)
-                out_lines.append('>%s' % ID)
+                out.write('>'); out.write(ID); out.write('\n')
                 out_seq = ''
                 if ref_ind > 0:
                     out_seq = '-'*ref_ind # write gaps before alignment
@@ -93,6 +91,5 @@ class MultipleSequenceAlignment_Minimap2(MultipleSequenceAlignment):
                         ind += e_len
                 if seq_len < len(ref_seq):
                     out_seq += '-'*(len(ref_seq)-seq_len) # write gaps after alignment
-                out_lines.append(out_seq)
-            GC.write_file('\n'.join(out_lines), out_filename)
+                out.write(out_seq); out.write('\n')
         return out_filename

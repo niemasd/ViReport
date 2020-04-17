@@ -6,6 +6,7 @@ from Driver import Driver
 import ViReport_GlobalContext as GC
 from os import makedirs
 from os.path import isfile
+from subprocess import call
 from time import time
 
 def print_message():
@@ -33,6 +34,10 @@ class Driver_Default(Driver):
         # set things up
         global LOG; LOG = GC.SELECTED['Logging']
         GC.VIREPORT_START_TIME = time()
+        if GC.GZIP_OUTPUT:
+            GC.PIGZ_COMMAND = ['pigz', '-9']
+            if GC.NUM_THREADS is not None:
+                GC.PIGZ_COMMAND += ['-p', str(GC.NUM_THREADS)]
 
         # organize citations
         GC.CITATIONS = set()
@@ -86,6 +91,21 @@ class Driver_Default(Driver):
         # run preprocessing
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Preprocessing'].__name__))
         GC.PROCESSED_SEQS, GC.PROCESSED_REF_ID, GC.PROCESSED_TIMES, GC.PROCESSED_OUTGROUPS, GC.PROCESSED_CATEGORIES = GC.SELECTED['Preprocessing'].preprocess(GC.INPUT_SEQS, GC.INPUT_REF_ID, GC.INPUT_TIMES, GC.INPUT_OUTGROUPS, GC.INPUT_CATEGORIES)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing preprocessed sequence(s)..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.PROCESSED_SEQS])
+            GC.PROCESSED_SEQS += '.gz'
+            LOG.writeln("[%s] Compressing preprocessed sample times..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.PROCESSED_TIMES])
+            GC.PROCESSED_TIMES += '.gz'
+            if GC.PROCESSED_OUTGROUPS is not None:
+                LOG.writeln("[%s] Compressing preprocessed outgroups list..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.PROCESSED_OUTGROUPS])
+                GC.PROCESSED_OUTGROUPS += '.gz'
+            if GC.PROCESSED_CATEGORIES is not None:
+                LOG.writeln("[%s] Compressing preprocessed sample categories..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.PROCESSED_CATEGORIES])
+                GC.PROCESSED_CATEGORIES += '.gz'
         LOG.writeln("[%s] Preprocessed sequences output to: %s" % (GC.get_time(), GC.PROCESSED_SEQS))
         if GC.PROCESSED_REF_ID is not None:
             LOG.writeln("[%s] Preprocessed reference ID: %s" % (GC.get_time(), GC.PROCESSED_REF_ID))
@@ -99,7 +119,13 @@ class Driver_Default(Driver):
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['MultipleSequenceAlignment'].__name__))
         GC.ALIGNMENT_WITH_OUTGROUP = GC.SELECTED['MultipleSequenceAlignment'].align(GC.PROCESSED_SEQS, GC.PROCESSED_REF_ID)
         GC.ALIGNMENT = GC.remove_outgroups_fasta(GC.ALIGNMENT_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing multiple sequence alignment..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.ALIGNMENT_WITH_OUTGROUP, GC.ALIGNMENT])
+            GC.ALIGNMENT_WITH_OUTGROUP += '.gz'
+            GC.ALIGNMENT += '.gz'
         LOG.writeln("[%s] Multiple sequence alignment output to: %s" % (GC.get_time(), GC.ALIGNMENT))
+        exit()
 
         # compute pairwise sequence distances
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PairwiseDistancesSequence'].__name__))
@@ -131,6 +157,10 @@ class Driver_Default(Driver):
         # infer ancestral sequence(s)
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['AncestralSequenceReconstruction'].__name__))
         GC.ANCESTRAL_SEQS = GC.SELECTED['AncestralSequenceReconstruction'].reconstruct(GC.TREE_ROOTED, GC.ALIGNMENT)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing ancestral sequence(s)..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.ANCESTRAL_SEQS])
+            GC.ANCESTRAL_SEQS += '.gz'
         LOG.writeln("[%s] Ancestral sequence(s) output to: %s" % (GC.get_time(), GC.ANCESTRAL_SEQS))
 
         # perform transmission clustering

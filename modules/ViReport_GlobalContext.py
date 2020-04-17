@@ -66,8 +66,12 @@ def read_file(fn):
 def write_file(s, fn):
     if fn.lower().endswith('.gz'):
         f = gopen(fn, 'wb', 9); f.write(s.encode())
+        if s[-1] != '\n':
+            f.write('\n'.encode())
     else:
         f = open(fn, 'w'); f.write(s)
+        if s[-1] != '\n':
+            f.write('\n')
     f.close()
 
 # get the filesize of a file or folder
@@ -200,8 +204,6 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
     outgroups = {l.strip() for l in read_file(outgroups_filename)}
     out_filename = '%s.no_outgroup.%s' % ('.'.join(rstrip_gz(seqs_filename).split('.')[:-1]), rstrip_gz(seqs_filename).split('.')[-1])
-    if GZIP_OUTPUT:
-        out_filename += '.gz'
     seqs = read_fasta(seqs_filename)
     for o in outgroups:
         if o in seqs:

@@ -27,8 +27,6 @@ class MultipleSequenceAlignment_PRANK(MultipleSequenceAlignment):
             raise ValueError("Invalid sequence file: %s" % seqs_filename)
         prank_dir = '%s/PRANK' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.rstrip_gz(seqs_filename.split('/')[-1]).split('.')[:-1]))
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
@@ -41,5 +39,5 @@ class MultipleSequenceAlignment_PRANK(MultipleSequenceAlignment):
             command = ['prank', '-uselogs', '-d=%s' % seqs_filename, '-o=%s' % '%s/output' % prank_dir]
             f = open('%s/command.txt' % prank_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log); log.close()
-            GC.write_file('\n'.join(GC.read_file('%s/output.best.fas' % prank_dir)), out_filename)
+            move('%s/output.best.fas' % prank_dir, out_filename)
         return out_filename

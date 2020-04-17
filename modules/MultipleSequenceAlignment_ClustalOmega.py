@@ -6,6 +6,7 @@ from MultipleSequenceAlignment import MultipleSequenceAlignment
 import ViReport_GlobalContext as GC
 from os import makedirs
 from os.path import isfile
+from shutil import move
 from subprocess import check_output
 
 class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
@@ -27,15 +28,13 @@ class MultipleSequenceAlignment_ClustalOmega(MultipleSequenceAlignment):
         clustalo_dir = '%s/ClustalOmega' % GC.OUT_DIR_TMPFILES
         log_filename = '%s/log.txt' % clustalo_dir
         out_filename = '%s/%s.aln' % (GC.OUT_DIR_OUTFILES, '.'.join(GC.rstrip_gz(seqs_filename.split('/')[-1]).split('.')[:-1]))
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Multiple sequence alignment exists. Skipping recomputation.")
         else:
             makedirs(clustalo_dir, exist_ok=True)
-            command = ['clustalo', '-v', '-v', '--auto', '-i', '-', '-l', log_filename]
+            command = ['clustalo', '-v', '-v', '--auto', '-i', '-', '-l', log_filename, '-o', out_filename]
             if GC.NUM_THREADS is not None:
                 command.append('--threads=%d' % GC.NUM_THREADS)
             f = open('%s/command.txt' % clustalo_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-            GC.write_file(check_output(command, input='\n'.join(GC.read_file(seqs_filename)).encode()).decode(), out_filename)
+            check_output(command, input='\n'.join(GC.read_file(seqs_filename)).encode())
         return out_filename

@@ -31,7 +31,7 @@ class MultipleSequenceAlignment_MUSCLE(MultipleSequenceAlignment):
         else:
             makedirs(muscle_dir, exist_ok=True)
             log_filename = '%s/log.txt' % muscle_dir
-            command = ['muscle', '-quiet', '-log', log_filename]
+            command = ['muscle', '-quiet', '-log', log_filename, '-out', out_filename]
             f = open('%s/command.txt' % muscle_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-            GC.write_file(check_output(command, input='\n'.join(GC.read_file(seqs_filename)).encode()).decode(), out_filename)
+            check_output(command, input='\n'.join(GC.read_file(seqs_filename)).encode())
         return out_filename

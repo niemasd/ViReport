@@ -30,9 +30,7 @@ class AncestralSequenceReconstruction_TreeTime(AncestralSequenceReconstruction):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         treetime_dir = '%s/TreeTime_AncestralSequenceReconstruction' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/ancestral_sequences.fas' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
-        if isfile(out_filename):
+        if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Ancestral sequences exist. Skipping recomputation.")
         else:
             makedirs(treetime_dir, exist_ok=True)
@@ -52,5 +50,5 @@ class AncestralSequenceReconstruction_TreeTime(AncestralSequenceReconstruction):
             command = ['treetime', 'ancestral', '--aln', aln_filename, '--tree', tree_with_internal_labels_filename, '--outdir', treetime_dir]
             f = open('%s/command.txt' % treetime_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log); log.close()
-            GC.write_file('\n'.join(GC.read_file('%s/ancestral_sequences.fasta' % treetime_dir)), out_filename)
+            move('%s/ancestral_sequences.fasta' % treetime_dir, out_filename)
         return out_filename

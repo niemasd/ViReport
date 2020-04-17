@@ -26,27 +26,19 @@ class Preprocessing_SafeNames(Preprocessing):
         if not isfile(sample_times_filename):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         out_seqs_filename = '%s/sequences_safe.fas' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_seqs_filename += '.gz'
         out_times_filename = '%s/times_safe.txt' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_times_filename += '.gz'
         if outgroups_filename is None:
             out_outgroups_filename = None
         else:
             if not isfile(outgroups_filename):
                 raise ValueError("Invalid outgroups list file: %s" % outgroups_filename)
             out_outgroups_filename = '%s/outgroups_safe.txt' % GC.OUT_DIR_OUTFILES
-            if GC.GZIP_OUTPUT:
-                out_outgroups_filename += '.gz'
         if categories_filename is None:
             out_categories_filename = None
         else:
             if not isfile(categories_filename):
                 raise ValueError("Invalid sample categories file: %s" % categories_filename)
             out_categories_filename = '%s/categories_safe.txt' % GC.OUT_DIR_OUTFILES
-            if GC.GZIP_OUTPUT:
-                out_categories_filename += '.gz'
 
         # output safe sequences
         if isfile(out_seqs_filename) or isfile('%s.gz' % out_seqs_filename):
