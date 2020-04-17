@@ -28,8 +28,6 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
             raise ValueError("Invalid alignment file: %s" % aln_filename)
         raxmlng_dir = '%s/RAxML-NG' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/unrooted.tre' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Inferred phylogeny exists. Skipping recomputation.")
         else:
@@ -43,7 +41,7 @@ class PhylogeneticInference_RAxMLNG(PhylogeneticInference):
                 command += ['--threads', str(GC.NUM_THREADS)]
             f = open('%s/command.txt' % raxmlng_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             check_output(command)
-            GC.write_file('\n'.join(GC.read_file('%s.raxml.bestTree' % aln_filename)), out_filename)
+            move('%s.raxml.bestTree' % aln_filename, out_filename)
             for f in glob('%s.*' % aln_filename):
                 move(f, '%s/%s' % (raxmlng_dir, f.split('/')[-1]))
         return out_filename

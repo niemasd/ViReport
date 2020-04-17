@@ -235,8 +235,6 @@ def remove_outgroups_newick(tree_filename, outgroups_filename):
     outgroups = {l.strip() for l in read_file(outgroups_filename)}
     tree = read_tree_newick(tree_filename)
     out_filename = '%s.no_outgroup.%s' % ('.'.join(rstrip_gz(tree_filename).split('.')[:-1]), rstrip_gz(tree_filename).split('.')[-1])
-    if GZIP_OUTPUT:
-        out_filename += '.gz'
     tree_no_og = tree.extract_tree_without(outgroups)
     tree_no_og.root.edge_length = None
     write_file('%s\n' % tree_no_og.newick().lstrip('[&R] '), out_filename)

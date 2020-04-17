@@ -31,8 +31,6 @@ class Dating_treedater(Dating):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         treedater_dir = '%s/treedater' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Dated tree exists. Skipping recomputation.")
         else:
@@ -40,8 +38,6 @@ class Dating_treedater(Dating):
             log_file = open('%s/log.txt' % treedater_dir, 'w')
             warn_file = open('%s/warnings.txt' % treedater_dir, 'w')
             tree_filename = out_filename
-            if out_filename.lower().endswith('.gz'):
-                tree_filename = '%s/dated.tre' % treedater_dir
             treedater_times_filename = '%s/times_treedater.txt' % treedater_dir
             GC.write_file(GC.convert_dates_treedater(sample_times_filename), treedater_times_filename)
             msa = GC.read_fasta(GC.ALIGNMENT)
@@ -63,6 +59,4 @@ class Dating_treedater(Dating):
             f = open('%s/command.txt' % treedater_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             call(command, stdout=log_file, stderr=warn_file)
             log_file.close(); warn_file.close()
-            if out_filename.lower().endswith('.gz'):
-                GC.write_file('\n'.join(GC.read_file(tree_filename)), out_filename)
         return out_filename

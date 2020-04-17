@@ -32,8 +32,8 @@ class Driver_Default(Driver):
 
     def run(seqs_filename, ref_id, sample_times_filename, outgroups_filename, categories_filename):
         # set things up
-        global LOG; LOG = GC.SELECTED['Logging']
         GC.VIREPORT_START_TIME = time()
+        global LOG; LOG = GC.SELECTED['Logging']
         if GC.GZIP_OUTPUT:
             GC.PIGZ_COMMAND = ['pigz', '-9']
             if GC.NUM_THREADS is not None:
@@ -129,48 +129,79 @@ class Driver_Default(Driver):
         # compute pairwise sequence distances
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PairwiseDistancesSequence'].__name__))
         GC.PAIRWISE_DISTS_SEQS = GC.SELECTED['PairwiseDistancesSequence'].pairwise_distances(GC.ALIGNMENT)
-        LOG.writeln("[%s] Pairwise sequence distances output to: %s" % (GC.get_time(), GC.PAIRWISE_DISTS_SEQS))
+        if GC.PAIRWISE_DISTS_SEQS is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing multiple sequence alignment..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.PAIRWISE_DISTS_SEQS])
+                GC.PAIRWISE_DISTS_SEQS += '.gz'
+            LOG.writeln("[%s] Pairwise sequence distances output to: %s" % (GC.get_time(), GC.PAIRWISE_DISTS_SEQS))
 
         # infer a phylogeny
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PhylogeneticInference'].__name__))
         GC.TREE_UNROOTED_WITH_OUTGROUP = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT_WITH_OUTGROUP)
         GC.TREE_UNROOTED = GC.remove_outgroups_newick(GC.TREE_UNROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing (unrooted) phylogeny..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.TREE_UNROOTED_WITH_OUTGROUP, GC.TREE_UNROOTED])
+            GC.TREE_UNROOTED_WITH_OUTGROUP += '.gz'
+            GC.TREE_UNROOTED += '.gz'
         LOG.writeln("[%s] Inferred (unrooted) phylogeny output to: %s" % (GC.get_time(), GC.TREE_UNROOTED))
 
         # compute pairwise phylogenetic distances
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PairwiseDistancesTree'].__name__))
         GC.PAIRWISE_DISTS_TREE = GC.SELECTED['PairwiseDistancesTree'].pairwise_distances(GC.TREE_UNROOTED)
-        LOG.writeln("[%s] Pairwise phylogenetic distances output to: %s" % (GC.get_time(), GC.PAIRWISE_DISTS_TREE))
+        if GC.PAIRWISE_DISTS_TREE is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing pairwise phylogenetic distances..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.PAIRWISE_DISTS_TREE])
+                GC.PAIRWISE_DISTS_TREE += '.gz'
+            LOG.writeln("[%s] Pairwise phylogenetic distances output to: %s" % (GC.get_time(), GC.PAIRWISE_DISTS_TREE))
 
         # root the phylogeny
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Rooting'].__name__))
         GC.TREE_ROOTED_WITH_OUTGROUP = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED_WITH_OUTGROUP)
         GC.TREE_ROOTED = GC.remove_outgroups_newick(GC.TREE_ROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing rooted phylogeny..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.TREE_ROOTED_WITH_OUTGROUP, GC.TREE_ROOTED])
+            GC.TREE_ROOTED_WITH_OUTGROUP += '.gz'
+            GC.TREE_ROOTED += '.gz'
         LOG.writeln("[%s] Rooted phylogeny output to: %s" % (GC.get_time(), GC.TREE_ROOTED))
 
         # date the rooted phylogeny
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Dating'].__name__))
         GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
+        if GC.GZIP_OUTPUT:
+            LOG.writeln("[%s] Compressing dated phylogeny..." % GC.get_time())
+            call(GC.PIGZ_COMMAND + [GC.TREE_DATED])
+            GC.TREE_DATED += '.gz'
         LOG.writeln("[%s] Dated phylogeny output to: %s" % (GC.get_time(), GC.TREE_DATED))
 
         # infer ancestral sequence(s)
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['AncestralSequenceReconstruction'].__name__))
         GC.ANCESTRAL_SEQS = GC.SELECTED['AncestralSequenceReconstruction'].reconstruct(GC.TREE_ROOTED, GC.ALIGNMENT)
-        if GC.GZIP_OUTPUT:
-            LOG.writeln("[%s] Compressing ancestral sequence(s)..." % GC.get_time())
-            call(GC.PIGZ_COMMAND + [GC.ANCESTRAL_SEQS])
-            GC.ANCESTRAL_SEQS += '.gz'
-        LOG.writeln("[%s] Ancestral sequence(s) output to: %s" % (GC.get_time(), GC.ANCESTRAL_SEQS))
+        if GC.ANCESTRAL_SEQS is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing ancestral sequence(s)..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.ANCESTRAL_SEQS])
+                GC.ANCESTRAL_SEQS += '.gz'
+            LOG.writeln("[%s] Ancestral sequence(s) output to: %s" % (GC.get_time(), GC.ANCESTRAL_SEQS))
 
         # perform transmission clustering
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['TransmissionClustering'].__name__))
         GC.TRANSMISSION_CLUSTERS = GC.SELECTED['TransmissionClustering'].infer_transmission_clusters()
-        LOG.writeln("[%s] Transmission clusters output to: %s" % (GC.get_time(), GC.TRANSMISSION_CLUSTERS))
+        if GC.TRANSMISSION_CLUSTERS is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing transmission clusters..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.TRANSMISSION_CLUSTERS])
+                GC.TRANSMISSION_CLUSTERS += '.gz'
+            LOG.writeln("[%s] Transmission clusters output to: %s" % (GC.get_time(), GC.TRANSMISSION_CLUSTERS))
 
         # write the report
         LOG.writeln("\n[%s] Writing report using '%s'..." % (GC.get_time(), GC.SELECTED['WriteReport'].__name__))
         GC.REPORT = GC.SELECTED['WriteReport'].write_report()
-        LOG.writeln("[%s] Report written to: %s" % (GC.get_time(), GC.REPORT))
+        if GC.REPORT is not None:
+            LOG.writeln("[%s] Report written to: %s" % (GC.get_time(), GC.REPORT))
 
         # print info about the run
         LOG.writeln("\n\n==========================   Information   ===========================")

@@ -30,8 +30,6 @@ class Dating_LSD2(Dating):
             raise ValueError("Invalid sample times file: %s" % sample_times_filename)
         lsd2_dir = '%s/LSD2' % GC.OUT_DIR_TMPFILES
         out_filename = '%s/dated.tre' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Dated tree exists. Skipping recomputation.")
         else:
@@ -46,7 +44,7 @@ class Dating_LSD2(Dating):
             command = ['lsd2', '-c', '-i', rooted_tree_filename, '-d', lsd_times_filename]
             f = open('%s/command.txt' % lsd2_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             o = check_output(command)
-            GC.write_file('\n'.join(GC.read_file('%s.result.nwk' % rooted_tree_filename)), out_filename)
+            move('%s.result.nwk' % rooted_tree_filename, out_filename)
             for f in glob('%s.*' % rooted_tree_filename):
                 move(f, '%s/%s' % (lsd2_dir, f.split('/')[-1]))
         return out_filename

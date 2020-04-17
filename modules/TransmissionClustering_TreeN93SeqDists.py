@@ -24,8 +24,6 @@ class TransmissionClustering_TreeN93SeqDists(TransmissionClustering):
 
     def infer_transmission_clusters():
         out_filename = '%s/transmission_clusters.tsv' % GC.OUT_DIR_OUTFILES
-        if GC.GZIP_OUTPUT:
-            out_filename += '.gz'
         if isfile(out_filename) or isfile('%s.gz' % out_filename):
             GC.SELECTED['Logging'].writeln("Transmission clusters exist. Skipping recomputation.")
         else:
