@@ -9,7 +9,7 @@ from os import makedirs
 from os.path import isfile
 from shutil import move
 from subprocess import call
-ZERO_THRESHOLD = 0.0000001
+ZERO_THRESHOLD = 0.00001
 
 class Dating_treedater(Dating):
     def init():
