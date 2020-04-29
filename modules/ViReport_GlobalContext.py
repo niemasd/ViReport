@@ -62,6 +62,15 @@ def read_file(fn):
     else:
         return [l.strip() for l in open(fn).read().strip().splitlines()]
 
+# stream the lines of a file
+def stream_file(fn):
+    if fn.lower().endswith('.gz'):
+        for l in gopen(fn):
+            yield l.decode()
+    else:
+        for l in open(fn):
+            yield l
+
 # write a str to a file
 def write_file(s, fn):
     if fn.lower().endswith('.gz'):
@@ -202,8 +211,10 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
         return seqs_filename
     if not isfile(seqs_filename):
         raise ValueError("Invalid sequence file: %s" % seqs_filename)
-    outgroups = {l.strip() for l in read_file(outgroups_filename)}
     out_filename = '%s.no_outgroup.%s' % ('.'.join(rstrip_gz(seqs_filename).split('.')[:-1]), rstrip_gz(seqs_filename).split('.')[-1])
+    if isfile(out_filename):
+        return out_filename
+    outgroups = {l.strip() for l in read_file(outgroups_filename)}
     seqs = read_fasta(seqs_filename)
     for o in outgroups:
         if o in seqs:

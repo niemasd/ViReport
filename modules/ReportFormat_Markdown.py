@@ -13,6 +13,7 @@ def md_init():
         GC.report_out_md_filename = '%s/Report.md' % GC.OUT_DIR
         GC.report_out_md = open(GC.report_out_md_filename, 'w')
         GC.report_out_md.write("# ViReport v%s &mdash; %s\n" % (GC.VIREPORT_VERSION, datetime.today().strftime('%Y-%m-%d')))
+        GC.report_out_md.flush()
 
 class ReportFormat_Markdown(ReportFormat):
     def init():
@@ -25,13 +26,13 @@ class ReportFormat_Markdown(ReportFormat):
         return GC.CITATION_VIREPORT
 
     def section(s):
-        md_init(); GC.report_out_md.write("\n## %s\n" % s)
+        md_init(); GC.report_out_md.write("\n## %s\n" % s); GC.report_out_md.flush()
 
     def subsection(s):
-        md_init(); GC.report_out_md.write("\n### %s\n" % s)
+        md_init(); GC.report_out_md.write("\n### %s\n" % s); GC.report_out_md.flush()
 
     def write(s):
-        md_init(); GC.report_out_md.write(s)
+        md_init(); GC.report_out_md.write(s); GC.report_out_md.flush()
 
     def writeln(s):
         md_init(); ReportFormat_Markdown.write(s); ReportFormat_Markdown.write('\n\n')
@@ -39,16 +40,16 @@ class ReportFormat_Markdown(ReportFormat):
     def bullets(items, level=0):
         md_init()
         if level == 0:
-            GC.report_out_md.write('\n')
+            GC.report_out_md.write('\n'); GC.report_out_md.flush()
         for item in items:
             if isinstance(item, str):
-                GC.report_out_md.write('%s* %s\n' % (level*'    ', item))
+                GC.report_out_md.write('%s* %s\n' % (level*'    ', item)); GC.report_out_md.flush()
             elif isinstance(item, list):
                 ReportFormat_Markdown.bullets(item, level=level+1)
             else:
                 raise ValueError("Invalid bullet item type: %s" % type(item))
         if level == 0:
-            GC.report_out_md.write('\n')
+            GC.report_out_md.write('\n'); GC.report_out_md.flush()
 
     def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
@@ -58,18 +59,18 @@ class ReportFormat_Markdown(ReportFormat):
             if not isfile(png_filename):
                 GC.pdf_to_png(filename, png_filename)
             filename = png_filename
-        GC.report_out_md.write('\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.'))
+        GC.report_out_md.write('\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.')); GC.report_out_md.flush()
         if width is not None or height is not None:
-            GC.report_out_md.write(' width="auto" height="auto" style="')
+            GC.report_out_md.write(' width="auto" height="auto" style="'); GC.report_out_md.flush()
             if width is not None:
-                GC.report_out_md.write('max-width:%d%%;' % int(width*100))
+                GC.report_out_md.write('max-width:%d%%;' % int(width*100)); GC.report_out_md.flush()
             if height is not None:
-                GC.report_out_md.write('max-height:%d%%;' % int(height*100))
-            GC.report_out_md.write('"')
-        GC.report_out_md.write('>\n')
+                GC.report_out_md.write('max-height:%d%%;' % int(height*100)); GC.report_out_md.flush()
+            GC.report_out_md.write('"'); GC.report_out_md.flush()
+        GC.report_out_md.write('>\n'); GC.report_out_md.flush()
         if caption is not None:
-            GC.report_out_md.write('<figcaption>%s</figcaption>\n' % caption)
-        GC.report_out_md.write('</figure>\n\n\n')
+            GC.report_out_md.write('<figcaption>%s</figcaption>\n' % caption); GC.report_out_md.flush()
+        GC.report_out_md.write('</figure>\n\n\n'); GC.report_out_md.flush()
 
     def close():
         md_init()

@@ -13,6 +13,7 @@ def html_init():
         GC.report_out_html_filename = '%s/Report.html' % GC.OUT_DIR
         GC.report_out_html = open(GC.report_out_html_filename, 'w')
         GC.report_out_html.write('<!DOCTYPE html>\n<html>\n<body>\n<h1>ViReport v%s &mdash; %s</h1>\n<p>\n' % (GC.VIREPORT_VERSION, datetime.today().strftime('%Y-%m-%d')))
+        GC.report_out_html.flush()
 
 class ReportFormat_HTML(ReportFormat):
     def init():
@@ -25,28 +26,28 @@ class ReportFormat_HTML(ReportFormat):
         return GC.CITATION_VIREPORT
 
     def section(s):
-        html_init(); GC.report_out_html.write("\n</p>\n<h2>%s</h2>\n<p>\n" % s)
+        html_init(); GC.report_out_html.write("\n</p>\n<h2>%s</h2>\n<p>\n" % s); GC.report_out_html
 
     def subsection(s):
-        html_init(); GC.report_out_html.write("\n</p>\n<h3>%s</h3>\n<p>\n" % s)
+        html_init(); GC.report_out_html.write("\n</p>\n<h3>%s</h3>\n<p>\n" % s); GC.report_out_html
 
     def write(s):
-        html_init(); GC.report_out_html.write(s)
+        html_init(); GC.report_out_html.write(s); GC.report_out_html
 
     def writeln(s):
-        html_init(); ReportFormat_HTML.write(s); ReportFormat_HTML.write('\n<br>\n')
+        html_init(); ReportFormat_HTML.write(s); ReportFormat_HTML.write('\n<br>\n'); GC.report_out_html
 
     def bullets(items, level=0):
         html_init()
-        GC.report_out_html.write('\n%s<ul>\n' % ('  '*level))
+        GC.report_out_html.write('\n%s<ul>\n' % ('  '*level)); GC.report_out_html
         for item in items:
             if isinstance(item, str):
-                GC.report_out_html.write('%s  <li>%s</li>\n' % (level*'  ', item))
+                GC.report_out_html.write('%s  <li>%s</li>\n' % (level*'  ', item)); GC.report_out_html
             elif isinstance(item, list):
                 ReportFormat_HTML.bullets(item, level=level+1)
             else:
                 raise ValueError("Invalid bullet item type: %s" % type(item))
-        GC.report_out_html.write('\n%s</ul>\n' % ('  '*level))
+        GC.report_out_html.write('\n%s</ul>\n' % ('  '*level)); GC.report_out_html
 
     def figure(filename, caption=None, width=None, height=None, keep_aspect_ratio=True):
         if not filename.startswith(GC.OUT_DIR_REPORTFILES):
@@ -56,18 +57,18 @@ class ReportFormat_HTML(ReportFormat):
             if not isfile(png_filename):
                 GC.pdf_to_png(filename, png_filename)
             filename = png_filename
-        GC.report_out_html.write('\n</p>\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.'))
+        GC.report_out_html.write('\n</p>\n\n<figure>\n<img src="%s"' % filename.replace(GC.OUT_DIR,'.')); GC.report_out_html
         if width is not None or height is not None:
-            GC.report_out_html.write(' width="auto" height="auto" style="')
+            GC.report_out_html.write(' width="auto" height="auto" style="'); GC.report_out_html
             if width is not None:
-                GC.report_out_html.write('max-width:%d%%;' % int(width*100))
+                GC.report_out_html.write('max-width:%d%%;' % int(width*100)); GC.report_out_html
             if height is not None:
-                GC.report_out_html.write('max-height:%d%%;' % int(height*100))
+                GC.report_out_html.write('max-height:%d%%;' % int(height*100)); GC.report_out_html
             GC.report_out_html.write('"')
-        GC.report_out_html.write('>\n')
+        GC.report_out_html.write('>\n'); GC.report_out_html
         if caption is not None:
-            GC.report_out_html.write('<figcaption>%s</figcaption>\n' % caption)
-        GC.report_out_html.write('</figure>\n\n<p>\n')
+            GC.report_out_html.write('<figcaption>%s</figcaption>\n' % caption); GC.report_out_html
+        GC.report_out_html.write('</figure>\n\n<p>\n'); GC.report_out_html
 
     def close():
         html_init()

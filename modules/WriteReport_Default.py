@@ -36,16 +36,20 @@ class WriteReport_Default(WriteReport):
 
         ## make input sequence lengths figure
         seq_lengths = GC.seq_lengths_fasta(GC.INPUT_SEQS)
+        num_seqs = len(seq_lengths)
+        seq_lengths_mean = mean(seq_lengths)
+        seq_lengths_std = std(seq_lengths)
         seq_lengths_hist_filename = '%s/input_sequence_lengths.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(seq_lengths, seq_lengths_hist_filename, hist=True, kde=False, title="Input Sequence Lengths", xlabel="Sequence Length", ylabel="Count")
+        del seq_lengths
 
         ## make input sample times figure
         dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.INPUT_TIMES)}
         if GC.INPUT_OUTGROUPS is not None:
-            for l in GC.read_file(GC.INPUT_OUTGROUPS):
+            for l in GC.stream_file(GC.INPUT_OUTGROUPS):
                 if l.strip() in dates_vireport:
                     del dates_vireport[l.strip()]
-        dates = sorted(dates_vireport[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
+        dates = sorted(dates_vireport[l[1:].strip()] for l in GC.stream_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in dates_vireport)
         if len(dates) % 2 == 0:
             med_date = GC.days_to_date((GC.date_to_days(dates[int(len(dates)/2)]) + GC.date_to_days(dates[int(len(dates)/2)-1])) / 2)
         else:
@@ -56,16 +60,16 @@ class WriteReport_Default(WriteReport):
 
         ## make input categories figure
         if GC.INPUT_CATEGORIES is not None:
-            id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.INPUT_CATEGORIES)}
-            sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.read_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
+            id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.stream_file(GC.INPUT_CATEGORIES)}
+            sample_cats = sorted(id_to_cat[l[1:].strip()] for l in GC.stream_file(GC.INPUT_SEQS) if l.startswith('>') and l[1:].strip() in id_to_cat)
             cats_hist_filename = '%s/input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
             GC.create_barplot(sample_cats, cats_hist_filename, horizontal=True, title="Input Sample Categories", ylabel="Category", xlabel="Count")
 
         ## write section
         section("Input Dataset")
-        write("The analysis was conducted on a dataset containing %d sequences." % len(seq_lengths))
-        write(" The average sequence length was %s," % GC.num_str(mean(seq_lengths)))
-        write(" with a standard deviation of %s." % GC.num_str(std(seq_lengths)))
+        write("The analysis was conducted on a dataset containing %d sequences." % num_seqs)
+        write(" The average sequence length was %s," % GC.num_str(seq_lengths_mean))
+        write(" with a standard deviation of %s." % GC.num_str(seq_lengths_std))
         write(" The earliest sample date was %s," % dates[0])
         write(" the median sample date was %s," % med_date)
         write(" and the most recent sample date was %s." % dates[-1])
@@ -76,16 +80,22 @@ class WriteReport_Default(WriteReport):
 
         ## make processed sequence lengths figure
         proc_seq_lengths = GC.seq_lengths_fasta(GC.PROCESSED_SEQS)
+        num_proc_seqs = len(proc_seq_lengths)
+        proc_seq_lengths_mean = mean(proc_seq_lengths)
+        proc_seq_lengths_std = std(proc_seq_lengths)
         proc_seq_lengths_hist_filename = '%s/processed_sequence_lengths.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_histogram(proc_seq_lengths, proc_seq_lengths_hist_filename, hist=True, kde=False, title="Processed Sequence Lengths", xlabel="Sequence Length", ylabel="Count")
+        del proc_seq_lengths
 
         ## make processed sample times figure
         proc_dates_vireport = {u:GC.days_to_date(GC.date_to_days(v)) for u,v in GC.load_dates_ViReport(GC.PROCESSED_TIMES)}
         if GC.PROCESSED_OUTGROUPS is not None:
-            for l in GC.read_file(GC.PROCESSED_OUTGROUPS):
+            for l in GC.stream_file(GC.PROCESSED_OUTGROUPS):
                 if l.strip() in proc_dates_vireport:
                     del proc_dates_vireport[l.strip()]
-        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in GC.read_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
+        proc_dates = sorted(proc_dates_vireport[l[1:].strip()] for l in GC.stream_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_dates_vireport)
+        proc_date_first = proc_dates[0]
+        proc_date_last = proc_dates[-1]
         if len(proc_dates) % 2 == 0:
             med_proc_date = GC.days_to_date((GC.date_to_days(proc_dates[int(len(proc_dates)/2)]) + GC.date_to_days(proc_dates[int(len(proc_dates)/2)-1])) / 2)
         else:
@@ -93,25 +103,27 @@ class WriteReport_Default(WriteReport):
         all_proc_dates = [GC.days_to_date(i) for i in range(GC.date_to_days(proc_dates[0]), GC.date_to_days(proc_dates[-1])+1)]
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
+        del proc_dates; del all_proc_dates
 
         ## make processed categories figure
         if GC.PROCESSED_CATEGORIES is None:
             proc_id_to_cat = dict()
         else:
-            proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.read_file(GC.PROCESSED_CATEGORIES)}
-            proc_sample_cats = sorted(proc_id_to_cat[l[1:].strip()] for l in GC.read_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_id_to_cat)
+            proc_id_to_cat = {l.split('\t')[0].strip() : l.split('\t')[1].strip() for l in GC.stream_file(GC.PROCESSED_CATEGORIES)}
+            proc_sample_cats = sorted(proc_id_to_cat[l[1:].strip()] for l in GC.stream_file(GC.PROCESSED_SEQS) if l.startswith('>') and l[1:].strip() in proc_id_to_cat)
             proc_cats_hist_filename = '%s/processed_input_categories.pdf' % GC.OUT_DIR_REPORTFIGS
             GC.create_barplot(proc_sample_cats, proc_cats_hist_filename, horizontal=True, title="Processed Sample Categories", ylabel="Category", xlabel="Count")
+            del proc_sample_cats
 
         ## write section
         section("Preprocessed Dataset")
         write(GC.SELECTED['Preprocessing'].blurb())
-        write(" After preprocessing, the dataset contained %d sequences." % len(proc_seq_lengths))
-        write(" The average sequence length was %s," % GC.num_str(mean(proc_seq_lengths)))
-        write(" with a standard deviation of %s." % GC.num_str(std(proc_seq_lengths)))
-        write(" The earliest sample date was %s," % proc_dates[0])
+        write(" After preprocessing, the dataset contained %d sequences." % num_proc_seqs)
+        write(" The average sequence length was %s," % GC.num_str(proc_seq_lengths_mean))
+        write(" with a standard deviation of %s." % GC.num_str(proc_seq_lengths_std))
+        write(" The earliest sample date was %s," % proc_date_first)
         write(" the median sample date was %s," % med_proc_date)
-        write(" and the most recent sample date was %s." % proc_dates[-1])
+        write(" and the most recent sample date was %s." % proc_date_last)
         figure(proc_seq_lengths_hist_filename, width=0.75, caption="Distribution of preprocessed sequence lengths")
         figure(proc_dates_hist_filename, width=0.75, caption="Distribution of preprocessed sample dates")
         if GC.PROCESSED_CATEGORIES is not None:
@@ -126,9 +138,12 @@ class WriteReport_Default(WriteReport):
 
         ## make pairwise distances figure
         if GC.PAIRWISE_DISTS_SEQS is not None:
-            dists_seq = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
+            dists_seq = [float(l.split(',')[2]) for l in GC.stream_file(GC.PAIRWISE_DISTS_SEQS) if not l.startswith('ID1')]
+            dists_seq_avg = mean(dists_seq)
+            dists_seq_std = std(dists_seq)
             dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
             GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
+            del dists_seq
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
@@ -169,6 +184,7 @@ class WriteReport_Default(WriteReport):
             msa_position_coverage_filename += '.gz'
         msa_coverage_manhattan_filename = '%s/alignment_coverage.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_manhattan(msa_position_coverage, msa_coverage_manhattan_filename, dot_size=8, title="Alignment Position Coverage", xlabel="Position of Multiple Sequence Alignment", ylabel="Proportion Non-Gap")
+        del msa
 
         ## write section
         section("Multiple Sequence Alignment")
@@ -176,8 +192,8 @@ class WriteReport_Default(WriteReport):
         write(" There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment. " % (msa_columns, msa_num_invariant, msa_num_unique))
         if GC.PAIRWISE_DISTS_SEQS is not None:
             write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
-            write(" The average pairwise sequence distance was %s," % GC.num_str(mean(dists_seq)))
-            write(" with a standard deviation of %s." % GC.num_str(std(dists_seq)))
+            write(" The average pairwise sequence distance was %s," % GC.num_str(dists_seq_avg))
+            write(" with a standard deviation of %s." % GC.num_str(dists_seq_std))
             figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
         write("Across the positions of the multiple sequence alignment,")
         write(" the minimum coverage was %s," % GC.num_str(min(v for v in msa_position_coverage)))
@@ -216,7 +232,7 @@ class WriteReport_Default(WriteReport):
             except:
                 tree_mut_viz_filename = None
         if GC.PAIRWISE_DISTS_TREE is not None:
-            dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
+            dists_tree = [float(l.split(',')[2]) for l in GC.stream_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
             dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
             GC.create_histogram(dists_tree, dists_tree_hist_filename, hist=False, kde=True, title="Pairwise Phylogenetic Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
 
