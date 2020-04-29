@@ -228,6 +228,8 @@ def remove_outgroups_fasta(seqs_filename, outgroups_filename):
 
 # remove outgroups from a Newick tree
 def remove_outgroups_newick(tree_filename, outgroups_filename):
+    if tree_filename is None:
+        return None
     if outgroups_filename is None:
         return tree_filename
     if not isfile(tree_filename):

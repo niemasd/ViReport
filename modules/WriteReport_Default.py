@@ -193,27 +193,28 @@ class WriteReport_Default(WriteReport):
         figure(msa_entropy_manhattan_filename, width=0.75, caption="Shannon entropy across the positions of the multiple sequence alignment. %s The significance threshold is shown as a red dashed line, and significant points are shown in red." % msa_entropy_manhattan_ythresh_blurb)
 
         # Phylogenetic Inference
-        ## compute values of phylogeny
-        tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
-        count_cats_mut = dict()
-        for node in tree_mut.traverse_leaves():
-            if node.label in proc_id_to_cat:
-                cat = proc_id_to_cat[node.label]
-                if cat not in count_cats_mut:
-                    count_cats_mut[cat] = 0
-                count_cats_mut[cat] += 1
-        colors_mut = list(color_palette("colorblind", n_colors=len(count_cats_mut)))
-        pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(count_cats_mut.keys()))}
-        handles_mut = [Patch(color=pal_mut[k], label='%s (%d)' % (k, count_cats_mut[k])) for k in sorted(count_cats_mut.keys())]
-        for node in tree_mut.traverse_leaves():
-            if node.label in proc_id_to_cat:
-                node.color = pal_mut[proc_id_to_cat[node.label]]
-        GC.color_internal(tree_mut)
-        tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
-        try:
-            tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
-        except:
-            tree_mut_viz_filename = None
+        if GC.TREE_ROOTED is not None:
+            ## compute values of phylogeny
+            tree_mut = read_tree_newick(GC.TREE_ROOTED); tree_mut.ladderize()
+            count_cats_mut = dict()
+            for node in tree_mut.traverse_leaves():
+                if node.label in proc_id_to_cat:
+                    cat = proc_id_to_cat[node.label]
+                    if cat not in count_cats_mut:
+                        count_cats_mut[cat] = 0
+                    count_cats_mut[cat] += 1
+            colors_mut = list(color_palette("colorblind", n_colors=len(count_cats_mut)))
+            pal_mut = {k:colors_mut[i] for i,k in enumerate(sorted(count_cats_mut.keys()))}
+            handles_mut = [Patch(color=pal_mut[k], label='%s (%d)' % (k, count_cats_mut[k])) for k in sorted(count_cats_mut.keys())]
+            for node in tree_mut.traverse_leaves():
+                if node.label in proc_id_to_cat:
+                    node.color = pal_mut[proc_id_to_cat[node.label]]
+            GC.color_internal(tree_mut)
+            tree_mut_viz_filename = '%s/tree_mutations.pdf' % GC.OUT_DIR_REPORTFIGS
+            try:
+                tree_mut.draw(show_labels=True, handles=handles_mut, show_plot=False, export_filename=tree_mut_viz_filename, xlabel="Expected Number of Per-Site Mutations")
+            except:
+                tree_mut_viz_filename = None
         if GC.PAIRWISE_DISTS_TREE is not None:
             dists_tree = [float(l.split(',')[2]) for l in GC.read_file(GC.PAIRWISE_DISTS_TREE) if not l.startswith('ID1')]
             dists_tree_hist_filename = '%s/pairwise_distances_tree.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -223,10 +224,11 @@ class WriteReport_Default(WriteReport):
         section("Phylogenetic Inference")
         write(GC.SELECTED['PhylogeneticInference'].blurb())
         write(' '); write(GC.SELECTED['Rooting'].blurb())
-        if tree_mut_viz_filename is None:
-            write(" The tree was too large to draw.")
-        else:
-            figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
+        if GC.TREE_ROOTED is not None:
+            if tree_mut_viz_filename is None:
+                write(" The tree was too large to draw.")
+            else:
+                figure(tree_mut_viz_filename, width=1, height=1, caption="Rooted phylogenetic tree in unit of expected per-site mutations")
         if GC.PAIRWISE_DISTS_TREE is not None:
             write(GC.SELECTED['PairwiseDistancesTree'].blurb())
             write(" The maximum pairwise phylogenetic distance (i.e., tree diameter) was %s," % GC.num_str(max(dists_tree)))
@@ -235,44 +237,46 @@ class WriteReport_Default(WriteReport):
             figure(dists_tree_hist_filename, width=0.75, caption="Distribution of pairwise phylogenetic distances")
 
         # Phylogenetic Dating
-        ## compute values of dated phylogeny
-        tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
-        count_cats_time = dict()
-        for node in tree_time.traverse_leaves():
-            if node.label in proc_id_to_cat:
-                cat = proc_id_to_cat[node.label]
-                if cat not in count_cats_time:
-                    count_cats_time[cat] = 0
-                count_cats_time[cat] += 1
-        colors_time = list(color_palette("colorblind", n_colors=len(count_cats_time)))
-        pal_time = {k:colors_time[i] for i,k in enumerate(sorted(count_cats_time.keys()))}
-        handles_time = [Patch(color=pal_time[k], label='%s (%d)' % (k, count_cats_time[k])) for k in sorted(count_cats_time.keys())]
-        for node in tree_time.traverse_leaves():
-            if node.label in proc_id_to_cat:
-                node.color = pal_time[proc_id_to_cat[node.label]]
-        GC.color_internal(tree_time)
-        tree_time_height = tree_time.height()
-        tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
-        tmrca_date = GC.days_to_date(tmrca_days)
-        tree_time.scale_edges(1./365.)
-        tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
-        tmrca_year = int(tmrca_date.split('-')[0])
-        tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
-        try:
-            tree_time.draw(show_labels=True, handles=handles_time, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
-        except:
-            tree_time_viz_filename = None
+        if GC.TREE_DATED is not None:
+            ## compute values of dated phylogeny
+            tree_time = read_tree_newick(GC.TREE_DATED); tree_time.ladderize(); tree_time.root.edge_length = None
+            count_cats_time = dict()
+            for node in tree_time.traverse_leaves():
+                if node.label in proc_id_to_cat:
+                    cat = proc_id_to_cat[node.label]
+                    if cat not in count_cats_time:
+                        count_cats_time[cat] = 0
+                    count_cats_time[cat] += 1
+            colors_time = list(color_palette("colorblind", n_colors=len(count_cats_time)))
+            pal_time = {k:colors_time[i] for i,k in enumerate(sorted(count_cats_time.keys()))}
+            handles_time = [Patch(color=pal_time[k], label='%s (%d)' % (k, count_cats_time[k])) for k in sorted(count_cats_time.keys())]
+            for node in tree_time.traverse_leaves():
+                if node.label in proc_id_to_cat:
+                    node.color = pal_time[proc_id_to_cat[node.label]]
+            GC.color_internal(tree_time)
+            tree_time_height = tree_time.height()
+            tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
+            tmrca_date = GC.days_to_date(tmrca_days)
+            tree_time.scale_edges(1./365.)
+            tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
+            tmrca_year = int(tmrca_date.split('-')[0])
+            tmrca_year_percent = tmrca_year + (tmrca_days - GC.date_to_days("%d-01-01" % tmrca_year))/365.
+            try:
+                tree_time.draw(show_labels=True, handles=handles_time, show_plot=False, export_filename=tree_time_viz_filename, xlabel="Year", start_time=tmrca_year_percent)
+            except:
+                tree_time_viz_filename = None
 
         ## write section
         section("Phylogenetic Dating")
         write(GC.SELECTED['Dating'].blurb())
-        write(" The height of the dated tree was %s days," % GC.num_str(tree_time_height))
-        write(" so given that the most recent sample was collected on %s," % proc_dates[-1])
-        write(" the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
-        if tree_time_viz_filename is None:
-            write(" The tree was too large to draw.")
-        else:
-            figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
+        if GC.TREE_DATED is not None:
+            write(" The height of the dated tree was %s days," % GC.num_str(tree_time_height))
+            write(" so given that the most recent sample was collected on %s," % proc_dates[-1])
+            write(" the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
+            if tree_time_viz_filename is None:
+                write(" The tree was too large to draw.")
+            else:
+                figure(tree_time_viz_filename, width=1, height=1, caption="Dated phylogenetic tree in unit of years")
 
         # Ancestral Sequence Reconstruction
         if GC.ANCESTRAL_SEQS is not None:

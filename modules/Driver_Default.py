@@ -136,12 +136,13 @@ class Driver_Default(Driver):
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PhylogeneticInference'].__name__))
         GC.TREE_UNROOTED_WITH_OUTGROUP = GC.SELECTED['PhylogeneticInference'].infer_phylogeny(GC.ALIGNMENT_WITH_OUTGROUP)
         GC.TREE_UNROOTED = GC.remove_outgroups_newick(GC.TREE_UNROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
-        if GC.GZIP_OUTPUT:
-            LOG.writeln("[%s] Compressing (unrooted) phylogeny..." % GC.get_time())
-            call(GC.PIGZ_COMMAND + [GC.TREE_UNROOTED_WITH_OUTGROUP, GC.TREE_UNROOTED])
-            GC.TREE_UNROOTED_WITH_OUTGROUP += '.gz'
-            GC.TREE_UNROOTED += '.gz'
-        LOG.writeln("[%s] Inferred (unrooted) phylogeny output to: %s" % (GC.get_time(), GC.TREE_UNROOTED))
+        if GC.TREE_UNROOTED_WITH_OUTGROUP is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing (unrooted) phylogeny..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.TREE_UNROOTED_WITH_OUTGROUP, GC.TREE_UNROOTED])
+                GC.TREE_UNROOTED_WITH_OUTGROUP += '.gz'
+                GC.TREE_UNROOTED += '.gz'
+            LOG.writeln("[%s] Inferred (unrooted) phylogeny output to: %s" % (GC.get_time(), GC.TREE_UNROOTED))
 
         # compute pairwise phylogenetic distances
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['PairwiseDistancesTree'].__name__))
@@ -157,21 +158,23 @@ class Driver_Default(Driver):
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Rooting'].__name__))
         GC.TREE_ROOTED_WITH_OUTGROUP = GC.SELECTED['Rooting'].root(GC.TREE_UNROOTED_WITH_OUTGROUP)
         GC.TREE_ROOTED = GC.remove_outgroups_newick(GC.TREE_ROOTED_WITH_OUTGROUP, GC.PROCESSED_OUTGROUPS)
-        if GC.GZIP_OUTPUT:
-            LOG.writeln("[%s] Compressing rooted phylogeny..." % GC.get_time())
-            call(GC.PIGZ_COMMAND + [GC.TREE_ROOTED_WITH_OUTGROUP, GC.TREE_ROOTED])
-            GC.TREE_ROOTED_WITH_OUTGROUP += '.gz'
-            GC.TREE_ROOTED += '.gz'
-        LOG.writeln("[%s] Rooted phylogeny output to: %s" % (GC.get_time(), GC.TREE_ROOTED))
+        if GC.TREE_ROOTED_WITH_OUTGROUP is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing rooted phylogeny..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.TREE_ROOTED_WITH_OUTGROUP, GC.TREE_ROOTED])
+                GC.TREE_ROOTED_WITH_OUTGROUP += '.gz'
+                GC.TREE_ROOTED += '.gz'
+            LOG.writeln("[%s] Rooted phylogeny output to: %s" % (GC.get_time(), GC.TREE_ROOTED))
 
         # date the rooted phylogeny
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['Dating'].__name__))
         GC.TREE_DATED = GC.SELECTED['Dating'].date(GC.TREE_ROOTED, GC.PROCESSED_TIMES)
-        if GC.GZIP_OUTPUT:
-            LOG.writeln("[%s] Compressing dated phylogeny..." % GC.get_time())
-            call(GC.PIGZ_COMMAND + [GC.TREE_DATED])
-            GC.TREE_DATED += '.gz'
-        LOG.writeln("[%s] Dated phylogeny output to: %s" % (GC.get_time(), GC.TREE_DATED))
+        if GC.TREE_DATED is not None:
+            if GC.GZIP_OUTPUT:
+                LOG.writeln("[%s] Compressing dated phylogeny..." % GC.get_time())
+                call(GC.PIGZ_COMMAND + [GC.TREE_DATED])
+                GC.TREE_DATED += '.gz'
+            LOG.writeln("[%s] Dated phylogeny output to: %s" % (GC.get_time(), GC.TREE_DATED))
 
         # infer ancestral sequence(s)
         LOG.writeln("\n[%s] Running '%s'..." % (GC.get_time(), GC.SELECTED['AncestralSequenceReconstruction'].__name__))
