@@ -445,13 +445,21 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
     if all_labels is not None:
         x = all_labels
     y = [count[l] if l in count else 0 for l in x]
+    if max(y) == 0:
+        ylog = False
+    else:
+        ylog = (50 * min(v for v in y if v > 0) <= max(y))
     if horizontal:
         fig, ax = plt.subplots(figsize=(8,max(2.5,0.2*len(x))))
         bp = barplot(x=y, y=x, ax=ax)
+        if ylog:
+            ax.set_xscale('log')
     else:
         fig, ax = plt.subplots()
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         bp = barplot(x=x, y=y, ax=ax)
+        if ylog:
+            ax.set_yscale('log')
     if title is not None:
         plt.title(title)
     if xlabel is not None:

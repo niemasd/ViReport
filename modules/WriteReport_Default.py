@@ -103,6 +103,7 @@ class WriteReport_Default(WriteReport):
         all_proc_dates = [GC.days_to_date(i) for i in range(GC.date_to_days(proc_dates[0]), GC.date_to_days(proc_dates[-1])+1)]
         proc_dates_hist_filename = '%s/processed_sample_dates.pdf' % GC.OUT_DIR_REPORTFIGS
         GC.create_barplot(proc_dates, proc_dates_hist_filename, all_labels=all_proc_dates, rotate_labels=90, title="Processed Sample Dates", xlabel="Sample Date", ylabel="Count")
+        max_proc_date = max(proc_dates)
         del proc_dates; del all_proc_dates
 
         ## make processed categories figure
@@ -271,7 +272,7 @@ class WriteReport_Default(WriteReport):
                     node.color = pal_time[proc_id_to_cat[node.label]]
             GC.color_internal(tree_time)
             tree_time_height = tree_time.height()
-            tmrca_days = GC.date_to_days(max(proc_dates)) - tree_time_height
+            tmrca_days = GC.date_to_days(max_proc_date) - tree_time_height
             tmrca_date = GC.days_to_date(tmrca_days)
             tree_time.scale_edges(1./365.)
             tree_time_viz_filename = '%s/tree_time.pdf' % GC.OUT_DIR_REPORTFIGS
@@ -287,7 +288,7 @@ class WriteReport_Default(WriteReport):
         write(GC.SELECTED['Dating'].blurb())
         if GC.TREE_DATED is not None:
             write(" The height of the dated tree was %s days," % GC.num_str(tree_time_height))
-            write(" so given that the most recent sample was collected on %s," % proc_dates[-1])
+            write(" so given that the most recent sample was collected on %s," % max_proc_date)
             write(" the estimated time of the most recent common ancestor (tMRCA) was %s." % tmrca_date)
             if tree_time_viz_filename is None:
                 write(" The tree was too large to draw.")
