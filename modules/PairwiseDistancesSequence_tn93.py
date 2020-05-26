@@ -30,9 +30,10 @@ class PairwiseDistancesSequence_tn93(PairwiseDistancesSequence):
             GC.SELECTED['Logging'].writeln("Pairwise sequence distances exist. Skipping recomputation.")
         else:
             makedirs(tn93_dir, exist_ok=True)
-            log = open('%s/log.txt' % tn93_dir, 'w')
-            command = ['tn93', '-t', '1', '-l', '1', '-q', '-o', out_filename]
+            prog = open('%s/log.txt' % tn93_dir, 'w')
+            command = ['tn93', '-t', '1', '-l', '1', '-o', out_filename]
             f = open('%s/command.txt' % tn93_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
-            check_output(command, input='\n'.join(GC.read_file(aln_filename)).encode(), stderr=log)
-            log.close()
+            o = check_output(command, input='\n'.join(GC.read_file(aln_filename)).encode(), stderr=prog)
+            prog.close()
+            f = open('%s/results.json' % tn93_dir, 'wb'); f.write(o); f.close()
         return out_filename
