@@ -43,7 +43,7 @@ class Dating_LSD2(Dating):
                 rooted_tree_filename = unzipped_filename
             msa = GC.read_fasta(GC.ALIGNMENT)
             msa_columns = len(msa[list(msa.keys())[0]])
-            command = ['lsd2', '-l', '0', '-u', '0', '-U', '0', '-c', '-s', str(msa_columns), '-i', rooted_tree_filename, '-d', lsd_times_filename]
+            command = ['lsd2', '-l', '0', '-u', '0', '-U', '0', '-s', str(msa_columns), '-i', rooted_tree_filename, '-d', lsd_times_filename]
             f = open('%s/command.txt' % lsd2_dir, 'w'); f.write('%s\n' % ' '.join(command)); f.close()
             o = check_output(command)
             move('%s.result.nwk' % rooted_tree_filename, out_filename)
