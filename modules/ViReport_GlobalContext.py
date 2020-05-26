@@ -453,13 +453,13 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
         fig, ax = plt.subplots(figsize=(8,max(2.5,0.2*len(x))))
         bp = barplot(x=y, y=x, ax=ax)
         if ylog:
-            ax.set_xscale('log')
+            bp.set_xscale('log')
     else:
         fig, ax = plt.subplots()
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         bp = barplot(x=x, y=y, ax=ax)
         if ylog:
-            ax.set_yscale('log')
+            bp.set_yscale('log')
     if title is not None:
         plt.title(title)
     if xlabel is not None:
