@@ -434,6 +434,47 @@ def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=No
     fig.savefig(filename)
     plt.close()
 
+# create a histogram from [x,count] points
+def create_histogram_from_points(points, filename, color='#A5C8E1', xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
+    x = [v[0] for v in points]; y = [v[1] for v in points]
+    if max(y) == 0:
+        ylog = False
+    elif not ylog:
+        ylog = (50 * min(v for v in y if v > 0) <= max(y))
+    fig, ax = plt.subplots()
+    bp = barplot(x=x, y=y, ax=ax, color=color)
+    if ylog:
+        ax.set_yscale('log')
+    if title is not None:
+        plt.title(title)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    if ymin is not None and ymax is not None:
+        plt.ylim(ymin,ymax)
+    elif ymin is not None:
+        plt.ylim(ymin=ymin)
+    elif ymax is not None:
+        plt.ylim(ymax=ymax)
+    if rotate_labels != 0:
+        plt.xticks(rotation=rotate_labels)
+    if hide_labels:
+        ax.set_xticks(list())
+    else:
+        xticks = ax.xaxis.get_major_ticks()
+        if len(x) < 20:
+            den = 1
+        else:
+            den = int(len(x)/20)
+        for ind, label in enumerate(bp.get_xticklabels()):
+            if ind % den != 0:
+                label.set_visible(False)
+                xticks[ind].set_visible(False)
+    plt.tight_layout()
+    fig.savefig(filename)
+    plt.close()
+
 # create a barplot from a list of labels
 def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=None, ylabel=None, title=None, ymin=None, ymax=None, ylog=None, hide_labels=False, rotate_labels=0):
     count = dict(); x = list()
@@ -447,27 +488,25 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
     y = [count[l] if l in count else 0 for l in x]
     if max(y) == 0:
         ylog = False
-    else:
+    elif not ylog:
         ylog = (50 * min(v for v in y if v > 0) <= max(y))
     if horizontal:
         fig, ax = plt.subplots(figsize=(8,max(2.5,0.2*len(x))))
         bp = barplot(x=y, y=x, ax=ax)
         if ylog:
-            bp.set_xscale('log')
+            ax.set_xscale('log')
     else:
         fig, ax = plt.subplots()
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         bp = barplot(x=x, y=y, ax=ax)
         if ylog:
-            bp.set_yscale('log')
+            ax.set_yscale('log')
     if title is not None:
         plt.title(title)
     if xlabel is not None:
         plt.xlabel(xlabel)
     if ylabel is not None:
         plt.ylabel(ylabel)
-    if ylog:
-        ax.set_yscale('log')
     if ymin is not None and ymax is not None:
         plt.ylim(ymin,ymax)
     elif ymin is not None:

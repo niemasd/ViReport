@@ -4,6 +4,7 @@ Default implementation of the "WriteReport" module
 '''
 from WriteReport import WriteReport
 import ViReport_GlobalContext as GC
+from json import load as json_load
 from matplotlib.patches import Patch
 from numpy import mean,quantile,std
 from os import makedirs
@@ -145,6 +146,15 @@ class WriteReport_Default(WriteReport):
             dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
             GC.create_histogram(dists_seq, dists_seq_hist_filename, hist=False, kde=True, title="Pairwise Sequence Distances", xlabel="Pairwise Distance", ylabel="Kernel Density Estimate")
             del dists_seq
+        elif hasattr(GC, 'PAIRWISE_DISTS_SEQS_SUMMARY'):
+            dists_seq_hist = json_load(open(GC.PAIRWISE_DISTS_SEQS_SUMMARY))['Histogram']
+            while len(dists_seq_hist) != 0 and dists_seq_hist[-1][1] == 0:
+                del dists_seq_hist[-1]
+            while len(dists_seq_hist) != 0 and dists_seq_hist[0][1] == 0:
+                del dists_seq_hist[0]
+            dists_seq_hist_filename = '%s/pairwise_distances_sequences.pdf' % GC.OUT_DIR_REPORTFIGS
+            GC.create_histogram_from_points(dists_seq_hist, dists_seq_hist_filename, xlabel="Pairwise Distance", ylabel="Frequency", title="Pairwise Sequence Distances", ymin=0)
+            del dists_seq_hist
 
         ## make Manhattan plot of Shannon entropy
         msa_position_entropies = GC.msa_shannon_entropy(msa)
