@@ -131,6 +131,13 @@ RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-exte
     cd ../.. && \
     rm -rf mafft*
 
+# install Minimap2 (2.17)
+RUN wget -qO- "https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x64-linux.tar.bz2" | tar -jx && \
+    mv minimap2*/k8 /usr/local/bin/ && \
+    mv minimap2*/minimap2* /usr/local/bin/ && \
+    mv minimap2*/paftools.js /usr/local/bin && \
+    rm -rf minimap2*
+
 # install MUSCLE (3.8.31)
 RUN wget -qO- "https://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz" | tar -zx && \
     mv muscle* /usr/local/bin/muscle
