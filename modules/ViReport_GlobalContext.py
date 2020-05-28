@@ -385,6 +385,10 @@ def create_manhattan(data, filename, sig_thresh=None, insig_color='black', sig_c
         ax.set_xscale('log')
     if ylog:
         ax.set_yscale('log')
+    if xlog and xmin == 0:
+        xmin = None
+    if ylog and ymin == 0:
+        ymin = None
     if xmin is not None and xmax is not None:
         plt.xlim(xmin,xmax)
     elif xmin is not None:
@@ -418,6 +422,10 @@ def create_histogram(data, filename, kde=True, hist=True, xlabel=None, ylabel=No
         ax.set_xscale('log')
     if ylog:
         ax.set_yscale('log')
+    if xlog and xmin == 0:
+        xmin = None
+    if ylog and ymin == 0:
+        ymin = None
     if xmin is not None and xmax is not None:
         plt.xlim(xmin,xmax)
     elif xmin is not None:
@@ -451,6 +459,8 @@ def create_histogram_from_points(points, filename, color='#A5C8E1', xlabel=None,
         plt.xlabel(xlabel)
     if ylabel is not None:
         plt.ylabel(ylabel)
+    if ylog and ymin == 0:
+        ymin = None
     if ymin is not None and ymax is not None:
         plt.ylim(ymin,ymax)
     elif ymin is not None:
@@ -490,6 +500,8 @@ def create_barplot(data, filename, horizontal=False, all_labels=None, xlabel=Non
         ylog = False
     elif not ylog:
         ylog = (50 * min(v for v in y if v > 0) <= max(y))
+    if ylog and ymin == 0:
+        ymin = None
     if horizontal:
         fig, ax = plt.subplots(figsize=(8,max(2.5,0.2*len(x))))
         bp = barplot(x=y, y=x, ax=ax)
