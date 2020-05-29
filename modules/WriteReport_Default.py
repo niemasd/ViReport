@@ -201,10 +201,11 @@ class WriteReport_Default(WriteReport):
         section("Multiple Sequence Alignment")
         write(GC.SELECTED['MultipleSequenceAlignment'].blurb())
         write(" There were %d positions (%d invariant) and %d unique sequences in the multiple sequence alignment. " % (msa_columns, msa_num_invariant, msa_num_unique))
-        if GC.PAIRWISE_DISTS_SEQS is not None:
+        if GC.PAIRWISE_DISTS_SEQS is not None or hasattr(GC, 'PAIRWISE_DISTS_SEQS_SUMMARY'):
             write(GC.SELECTED['PairwiseDistancesSequence'].blurb())
-            write(" The average pairwise sequence distance was %s," % GC.num_str(dists_seq_avg))
-            write(" with a standard deviation of %s." % GC.num_str(dists_seq_std))
+            if GC.PAIRWISE_DISTS_SEQS is not None:
+                write(" The average pairwise sequence distance was %s," % GC.num_str(dists_seq_avg))
+                write(" with a standard deviation of %s." % GC.num_str(dists_seq_std))
             figure(dists_seq_hist_filename, width=0.75, caption="Distribution of pairwise sequence distances")
         write("Across the positions of the multiple sequence alignment,")
         write(" the minimum coverage was %s," % GC.num_str(min(v for v in msa_position_coverage)))
