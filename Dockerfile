@@ -122,8 +122,8 @@ RUN wget -q "https://github.com/tothuhien/lsd2/archive/master.zip" && \
     cd ../.. && \
     rm -rf lsd2-master master.zip
 
-# install MAFFT (7.453)
-RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.453-without-extensions-src.tgz" | tar -zx && \
+# install MAFFT (7.467)
+RUN wget -qO- "https://mafft.cbrc.jp/alignment/software/mafft-7.467-without-extensions-src.tgz" | tar -zx && \
     cd mafft*/core && \
     make clean && \
     make && \
