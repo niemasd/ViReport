@@ -16,7 +16,7 @@ class PhylogeneticInference_FastTree(PhylogeneticInference):
         pass
 
     def cite():
-        return [GC.CITATION_FASTTREE, GC.CITATION_MODEL_GTR, GC.CITATION_MODEL_LG]
+        return [GC.CITATION_FASTTREE, GC.CITATION_MODEL_GTR]
 
     def blurb():
         return "A maximum-likelihood phylogeny was inferred under the General Time-Reversible (GTR) model (Tavare, 1986) using FastTree 2 (Price et al., 2010) using a Gamma20-based likelihood."
