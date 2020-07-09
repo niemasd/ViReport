@@ -45,6 +45,7 @@ CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock ph
 CITATION_TREEN93 = 'Moshiri N. (2018). "TreeN93: a non-parametric distance-based method for inferring viral transmission clusters". bioRxiv.'
 CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
 CITATION_TREETIME = 'Sagulenko P., Puller V., Neher R.A. (2018). "TreeTime: Maximum-likelihood phylodynamic analysis". Virus Evolution. 4(1), vex042.'
+CITATION_VERYFASTTREE = 'Piñeiro C., Abuín J.M., Pichel J.C. (2020). "VeryFastTree: speeding up the estimation of phylogenies for large alignments through parallelization and vectorization strategies". Bioinformatics. btaa582.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # return the current time as a string
@@ -123,6 +124,14 @@ def num_str(n, dec_sigfigs=3):
 # get the reverse complement of a DNA string
 def rev_comp(s):
     return ''.join(COMPLEMENT[c] if c in COMPLEMENT else c for c in s.upper()[::-1])
+
+# convert a FASTA stream to upper-case nucleotides
+def fasta_stream_upper(s):
+    for l in s:
+        if l.startswith('>'):
+            yield l
+        else:
+            yield l.upper()
 
 # parse a CIGAR string
 def parse_cigar(s):
