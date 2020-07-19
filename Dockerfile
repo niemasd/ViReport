@@ -175,8 +175,8 @@ RUN wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93.
     wget -qO- "https://raw.githubusercontent.com/niemasd/TreeN93/master/TreeN93_cluster.py" > /usr/local/bin/TreeN93_cluster.py && \
     chmod a+x /usr/local/bin/TreeN93*.py
 
-# install VeryFastTree (3.0)
-RUN wget -qO- "https://github.com/citiususc/veryfasttree/archive/v3.0.tar.gz" | tar -zx && \
+# install VeryFastTree (3.0.1)
+RUN wget -qO- "https://github.com/citiususc/veryfasttree/archive/v3.0.1.tar.gz" | tar -zx && \
     cd veryfasttree-* && \
     cmake -USE_NATIVE=ON -USE_SEE2=ON -USE_SEE4=ON -USE_AVX=ON -USE_AVX2=ON -USE_AVX512=ON . && \
     make && \
