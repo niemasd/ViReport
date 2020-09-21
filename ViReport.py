@@ -64,6 +64,7 @@ def parse_args():
     parser.add_argument('-c', '--categories', required=False, default=None, type=str, help="Sample Categories (TSV format)")
     parser.add_argument('-og', '--outgroups', required=False, default=None, type=str, help="List of Outgroups")
     parser.add_argument('-o', '--out_dir', required=True, type=str, help="Output Directory")
+    parser.add_argument('-e', '--email', required=False, default=None, type=str, help="Email Address")
     parser.add_argument('-mt', '--max_threads', action='store_true', help="Use Maximum Number of Threads")
     parser.add_argument('-gz', '--gzip_output', action='store_true', help="Gzip Large Output Files")
     parser.add_argument('--continue_workflow', action='store_true', help="Continue Workflow Execution")
@@ -75,6 +76,7 @@ def parse_args():
     else:
         GC.NUM_THREADS = None
     GC.REF_ID = args.reference_id
+    GC.EMAIL = args.email
     GC.GZIP_OUTPUT = args.gzip_output
 
     # check input files

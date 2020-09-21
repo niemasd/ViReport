@@ -43,9 +43,10 @@ CITATION_PRANK = 'Loytynoja A. (2013). "Phylogeny-aware alignment with PRANK". M
 CITATION_RAXML_NG = 'Kozlov A.M., Darriba D., Flouri T., Morel B., Stamatakis A. (2019). "RAxML-NG: A fast, scalable, and user-friendly tool for maximum likelihood phylogenetic inference". Bioinformatics. 35(21), 4453-4455.'
 CITATION_TREEDATER = 'Volz E.M., Frost S.D.W. (2017). "Scalable relaxed clock phylogenetic dating". Virus Evolution. 3(2), vex025.'
 CITATION_TREEN93 = 'Moshiri N. (2018). "TreeN93: a non-parametric distance-based method for inferring viral transmission clusters". bioRxiv.'
-CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. In press.'
+CITATION_TREESWIFT = 'Moshiri N. (2020). "TreeSwift: a massively scalable Python tree package". SoftwareX. 11:100436.'
 CITATION_TREETIME = 'Sagulenko P., Puller V., Neher R.A. (2018). "TreeTime: Maximum-likelihood phylodynamic analysis". Virus Evolution. 4(1), vex042.'
 CITATION_VERYFASTTREE = 'Piñeiro C., Abuín J.M., Pichel J.C. (2020). "VeryFastTree: speeding up the estimation of phylogenies for large alignments through parallelization and vectorization strategies". Bioinformatics. btaa582.'
+CITATION_VIRALMSA = 'Moshiri N. (2020). "ViralMSA: Massively scalable reference-guided multiple sequence alignment of viral genomes." Bioinformatics. btaa743.'
 CITATION_VIREPORT = 'Moshiri N. (2020). "ViReport" (https://github.com/niemasd/ViReport).'
 
 # return the current time as a string
